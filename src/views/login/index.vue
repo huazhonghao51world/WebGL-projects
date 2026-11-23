@@ -96,7 +96,7 @@ export default {
 
         this.loading = false;
         this.$message && this.$message.success("登录成功");
-        this.$router.push("/page_2/2").catch(() => {});
+        this.$router.push("/xy-factory").catch(() => {});
       }, 400);
     },
     handleExit() {

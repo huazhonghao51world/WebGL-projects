@@ -50,7 +50,7 @@ const routes = [
     path: "/",
     component: () => import("@/views/index.vue"),
     // redirect: "/page_1",
-    redirect: "/page_2/2", // 单图模式（灯塔工厂）：项目暂时只有 /page_2/2 一张图，其余路由暂时隐藏，恢复时去掉注释即可
+    redirect: "/xy-factory", // 默认进入 XY 工厂；灯塔工厂仍可通过 /page_2/2 访问
     meta: {
       title: '数据可视化大屏',
       requiresAuth: false, // 是否需要认证
@@ -470,7 +470,7 @@ router.beforeEach((to, from, next) => {
 
   // 已登录访问登录页时，直接进入首页。
   if (to.path === '/login' && isAuthenticated()) {
-    next('/page_2/2');
+    next('/xy-factory');
     return;
   }
 
