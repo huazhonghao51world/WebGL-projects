@@ -116,6 +116,87 @@ function assertAnimationPrecision(file) {
   if (bad.size) throw new Error(`${path.basename(file)} 的动画数据被量化，播放会抖动，已停止发布：${[...bad].join('、')}。请场景组导出时保持动画为 Float32、不加 Meshopt 滤波。`);
 }
 
+/* ------------------------------------------------------------------ camera cuts (UE exports motion tracks, not a Camera Cuts track) */
+// Bump when the inference rule changes: published entities are re-derived without re-importing the model.
+const SEQUENCES_RULE = 2;
+// Same rule as the scene team's engine/cameraCuts.ts: a camera "takes over" when its motion starts.
+const sanitize = (name) => String(name || '');
+function readGlb(file) {
+  const raw = fs.readFileSync(file);
+  const jsonLength = raw.readUInt32LE(12);
+  const doc = JSON.parse(raw.toString('utf8', 20, 20 + jsonLength));
+  const binStart = 20 + jsonLength + 8;
+  return { doc, bin: raw.subarray(binStart, binStart + raw.readUInt32LE(20 + jsonLength)) };
+}
+function accessorFloats({ doc, bin }, index) {
+  const accessor = doc.accessors[index];
+  if (accessor.componentType !== 5126 || accessor.sparse) throw new Error('动画数据不是 Float32');
+  const view = doc.bufferViews[accessor.bufferView];
+  const size = { SCALAR: 1, VEC3: 3, VEC4: 4 }[accessor.type];
+  const stride = view.byteStride ? view.byteStride / 4 : size;
+  const base = (view.byteOffset || 0) + (accessor.byteOffset || 0);
+  const out = new Float32Array(accessor.count * size);
+  for (let i = 0; i < accessor.count; i++) for (let k = 0; k < size; k++) out[i * size + k] = bin.readFloatLE(base + (i * stride + k) * 4);
+  return out;
+}
+function readSequences(file, overrides = {}) {
+  const glb = readGlb(file);
+  const { doc } = glb;
+  const parents = new Map();
+  doc.nodes.forEach((node, index) => (node.children || []).forEach((child) => parents.set(child, index)));
+  const cameraOf = new Map();
+  doc.nodes.forEach((node, index) => {
+    if (node.camera === undefined) return;
+    for (let at = index; at !== undefined; at = parents.get(at)) if (!cameraOf.has(at)) cameraOf.set(at, index);
+  });
+  const sequences = [];
+  for (const animation of doc.animations || []) {
+    const ranges = new Map();
+    let duration = 0;
+    for (const channel of animation.channels) {
+      const sampler = animation.samplers[channel.sampler];
+      const times = accessorFloats(glb, sampler.input);
+      duration = Math.max(duration, times[times.length - 1] || 0);
+      const camera = cameraOf.get(channel.target.node);
+      if (camera === undefined || !['translation', 'rotation', 'scale'].includes(channel.target.path)) continue;
+      const values = accessorFloats(glb, sampler.output);
+      const size = channel.target.path === 'rotation' ? 4 : 3;
+      const stride = sampler.interpolation === 'CUBICSPLINE' ? size * 3 : size;
+      const offset = sampler.interpolation === 'CUBICSPLINE' ? size : 0;
+      const list = ranges.get(camera) || [];
+      ranges.set(camera, list);
+      for (let i = 1; i < times.length; i++) {
+        let diff = 0; let opposite = 0;
+        for (let k = 0; k < size; k++) {
+          const a = values[(i - 1) * stride + offset + k]; const b = values[i * stride + offset + k];
+          diff = Math.max(diff, Math.abs(a - b)); opposite = Math.max(opposite, Math.abs(a + b));
+        }
+        if ((size === 4 ? Math.min(diff, opposite) : diff) > 1e-6) list.push([times[i - 1], times[i]]);
+      }
+    }
+    // SDK 按 glTF 原始节点路径匹配镜头：用顶层 Actor 名（如 CineCameraActor_SQ3_1），组件名 CameraComponent 会重名。
+    const nameOf = (camera) => {
+      let top = camera;
+      for (let at = camera; at !== undefined; at = parents.get(at)) top = at;
+      return sanitize(doc.nodes[top].name);
+    };
+    let shots = [];
+    if (ranges.size === 1) shots = [{ camera: nameOf([...ranges.keys()][0]), fromMs: 0 }];
+    else for (const [camera, list] of ranges) {
+      let end = -Infinity;
+      for (const [start, next] of list.sort((a, b) => a[0] - b[0])) {
+        if (start > end + 1e-9) shots.push({ camera: nameOf(camera), fromMs: Math.round(start * 1000) });
+        end = Math.max(end, next);
+      }
+    }
+    shots.sort((a, b) => a.fromMs - b.fromMs);
+    if (shots.length) shots[0].fromMs = 0;
+    const clip = animation.name || `animation_${sequences.length}`;
+    sequences.push({ clip, durationMs: Math.round(duration * 1000), shots: overrides[clip] || shots, cutsSource: overrides[clip] ? 'override' : 'inferred' });
+  }
+  return sequences;
+}
+
 /* ------------------------------------------------------------------ plan */
 async function plan(draft, published, assets) {
   const entities = new Map(draft.entities.map((entity) => [entity.entityId, entity]));
@@ -131,7 +212,10 @@ async function plan(draft, published, assets) {
     }
     const source = { file: model.file, sha256: await sha256(file) };
     const current = entity && entity.customData && entity.customData.source;
-    if (current && current.sha256 === source.sha256) continue;
+    if (current && current.sha256 === source.sha256) {
+      if (entity.customData.sequencesRule !== SEQUENCES_RULE) changes.push({ type: 'sequences', model, file, source, entity, reason: '重算动画序列与切镜' });
+      continue;
+    }
     assertAnimationPrecision(file);
     // Entities imported before fingerprints existed: the platform keeps the original's hash, so an identical
     // file only needs its fingerprint recorded, not a re-import.
@@ -165,6 +249,8 @@ async function importModel(change, work) {
   const normalized = path.join(work, `${model.entityId}-normalized`);
   run('prepare-xy-assets.cjs', [path.dirname(file), normalized, config.platformRoot, name]);
   const upload = path.join(normalized, name);
+  const sequences = readSequences(upload, model.cutOverrides);
+  if (sequences.length) log(`${name}：${sequences.length} 段动画（${sequences.map((s) => `${s.clip} ${s.shots.length} 镜`).join('，')}）`);
   const form = new FormData();
   form.append('model', await fs.openAsBlob(upload), name);
   form.append('original', await fs.openAsBlob(file), name);
@@ -176,7 +262,7 @@ async function importModel(change, work) {
     if (current.status === 'ready') {
       const asset = (await request('/assets')).data.find((item) => item.assetId === model.assetId && item.assetRevision === current.assetRevision);
       log(`导入 ${name} → ${asset.assetId}@${asset.assetRevision}${asset.report.animations.length ? `，动画 ${asset.report.animations.join(', ')}` : ''}`);
-      return { assetId: asset.assetId, assetRevision: asset.assetRevision, contentHash: asset.contentHash, metadataHash: asset.metadataHash };
+      return { assetId: asset.assetId, assetRevision: asset.assetRevision, contentHash: asset.contentHash, metadataHash: asset.metadataHash, sequences };
     }
     await delay(1000);
   }
@@ -203,7 +289,7 @@ async function main() {
   };
   const published = exists ? (await request(`/scenes/${sceneId}/custom-apis?revision=published`).catch(() => ({ data: {} }))).data : {};
   const changes = await plan(doc, published, (await request('/assets')).data);
-  const label = (c) => (c.type === 'model' || c.type === 'fingerprint' ? c.model.file : c.type === 'anchors' ? config.anchors.file : config.profile.packageId);
+  const label = (c) => (['model', 'fingerprint', 'sequences'].includes(c.type) ? c.model.file : c.type === 'anchors' ? config.anchors.file : config.profile.packageId);
   for (const change of changes) log(`待发布：${label(change)}（${change.reason}）`);
   if (!changes.length) { console.log(JSON.stringify({ sceneId, changed: [], published: false })); log('交付目录与已发布场景一致，无需发布'); return; }
   if (dryRun) { console.log(JSON.stringify({ sceneId, changed: changes.map(label), dryRun: true })); return; }
@@ -214,13 +300,22 @@ async function main() {
       upsertEntity(doc, { ...change.entity, customData: { ...(change.entity.customData || {}), source: change.source } });
     }
     for (const change of changes.filter((item) => item.type === 'model')) {
-      const ref = await importModel(change, work);
+      const { sequences, ...ref } = await importModel(change, work);
       doc.assets = doc.assets.filter((asset) => asset.assetId !== ref.assetId).concat(ref);
       const previous = change.entity || { entityId: change.model.entityId, kind: 'model', transform: {}, customData: {} };
+      const { sequences: _old, ...rest } = previous.customData || {};
       upsertEntity(doc, {
-        ...previous, name: previous.name || change.model.name, assetRef: { assetId: ref.assetId, assetRevision: ref.assetRevision },
-        customData: { ...(previous.customData || {}), source: change.source },
+        ...previous, name: change.model.name, assetRef: { assetId: ref.assetId, assetRevision: ref.assetRevision },
+        customData: { ...rest, source: change.source, sequencesRule: SEQUENCES_RULE, ...(sequences.length ? { sequences } : {}) },
       });
+    }
+    for (const change of changes.filter((item) => item.type === 'sequences')) {
+      const normalized = path.join(work, `${change.model.entityId}-normalized`);
+      run('prepare-xy-assets.cjs', [path.dirname(change.file), normalized, config.platformRoot, path.basename(change.file)]);
+      const sequences = readSequences(path.join(normalized, path.basename(change.file)), change.model.cutOverrides);
+      const { sequences: _old, ...rest } = change.entity.customData || {};
+      upsertEntity(doc, { ...change.entity, customData: { ...rest, sequencesRule: SEQUENCES_RULE, ...(sequences.length ? { sequences } : {}) } });
+      log(`${change.model.file}：${sequences.length} 段动画序列已更新`);
     }
     const anchors = changes.find((item) => item.type === 'anchors');
     if (anchors) {

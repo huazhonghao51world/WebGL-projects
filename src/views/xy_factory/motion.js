@@ -1,47 +1,72 @@
 import { getTwinApp } from "@/utils/twin/app";
 
-// 场景组交付的 UE Sequencer 序列（L_Prop.glb → 平台资产 xy-prop-sq3-v1 → 场景实体 xy-prop-sq3）。
-// 运动全部来自 GLB 自带片段，前端只做播放控制；换版时只改这里。
-export const sequence = {
-  entityId: "xy-prop-sq3",
-  clip: "SQ_3_likuquanjing_0",
-  label: "库区序列 SQ_3",
-  // UE 显示帧率与导出起始帧（GLB 第 0 秒 = 第 -3 帧）；切镜帧取自 Sequencer 的 Camera Cuts 区段。
-  fps: 30,
-  exportStartFrame: -3,
-  shots: [
-    { camera: "CineCameraActor_SQ3_1", label: "镜头 1", fromFrame: -3 },
-    { camera: "CineCameraActor_SQ3_2", label: "镜头 2", fromFrame: 900 },
-  ],
+// 场景组交付的 UE Sequencer 序列。运动全部来自 GLB 自带片段，前端只做播放控制。
+// 序列清单与切镜表由发布流程（scripts/release-xy-scene.cjs）写入各模型实体的 customData.sequences：
+// 切镜点按镜头开始运动的时刻自动推断，SQ_3 使用 UE Camera Cuts 的人工切镜表。
+const CLIP_LABELS = {
+  SQ_3_likuquanjing_0: "库区全景",
+};
+// 旧发布版没有 customData.sequences 时的兜底（SQ_3，第 900 帧切镜）。
+const LEGACY = [{ entityId: "xy-prop-sq3", clip: "SQ_3_likuquanjing_0", durationMs: 0, shots: [{ camera: "CineCameraActor_SQ3_1", fromMs: 0 }, { camera: "CineCameraActor_SQ3_2", fromMs: 30100 }] }];
+
+const labelOf = (clip) => {
+  const code = /^(SQ_?\d+)/i.exec(clip);
+  const name = CLIP_LABELS[clip];
+  return name ? `${code ? code[1].replace("_", "") : clip} ${name}` : clip.replace(/_0$/, "");
 };
 
-export const frameToMs = (frame, seq = sequence) => ((frame - seq.exportStartFrame) * 1000) / seq.fps;
+/** 已发布场景中可播放的全部序列（按 SQ 序号排序）。 */
+export function publishedSequences(viewer) {
+  let list = [];
+  try {
+    for (const entity of viewer.scene.getDocument().entities) {
+      const sequences = entity.customData && entity.customData.sequences;
+      if (Array.isArray(sequences)) for (const item of sequences) list.push({ entityId: entity.entityId, ...item });
+    }
+  } catch (error) { list = []; }
+  if (!list.length) list = LEGACY;
+  const order = (clip) => { const m = /SQ_?(\d+)/i.exec(clip); return m ? Number(m[1]) : 999; };
+  return list
+    .map((item) => ({ ...item, label: labelOf(item.clip), shots: item.shots.map((shot, index) => ({ ...shot, label: `镜头 ${index + 1}` })) }))
+    .sort((a, b) => order(a.clip) - order(b.clip) || a.clip.localeCompare(b.clip));
+}
 
 export const idleMotion = {
-  available: false, reason: "三维场景连接后可用", cameras: false, label: sequence.label, shots: [],
+  available: false, reason: "三维场景连接后可用", cameras: false, label: "", shots: [], sequences: [], index: 0,
   follow: false, loop: false, active: false, playing: false, timeMs: 0, durationMs: 0, rate: 1, shot: null,
 };
-
-/** 播放场景 GLB 自带的动画片段，并可按 UE 切镜表跟随模型内置相机。onChange 收到可直接渲染的纯数据快照。 */
-export function connectMotion(onChange, seq = sequence) {
+/** 播放场景 GLB 自带的动画片段，并可按切镜表跟随模型内置相机。onChange 收到可直接渲染的纯数据快照。 */
+export function connectMotion(onChange) {
   const app = getTwinApp();
   const viewer = app.viewer;
-  const shots = seq.shots.map(({ camera, label, fromFrame }) => ({ camera, label, fromMs: frameToMs(fromFrame, seq) }));
+  const sequences = publishedSequences(viewer);
+  let index = 0;
+  let seq = sequences[0];
+  let shots = [];
   let available = false;
   let reason = "";
-  try {
-    available = viewer.scene.getClipNames(seq.entityId).includes(seq.clip);
-    if (!available) reason = `场景模型缺少动画片段 ${seq.clip}`;
-  } catch (error) {
-    reason = "当前发布版没有带动画的道具模型";
-  }
   let cameras = false;
-  if (available) {
+  function select(next) {
+    index = Math.max(0, Math.min(sequences.length - 1, next));
+    seq = sequences[index];
+    shots = seq.shots;
+    available = false;
+    reason = "";
     try {
-      const paths = viewer.camera.getNodeCameras(seq.entityId).map((item) => item.path);
-      cameras = shots.every((shot) => paths.filter((path) => path.includes(shot.camera)).length === 1);
-    } catch (error) { cameras = false; }
+      available = viewer.scene.getClipNames(seq.entityId).includes(seq.clip);
+      if (!available) reason = `场景模型缺少动画片段 ${seq.clip}`;
+    } catch (error) {
+      reason = "当前发布版没有带动画的模型";
+    }
+    cameras = false;
+    if (available && shots.length) {
+      try {
+        const paths = viewer.camera.getNodeCameras(seq.entityId).map((item) => item.path);
+        cameras = shots.every((shot) => paths.filter((path) => path.includes(shot.camera)).length === 1);
+      } catch (error) { cameras = false; }
+    }
   }
+  select(0);
   let follow = cameras;
   let loop = false;
   let owned = false;
@@ -57,6 +82,7 @@ export function connectMotion(onChange, seq = sequence) {
     const cuts = viewer.camera.getCameraCuts();
     return {
       available, reason, cameras, label: seq.label, shots, follow, loop, active: mine,
+      sequences: sequences.map((item) => ({ clip: item.clip, label: item.label })), index,
       playing: mine && state.playing, timeMs: mine ? state.timeMs : 0, durationMs: mine ? state.durationMs : 0,
       rate: mine ? state.rate : 1, shot: cuts && cuts.entityId === seq.entityId ? cuts.activeShot : null,
     };
@@ -107,6 +133,18 @@ export function connectMotion(onChange, seq = sequence) {
 
   return {
     snapshot: () => (live() ? snapshot() : { ...idleMotion }),
+    /** 切换序列：停止当前播放并复位。 */
+    select: (next) => {
+      if (!live()) return;
+      tick(false);
+      endCuts();
+      if (owned && isMine(viewer.animations.getState())) viewer.animations.stop();
+      owned = false;
+      const wasFollowing = follow;
+      select(next);
+      follow = cameras && wasFollowing;
+      emit();
+    },
     toggle: () => run(() => {
       const state = viewer.animations.getState();
       if (!owned || !isMine(state)) { play(); return; }

@@ -5,7 +5,13 @@
     { "file": "models/L_Building.glb", "assetId": "xy-campus-exterior-v1", "entityId": "xy-campus-exterior", "name": "XY园区外围" },
     { "file": "models/L_Building2.glb", "assetId": "xy-campus-core-v1", "entityId": "xy-campus-core", "name": "生产楼与库区楼" },
     {
-      "file": "models/L_Prop.glb", "assetId": "xy-prop-sq3-v1", "entityId": "xy-prop-sq3", "name": "库区道具与动画 SQ_3" }
+      "file": "models/L_Prop.glb", "assetId": "xy-prop-sq3-v1", "entityId": "xy-prop-sq3", "name": "库区道具与动画",
+      "cutOverrides": {
+        "SQ_3_likuquanjing_0": [{ "camera": "CineCameraActor_SQ3_1", "fromMs": 0 }, { "camera": "CineCameraActor_SQ3_2", "fromMs": 30100 }]
+      }
+    },
+    { "file": "models/L_Mesh.glb", "assetId": "xy-mesh-v1", "entityId": "xy-mesh", "name": "生产动画（注塑、打包）" },
+    { "file": "models/L_shinei.glb", "assetId": "xy-shinei-v1", "entityId": "xy-shinei", "name": "室内设备" }
   ],
   "anchors": { "file": "models/L_BP.glb", "entityId": "xy-anchors", "name": "XY园区点位" },
   "profile": { "dir": "scene-packages/xy-scene-profile/dist", "packageId": "xy-scene-profile", "contract": "xy-scene-profile", "contractMajor": 1, "functions": ["applySceneProfile", "resetSceneProfile"] }

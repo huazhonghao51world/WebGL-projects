@@ -28,11 +28,8 @@
       <span class="xy-asof">演示数据 · 截至 {{ asOf }}</span><span class="xy-live"><span class="dot" :class="{ online: isReady }"></span>{{ statusLabel }}<FpsCounter v-if="isReady" compact /><button v-if="sceneStatus.state === 'error'" type="button" @click="retry">重试</button></span>
     </div>
 
-    <XYDashboard v-if="!panelsHidden" :mod="activeId" :camera-count="cameras.length" :building-names="buildingNames" :alarms="alarmData"
-      @module="setModule" @locate="locate" @device="openDevice" @alarms="openAlarms" @cameras="openCameras" @pending="pending">
-      <template #motion>
-        <div class="xy-slot-card"><XYBusinessPanel :module="productionModule" :ready="isReady" :motion="motion" @motion="onMotion" /></div>
-      </template>
+    <XYDashboard v-if="!panelsHidden" :mod="activeId" :camera-count="cameras.length" :building-names="buildingNames" :alarms="alarmData" :flow="flow"
+      @module="setModule" @locate="locate" @device="openDevice" @alarms="openAlarms" @cameras="openCameras" @pending="pending" @flow="onFlow">
       <template #environment>
         <div class="xy-slot-card"><XYBusinessPanel :module="environmentModule" :ready="isReady" @time="setLightTime" @weather="setWeather" @reset-environment="restoreEnvironment" /></div>
       </template>
@@ -60,7 +57,7 @@
       </template>
     </div>
 
-    <!-- 底部场景工具条（对齐灯塔工厂工具集） -->
+    <!-- 底部场景工具条 -->
     <div class="xy-scene-tools">
       <div v-if="areaResult" class="xy-note xy-area-readout">
         <strong v-if="areaResult.metrics">{{ areaPicking ? '预览' : '结果' }} · 面积 {{ areaResult.metrics.area.toFixed(2) }} m² · 周长 {{ areaResult.metrics.perimeter.toFixed(2) }} m</strong>
@@ -115,13 +112,14 @@
         <template v-else-if="dialog.type === 'device' && device">
           <div class="xy-device">
             <dl class="xy-facts">
-              <div><dt>编号</dt><dd>{{ device.id }}</dd></div><div><dt>类型</dt><dd>{{ device.type }}</dd></div>
-              <div><dt>位置</dt><dd>{{ buildingNames[device.building] || '杂物房' }} {{ device.floor }}</dd></div><div><dt>状态</dt><dd>{{ device.status }}</dd></div>
+              <div><dt>编号</dt><dd>{{ device.id }}</dd></div><div><dt>类型</dt><dd>{{ deviceGroupName }}</dd></div>
+              <div><dt>位置</dt><dd>{{ buildingNames[device.building] }}</dd></div><div><dt>状态</dt><dd>{{ device.status }}</dd></div>
               <div><dt>健康度</dt><dd>{{ device.health }} 分</dd></div><div><dt>温度</dt><dd>{{ device.temp }} °C</dd></div>
               <div><dt>功率</dt><dd>{{ device.power }} kW</dd></div><div><dt>累计运行</dt><dd>{{ device.hours.toLocaleString() }} h</dd></div>
             </dl>
+            <p class="quiet">节拍 {{ device.cycle }}{{ device.note ? ` · ${device.note}` : "" }}</p>
             <div class="xy-dialog-actions">
-              <button type="button" class="xy-btn" @click="locate(device.building, device.floor); dialog = null">聚焦设备所在楼层</button>
+              <button type="button" class="xy-btn" @click="locate(device.building); dialog = null">定位设备所在楼栋</button>
               <button type="button" class="xy-btn ghost" @click="pending('部件拆解')">部件拆解</button>
               <button type="button" class="xy-btn ghost" @click="pending('材质调节')">材质调节</button>
               <button type="button" class="xy-btn ghost" @click="pending('设备远程控制')">设备控制</button>
@@ -146,14 +144,14 @@ import { getTwinApp } from "@/utils/twin/app";
 import { startAreaMeasurement } from "@/utils/twin/areaMeasurement";
 import { buildCampus, campus, floors, publishedAnchors } from "./campus";
 import { connectCampus } from "./sceneAdapter";
-import { connectMotion, idleMotion } from "./motion";
+import { createPipeline, idleFlow, stages as flowStages, STACKER_VIEW } from "./pipeline";
 import { applySceneProfile } from "./sceneProfile";
 import XYAreaOverlay from "./areaOverlay.vue";
 import XYBusinessPanel from "./businessPanel.vue";
 import XYIcon from "./icons.vue";
 import XYDashboard from "./dashboard.vue";
-import { modules, tourIds, toolGroups, productionModule, environmentModule } from "./operations";
-import { alarms, devices, buildingProfiles, AS_OF } from "./dashboardData";
+import { modules, tourIds, toolGroups, environmentModule } from "./operations";
+import { alarms, devices, deviceGroups, buildingProfiles, AS_OF } from "./dashboardData";
 
 const two = (n) => String(n).padStart(2, "0");
 
@@ -161,9 +159,9 @@ export default {
   name: "XYFactory",
   components: { FpsCounter, XYAreaOverlay, XYBusinessPanel, XYIcon, XYDashboard },
   data: () => ({
-    campus, floors, modules, toolGroups, productionModule, environmentModule,
+    campus, floors, modules, toolGroups, environmentModule,
     asOf: AS_OF, activeId: "overview", panelsHidden: false, selectedId: "", floor: null, availableFloors: [],
-    showCameras: false, touring: false, measuring: false, areaResult: null, walking: false, message: "", motion: { ...idleMotion }, profile: null,
+    showCameras: false, touring: false, measuring: false, areaResult: null, walking: false, message: "", flow: { ...idleFlow }, profile: null,
     now: new Date(), layersOpen: false, dialog: null, alarmData: alarms.map((a) => ({ ...a })), alarmFilter: { level: "", state: "" }, alarmId: "",
     handleForm: { user: "", result: "已修复恢复运行" }, deviceId: "",
   }),
@@ -176,6 +174,7 @@ export default {
     filteredAlarms() { return this.alarmData.filter((a) => (!this.alarmFilter.level || a.level === this.alarmFilter.level) && (!this.alarmFilter.state || a.state === this.alarmFilter.state)); },
     handling() { return this.alarmData.find((a) => a.id === this.alarmId && a.state === "未处置"); },
     device() { return devices.find((d) => d.id === this.deviceId); },
+    deviceGroupName() { const g = this.device && deviceGroups.find((x) => x.id === this.device.group); return g ? g.name : ""; },
     ...mapState(["sceneStatus", "isSceneAlready"]),
     isReady() { return this.isSceneAlready && this.sceneStatus.caseKey === "xy" && this.sceneStatus.state === "ready"; },
     isLoading() { return this.sceneStatus.caseKey !== "xy" || this.sceneStatus.state === "loading"; },
@@ -193,7 +192,14 @@ export default {
       return this.sceneStatus.state === "error" ? "静态预览 · 连接失败" : "静态预览 · 三维尚未配置";
     },
   },
-  watch: { isReady(ready) { if (ready) this.attach(); else this.detach(); } },
+  watch: {
+    isReady(ready) { if (ready) this.attach(); else this.detach(); },
+    "flow.stage"(index) {
+      const stage = flowStages[index];
+      if (stage) this.message = `生产流水线 · ${index + 1}/${flowStages.length} ${stage.name}`;
+      else if (this.message.startsWith("生产流水线")) this.message = "";
+    },
+  },
   mounted() {
     emitter.on("sceneUpdated", this.attach);
     document.addEventListener("visibilitychange", this.onVisibility);
@@ -230,8 +236,8 @@ export default {
         this.run(adapter.ready);
         if (this.selected) this.select(this.selectedId, this.floor, false);
         this.measureViewer = getTwinApp().viewer;
-        this.motionPlayer = connectMotion((next) => { this.motion = next; });
-        this.motion = this.motionPlayer.snapshot();
+        this.pipeline = createPipeline(this.measureViewer, (next) => { this.flow = next; });
+        this.flow = this.pipeline.snapshot();
         applySceneProfile().then((profile) => { if (this.adapter === adapter) this.profile = profile; });
         this.offMeasure = this.measureViewer.events.on("measurement.changed", (event) => {
           this.measuring = this.measureViewer.measurements.isActive();
@@ -241,9 +247,9 @@ export default {
     },
     detach() {
       this.stopTour();
-      if (this.motionPlayer) this.motionPlayer.dispose();
-      this.motionPlayer = null;
-      this.motion = { ...idleMotion };
+      if (this.pipeline) this.pipeline.dispose();
+      this.pipeline = null;
+      this.flow = { ...idleFlow };
       this.profile = null;
       if (this.offMeasure) this.offMeasure();
       this.offMeasure = null;
@@ -287,7 +293,7 @@ export default {
     },
     runTool(tool) {
       if (tool.pending) { this.pending(tool.name); return; }
-      ({ reset: this.reset, tour: this.toggleTour, walk: this.toggleWalk, measure: this.toggleMeasure, area: this.toggleArea, cameras: this.toggleCameras })[tool.id]();
+      ({ reset: this.reset, tour: this.toggleTour, walk: this.toggleWalk, stacker: this.viewStacker, measure: this.toggleMeasure, area: this.toggleArea, cameras: this.toggleCameras })[tool.id]();
     },
     onKey(event) { if (event.key === "Escape" && this.dialog) this.dialog = null; },    clearPoint() {
       this.selectedId = "";
@@ -412,30 +418,43 @@ export default {
     onVisibility() { if (document.hidden) this.stopTour(); },
     setLightTime(time) { if (this.adapter) this.run(() => this.adapter.setTime(time)); },
     setWeather(weather) { if (this.adapter) this.run(() => this.adapter.setWeather(weather)); },
-    restoreEnvironment() { if (this.adapter) this.run(() => this.adapter.restoreEnvironment()); },
-    retry() { emitter.emit("sceneRetry"); },
-    onMotion(command, value) {
-      const player = this.motionPlayer;
-      if (!player) return;
-      const camerasTaken = this.motion.follow && this.motion.cameras;
-      if ((command === "toggle" && camerasTaken) || (command === "follow" && value)) {
-        this.stopTour();
-        this.endSpatialTools();
-      }
+    restoreEnvironment() {
+      if (!this.adapter) return;
+      // 全局光照随场景配置包下发：恢复默认 = 撤销天气/时间调整后重新应用场景组的光照。
       this.run(async () => {
-        if ((command === "toggle" && camerasTaken) || (command === "follow" && value)) await this.leaveWalk();
-        if (this.motionPlayer !== player) return;
-        if (command === "toggle") player.toggle();
-        else if (command === "stop") player.stop();
-        else if (command === "seek") player.seek(value);
-        else if (command === "rate") player.setRate(value);
-        else if (command === "loop") player.setLoop(value);
-        else if (command === "follow") player.setFollow(value);
+        this.adapter.restoreEnvironment();
+        const adapter = this.adapter;
+        const profile = await applySceneProfile();
+        if (this.adapter === adapter) this.profile = profile;
       });
     },
-    /** 运镜接管相机时先结束，避免全景、聚焦、漫游与场景镜头争抢。 */
+    retry() { emitter.emit("sceneRetry"); },
+    /** 产品生产流水线：stage=播放单个环节，all=完整流水线，toggle=暂停/继续，stop=结束。 */
+    onFlow(command, value) {
+      if (command === "stage" && this.activeId !== "product") this.activeId = "product";
+      const player = this.pipeline;
+      if (!player) { if (command !== "stop") this.message = "三维场景连接后可播放生产流水线"; return; }
+      if (command !== "stop") { this.stopTour(); this.endSpatialTools(); }
+      this.run(async () => {
+        if (command !== "stop") await this.leaveWalk();
+        if (this.pipeline !== player) return;
+        if (command === "all") await player.playAll();
+        else if (command === "stage") await player.playStage(value);
+        else if (command === "toggle") await player.toggle();
+        else if (command === "stop") player.stop();
+      });
+    },
+    viewStacker() {
+      if (!this.measureViewer) return;
+      this.stopTour();
+      this.endSpatialTools();
+      this.releaseMotionCamera();
+      const viewer = this.measureViewer;
+      this.run(async () => { await this.leaveWalk(); if (this.measureViewer === viewer) await viewer.camera.flyTo(STACKER_VIEW, 1200); this.message = "立体库巷道视角"; });
+    },
+    /** 流水线运镜接管相机时，其他相机操作先结束流水线，避免争抢。 */
     releaseMotionCamera() {
-      if (this.motionPlayer && this.motion.follow && this.motion.shot !== null) this.motionPlayer.setFollow(false);
+      if (this.pipeline && this.flow.active) { this.pipeline.stop(); this.message = ""; }
     },
   },
 };

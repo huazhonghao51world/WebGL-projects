@@ -36,7 +36,7 @@
 .xy-brand h1 { margin:0; font:700 20px/1.2 var(--xy-font); letter-spacing:.08em; background:linear-gradient(180deg,#fff 30%,#8be9ff); -webkit-background-clip:text; color:transparent; }
 .xy-brand p { margin:2px 0 0; color:var(--xy-muted); font-size:10px; letter-spacing:.22em; }
 .xy-nav { flex:1; display:flex; justify-content:center; gap:2px; min-width:0; overflow-x:auto; scrollbar-width:none; }
-.xy-nav button { position:relative; flex:none; display:flex; align-items:center; gap:6px; height:40px; padding:0 14px; border:0; background:transparent; color:#b4c8dc; font-size:14px; letter-spacing:.04em; transform:skewX(-14deg); border-radius:2px; }
+.xy-nav button { position:relative; flex:none; display:flex; align-items:center; gap:6px; height:40px; padding:0 10px; border:0; background:transparent; color:#b4c8dc; font-size:14px; letter-spacing:.04em; transform:skewX(-14deg); border-radius:2px; }
 .xy-nav button > * { transform:skewX(14deg); }
 .xy-nav button svg { width:16px; height:16px; }
 .xy-nav button:hover { color:#fff; background:rgba(62,230,212,.08); }
@@ -123,6 +123,7 @@
 .quiet { color:var(--xy-muted); font-size:12px; }
 .xy-clean-view::before { opacity:.4; }
 
+@media (max-width:1800px) { .xy-weather { display:none; } .xy-brand p { display:none; } }
 @media (max-width:1400px) { .xy-clock,.xy-weather { display:none; } .xy-nav button { padding:0 9px; font-size:13px; } }
 @media (max-width:1100px) { .xy-brand p,.xy-nav button span { display:none; } }
 .xy-tools { position:relative; flex-wrap:nowrap; }
