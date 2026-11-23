@@ -1,0 +1,15 @@
+import json
+from pathlib import Path
+cdp('Network.enable')
+cdp('Runtime.enable')
+cdp('Log.enable')
+cdp('Network.setCacheDisabled', cacheDisabled=True)
+cdp('Network.setBypassServiceWorker', bypass=True)
+cdp('Network.setBlockedURLs', urls=['https://*','http://10.*','http://115.*','http://127.0.0.1:*'])
+cdp('Emulation.setDeviceMetricsOverride',width=1920,height=1080,deviceScaleFactor=1,mobile=False)
+drain_events()
+goto_url('http://localhost:3766/#/page_2/2')
+wait_for_load()
+print(page_info())
+print(js('JSON.stringify(window.__dengtaDiagnostics)'))
+capture_screenshot('E:/All_in_wdp/wdpapi_sdk/dengta-twinProject/vendor-staging/scene-cold.png',max_dim=1800)

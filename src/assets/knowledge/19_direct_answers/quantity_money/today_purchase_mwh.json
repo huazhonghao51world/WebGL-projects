@@ -1,0 +1,7 @@
+{
+  "date": "2026-08-05",
+  "answer_zh": "今天买电（外购结算）约 119.8 MWh。厂内用电约 142 MWh，其中光伏自用约 21.4 MWh 不算外购。",
+  "purchase_mwh": 119.8,
+  "site_load_mwh": 142.0,
+  "pv_self_mwh": 21.4
+}

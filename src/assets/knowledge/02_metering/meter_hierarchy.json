@@ -1,0 +1,26 @@
+{
+  "root": "M-EL-GATE-001",
+  "children": {
+    "M-EL-GATE-001": [
+      "M-EL-SUB-001",
+      "M-EL-PV-001"
+    ],
+    "M-EL-SUB-001": [
+      "M-EL-WS-001",
+      "M-EL-ASRS-001",
+      "M-EL-WH-001",
+      "M-EL-AIR-001",
+      "M-EL-CLG-001",
+      "M-EL-BESS-001",
+      "M-EL-OFF-001",
+      "M-EL-LOG-001",
+      "M-EL-UTL-001"
+    ],
+    "M-EL-ASRS-001": [
+      "M-EL-ASRS-STK"
+    ],
+    "M-EL-WS-001": [
+      "M-EL-WS-CRANE"
+    ]
+  }
+}

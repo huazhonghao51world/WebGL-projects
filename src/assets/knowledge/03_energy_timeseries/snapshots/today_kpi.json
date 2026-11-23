@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-05",
+  "total_tce": "18.6",
+  "electricity_mwh": "142",
+  "fossil_tce": "4.1",
+  "meters": "128/132",
+  "fuel_share_pct": {
+    "电力": 76,
+    "天然气": 12,
+    "柴油": 5,
+    "热力": 4,
+    "氢/其他": 3
+  },
+  "top_zone_electricity": "生产车间",
+  "asrs_mwh": 16.8,
+  "pv_mwh": 22.0
+}

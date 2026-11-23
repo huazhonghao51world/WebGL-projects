@@ -1,0 +1,33 @@
+{
+  "date": "2026-08-05",
+  "total_bill_wan": 11.26,
+  "total_bill_yuan": 112600,
+  "purchase_mwh": 119.8,
+  "site_load_mwh": 142.0,
+  "pv_self_mwh": 21.4,
+  "pv_avoided_cost_wan": 1.59,
+  "breakdown_wan": {
+    "energy_tou": 9.44,
+    "demand_basic": 1.62,
+    "reactive_and_misc": 0.12,
+    "green_cert_alloc": 0.08
+  },
+  "tou_mwh": {
+    "peak": 40.5,
+    "flat": 44.2,
+    "valley": 35.1
+  },
+  "tou_cost_wan": {
+    "peak": 4.28,
+    "flat": 3.48,
+    "valley": 1.68
+  },
+  "peak_cost_share_pct": 38.0,
+  "blended_energy_price_yuan_per_kwh": 0.788,
+  "by_supplier_wan": {
+    "utility_retail": 6.42,
+    "retailer_A": 3.21,
+    "direct_line_B": 1.63
+  },
+  "answer_zh": "今天电费合计约11.26万元。外购结算约119.8兆瓦时，光伏自用约21.4兆瓦时不进购电账单。电度电费约9.44万、基本电费日摊约1.62万、其他约0.2万。峰段费用约4.28万，占38%。"
+}

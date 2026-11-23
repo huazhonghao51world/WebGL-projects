@@ -1,0 +1,24 @@
+{
+  "name": "月度电量阶梯（大工业示意）",
+  "basis": "当月关口外购合计 MWh",
+  "tiers": [
+    {
+      "upto_mwh": 3000,
+      "adder_yuan_per_kwh": 0.0,
+      "desc": "基准档，不加价"
+    },
+    {
+      "upto_mwh": 4500,
+      "adder_yuan_per_kwh": 0.03,
+      "desc": "超额档 +0.03 元/kWh"
+    },
+    {
+      "upto_mwh": null,
+      "adder_yuan_per_kwh": 0.08,
+      "desc": "高耗档 +0.08 元/kWh"
+    }
+  ],
+  "month_progress_mwh": 2680,
+  "current_tier": 1,
+  "note": "本月进度约 2680 MWh，仍在基准档；若冲到 3000 以上，超出部分叠加阶梯加价。"
+}

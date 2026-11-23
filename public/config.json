@@ -1,0 +1,20 @@
+{
+  "serverUrl": "http://10.67.8.183:5184/api",
+  "deliveryCode": "TWN-KTKA-GNK7-2Y2G",
+  "autoUpdate": true,
+  "autoUpdateIntervalMs": 30000,
+  "pixelRatio": 1,
+  "sourceUrl": "https://51world-1371713115.cos.ap-guangzhou.myqcloud.com/729/",
+  "resolution": [
+    1920,
+    1080
+  ],
+  "isNeedFullScreen": false,
+  "cases": {
+    "xy": {
+      "sceneId": "xy-factory",
+      "deliveryCode": "TWN-CHZN-KURZ-BEXA",
+      "autoUpdate": true
+    }
+  }
+}

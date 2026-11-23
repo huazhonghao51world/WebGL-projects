@@ -1,0 +1,67 @@
+{
+  "zones": [
+    {
+      "id": "production",
+      "name": "生产",
+      "includes": [
+        "workshop"
+      ]
+    },
+    {
+      "id": "power",
+      "name": "动力",
+      "includes": [
+        "substation",
+        "air",
+        "cooling",
+        "storage"
+      ]
+    },
+    {
+      "id": "utility",
+      "name": "公辅",
+      "includes": [
+        "utility",
+        "process",
+        "tank_farm"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "仓储",
+      "includes": [
+        "warehouse_flat",
+        "warehouse_vertical"
+      ]
+    },
+    {
+      "id": "logistics",
+      "name": "物流",
+      "includes": [
+        "logistics",
+        "tunnel"
+      ]
+    },
+    {
+      "id": "office",
+      "name": "办公",
+      "includes": [
+        "office"
+      ]
+    },
+    {
+      "id": "renewable",
+      "name": "可再生",
+      "includes": [
+        "pv"
+      ]
+    },
+    {
+      "id": "gate",
+      "name": "受电边界",
+      "includes": [
+        "grid"
+      ]
+    }
+  ]
+}

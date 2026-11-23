@@ -1,0 +1,12 @@
+{
+  "sceneId": "xy-factory",
+  "platformRoot": "E:/All_in_wdp/wdpapi_sdk/threejs-twin-p0",
+  "models": [
+    { "file": "models/L_Building.glb", "assetId": "xy-campus-exterior-v1", "entityId": "xy-campus-exterior", "name": "XY园区外围" },
+    { "file": "models/L_Building2.glb", "assetId": "xy-campus-core-v1", "entityId": "xy-campus-core", "name": "生产楼与库区楼" },
+    {
+      "file": "models/L_Prop.glb", "assetId": "xy-prop-sq3-v1", "entityId": "xy-prop-sq3", "name": "库区道具与动画 SQ_3" }
+  ],
+  "anchors": { "file": "models/L_BP.glb", "entityId": "xy-anchors", "name": "XY园区点位" },
+  "profile": { "dir": "scene-packages/xy-scene-profile/dist", "packageId": "xy-scene-profile", "contract": "xy-scene-profile", "contractMajor": 1, "functions": ["applySceneProfile", "resetSceneProfile"] }
+}

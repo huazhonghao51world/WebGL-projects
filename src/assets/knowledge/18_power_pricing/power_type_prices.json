@@ -1,0 +1,41 @@
+{
+  "name": "不同电力类型价格差异",
+  "types": [
+    {
+      "type": "grid_brown",
+      "label": "常规外购电（含燃煤标杆成分）",
+      "settlement": "关口分时",
+      "ref_price_peak": 1.1858,
+      "carbon_note": "按区域因子计 Scope2"
+    },
+    {
+      "type": "green_certificate_bundle",
+      "label": "外购电+绿证捆绑",
+      "settlement": "电能量价+绿证溢价",
+      "energy_price_flat": 0.7421,
+      "cert_premium": 0.035,
+      "remark": "声明绿电时电能量与证书分开计量，禁止双重计算"
+    },
+    {
+      "type": "pv_assist_onsite",
+      "label": "场内光伏辅电",
+      "settlement": "不进外购账单",
+      "avoided_cost_ref": 0.7421,
+      "remark": "自用节约按平段机会成本估算；≠外购绿电"
+    },
+    {
+      "type": "storage_arbitrage",
+      "label": "储能峰放谷充",
+      "charge_valley": 0.3856,
+      "discharge_peak_value": 1.1858,
+      "roundtrip_eff": 0.9,
+      "remark": "价差套利受效率与需量约束"
+    },
+    {
+      "type": "diesel_backup",
+      "label": "柴发顶峰电",
+      "variable_cost_yuan_per_kwh": 2.1,
+      "remark": "远高于市电峰段，仅应急/策略强制；另计 Scope1 碳成本"
+    }
+  ]
+}

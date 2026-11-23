@@ -1,0 +1,9 @@
+﻿fuel,unit,factor_tce_per_unit,basis,version
+电力(当量),MWh,0.1229,当量值,demo-v1.2
+电力(等价),MWh,0.3,等价值示意,demo-v1.2
+天然气,万Nm3,13.3,当量,demo-v1.2
+柴油,t,1.4571,当量,demo-v1.2
+热力,GJ,0.0341,当量,demo-v1.2
+氢,t,4.0,示意,demo-v1.2
+氨,t,0.9,示意,demo-v1.2
+甲醇,t,0.98,示意,demo-v1.2

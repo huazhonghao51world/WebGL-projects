@@ -1,0 +1,228 @@
+{
+  "source": "L_BP.glb",
+  "sourceSha256": "346f86c1234f478d3a11e7f1b2b42e3b8072316f98d6e4e61e42d662e5d14db5",
+  "coordinateSpace": "glTF local XYZ; original translations; site calibration pending",
+  "usage": "Review only; no runtime entity IDs, camera orientations, video channels or official business IDs assigned.",
+  "anchors": [
+    {
+      "sourceNodeIndex": 0,
+      "sourceName": "园区监控摄像头3",
+      "kind": "camera-location",
+      "position": [
+        97.8612976,
+        24.113966,
+        20.185667
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 1,
+      "sourceName": "园区监控摄像头5",
+      "kind": "camera-location",
+      "position": [
+        -41.3308182,
+        32.0935211,
+        -37.5427742
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 2,
+      "sourceName": "园区监控摄像头6",
+      "kind": "camera-location",
+      "position": [
+        98.8107758,
+        32.0935211,
+        -43.0887489
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 3,
+      "sourceName": "园区监控摄像头2",
+      "kind": "camera-location",
+      "position": [
+        -21.1332054,
+        24.113966,
+        25.1450405
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 4,
+      "sourceName": "园区监控摄像头4",
+      "kind": "camera-location",
+      "position": [
+        -22.5673943,
+        24.113966,
+        -11.4778032
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 5,
+      "sourceName": "园区监控摄像头1",
+      "kind": "camera-location",
+      "position": [
+        -61.9308205,
+        18.6935196,
+        39.957222
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 6,
+      "sourceName": "园区监控摄像头7",
+      "kind": "camera-location",
+      "position": [
+        -66.0892181,
+        26.29352,
+        -3.28874922
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 7,
+      "sourceName": "园区监控摄像头8",
+      "kind": "camera-location",
+      "position": [
+        -94.9892197,
+        23.4935207,
+        -45.0887489
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 8,
+      "sourceName": "园区监控摄像头9",
+      "kind": "camera-location",
+      "position": [
+        -102.98922,
+        18.0935192,
+        -21.2887497
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 9,
+      "sourceName": "园区监控摄像头10",
+      "kind": "camera-location",
+      "position": [
+        -104.089218,
+        18.2935181,
+        -68.3887482
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 10,
+      "sourceName": "园区监控摄像头11",
+      "kind": "camera-location",
+      "position": [
+        117.310776,
+        18.2935181,
+        -56.9887505
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 11,
+      "sourceName": "园区监控摄像头12",
+      "kind": "camera-location",
+      "position": [
+        114.910782,
+        19.9935188,
+        36.9112511
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 12,
+      "sourceName": "园区监控摄像头13",
+      "kind": "camera-location",
+      "position": [
+        -30.8892212,
+        18.3935184,
+        -63.0887489
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 13,
+      "sourceName": "生产楼",
+      "kind": "building-label",
+      "position": [
+        36.7667923,
+        25.3139668,
+        3.6450417
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 14,
+      "sourceName": "库区楼",
+      "kind": "building-label",
+      "position": [
+        23.0667934,
+        31.613966,
+        -48.8549538
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 15,
+      "sourceName": "2号研发楼",
+      "kind": "building-label",
+      "position": [
+        47.66679,
+        18.5139675,
+        -71.3549576
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 16,
+      "sourceName": "1号研发楼",
+      "kind": "building-label",
+      "position": [
+        124.166794,
+        18.9139671,
+        1.0450418
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 17,
+      "sourceName": "杂物房",
+      "kind": "building-label",
+      "position": [
+        122.066795,
+        18.9139671,
+        39.5450401
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 18,
+      "sourceName": "办公楼",
+      "kind": "building-label",
+      "position": [
+        -78.3332062,
+        24.7139664,
+        -7.25495768
+      ],
+      "businessId": null
+    },
+    {
+      "sourceNodeIndex": 19,
+      "sourceName": "宿舍楼",
+      "kind": "building-label",
+      "position": [
+        -81.0332031,
+        22.8139668,
+        -49.5549545
+      ],
+      "businessId": null
+    }
+  ]
+}

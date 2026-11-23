@@ -1,0 +1,25 @@
+{
+  "S01": {
+    "param": "workshopPct",
+    "hint": "移峰比例"
+  },
+  "S02": {
+    "param": "storageMw",
+    "hint": "储能功率"
+  },
+  "S03": {
+    "param": "air",
+    "values": [
+      "opt",
+      "leak"
+    ]
+  },
+  "S04": {
+    "param": "pvOnline",
+    "hint": "光伏在线"
+  },
+  "S06": {
+    "param": "gridMode/peakBuy",
+    "hint": "limit/smooth/cap"
+  }
+}

@@ -1,0 +1,11 @@
+﻿equipment_id,name,location,efficiency_class,action
+E-AIR-001,空压机1#,空压站,二级边缘,待观察
+E-AIR-002,空压机2#,空压站,低于二级,待改造
+E-AIR-003,空压机3#,空压站,低于二级,待改造
+E-ASRS-STK-01,堆垛机A1,立式仓库,达标,优化调度
+E-ASRS-STK-02,堆垛机A2,立式仓库,达标,优化调度
+E-WS-CRANE-01,天车1#,生产车间,达标,正常
+E-CLG-01,冷水机组1#,制冷站,二级边缘,待观察
+E-BESS-PCS,储能PCS,储能站,达标,正常
+E-GEN-01,柴发1#,应急,—,待命
+E-XFMR-01,主变,变电所,达标,正常

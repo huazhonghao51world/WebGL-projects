@@ -1,0 +1,42 @@
+{
+  "rules": [
+    "外购：grid → substation（禁止把外购主通道画进车间）",
+    "光伏辅电：pv → substation",
+    "储能：storage → substation；验策成果可表现 substation → grid",
+    "柴发：generator → substation",
+    "空压：air → workshop（压缩空气服务生产）",
+    "馈线示意：substation → workshop / warehouse_vertical / warehouse_flat / air / cooling / office / logistics"
+  ],
+  "feeders": [
+    {
+      "from": "substation",
+      "to": "workshop",
+      "name": "生产馈线"
+    },
+    {
+      "from": "substation",
+      "to": "warehouse_vertical",
+      "name": "立式库馈线"
+    },
+    {
+      "from": "substation",
+      "to": "warehouse_flat",
+      "name": "平库馈线"
+    },
+    {
+      "from": "substation",
+      "to": "air",
+      "name": "空压馈线"
+    },
+    {
+      "from": "substation",
+      "to": "cooling",
+      "name": "制冷馈线"
+    },
+    {
+      "from": "substation",
+      "to": "office",
+      "name": "办公馈线"
+    }
+  ]
+}

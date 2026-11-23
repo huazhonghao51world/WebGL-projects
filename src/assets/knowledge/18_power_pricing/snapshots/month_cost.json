@@ -1,0 +1,9 @@
+{
+  "month": "2026-08",
+  "answer_zh": "本月电费累计约 98.6 万元（月累计），外购约 2680 MWh；全月预测约 128 万元。",
+  "mtd_bill_wan": 98.6,
+  "mtd_purchase_mwh": 2680,
+  "forecast_month_bill_wan": 128.0,
+  "tier_status": "仍在基准阶梯档",
+  "demand_charge_mtd_wan": 16.2
+}

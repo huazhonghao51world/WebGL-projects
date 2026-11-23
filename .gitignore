@@ -1,0 +1,35 @@
+.DS_Store
+node_modules
+/dist
+
+# local env files
+.env.local
+.env.*.local
+/public/xy-scene.local.json
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+*.zip
+
+*.github
+*.trae
+
+# local build outputs / delivery packages
+/outputs/
+/vendor-staging/
+/xy_factory_backup_*/
+__pycache__/
+*.pyc
+

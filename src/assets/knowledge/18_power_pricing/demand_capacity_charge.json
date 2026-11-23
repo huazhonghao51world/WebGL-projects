@@ -1,0 +1,9 @@
+{
+  "name": "基本电费 / 需量电费",
+  "method": "最大需量",
+  "price_yuan_per_kw_month": 40,
+  "billing_demand_mw": 12.5,
+  "month_demand_charge_wan": 50.0,
+  "today_accrual_wan": 1.62,
+  "note": "日摊≈月基本电费/当月天数；削峰可降低计费需量从而降基本电费。"
+}

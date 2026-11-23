@@ -1,0 +1,106 @@
+{
+  "objects": [
+    {
+      "id": "grid",
+      "name": "并网点",
+      "zone": "受电",
+      "role": "外购电入厂关口"
+    },
+    {
+      "id": "substation",
+      "name": "厂内变电所",
+      "zone": "动力",
+      "role": "受电枢纽与分配"
+    },
+    {
+      "id": "pv",
+      "name": "楼顶/场内光伏",
+      "zone": "可再生",
+      "role": "辅电，非购电"
+    },
+    {
+      "id": "storage",
+      "name": "储能站",
+      "zone": "动力",
+      "role": "削峰填谷"
+    },
+    {
+      "id": "generator",
+      "name": "备用柴发",
+      "zone": "应急",
+      "role": "顶峰/应急，Scope1"
+    },
+    {
+      "id": "air",
+      "name": "空压站",
+      "zone": "动力",
+      "role": "压缩空气，高耗转换"
+    },
+    {
+      "id": "cooling",
+      "name": "制冷站",
+      "zone": "动力",
+      "role": "工艺与库区温控"
+    },
+    {
+      "id": "workshop",
+      "name": "生产车间",
+      "zone": "生产",
+      "role": "主用电负荷，可移峰"
+    },
+    {
+      "id": "warehouse_flat",
+      "name": "平库/拱顶仓储",
+      "zone": "仓储",
+      "role": "成品/原料平库"
+    },
+    {
+      "id": "warehouse_vertical",
+      "name": "立式仓库",
+      "zone": "仓储",
+      "role": "AS/RS高架库，重点用电"
+    },
+    {
+      "id": "tank_farm",
+      "name": "储罐区",
+      "zone": "工艺公用",
+      "role": "球罐/立罐燃料与介质"
+    },
+    {
+      "id": "process",
+      "name": "工艺装置区",
+      "zone": "工艺",
+      "role": "塔器管廊与过程用能"
+    },
+    {
+      "id": "stack",
+      "name": "烟囱排放口",
+      "zone": "环保",
+      "role": "Scope1烟气监测点"
+    },
+    {
+      "id": "utility",
+      "name": "公辅管廊",
+      "zone": "公辅",
+      "role": "介质分配与损失"
+    },
+    {
+      "id": "logistics",
+      "name": "装卸与车队区",
+      "zone": "物流",
+      "role": "运输碳与装卸用电"
+    },
+    {
+      "id": "tunnel",
+      "name": "山体隧道通道",
+      "zone": "物流",
+      "role": "进出厂物流通道"
+    },
+    {
+      "id": "office",
+      "name": "办公楼",
+      "zone": "管理",
+      "role": "管理用电与碳资产办公视角"
+    }
+  ]
+}

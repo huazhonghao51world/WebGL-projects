@@ -1,0 +1,52 @@
+{
+  "name": "不同购电主体 / 厂家电价差异",
+  "answer_zh": "今天买的电来自三处：市电（电网零售）约 55%，售电公司A套餐约 30%，发电企业B专线约 15%。",
+  "active_mix": [
+    {
+      "source": "utility_retail",
+      "label": "市电（电网零售）",
+      "share_pct": 55,
+      "role": "保底+目录分时"
+    },
+    {
+      "source": "retailer_A",
+      "label": "售电公司A套餐",
+      "share_pct": 30,
+      "role": "市场化套餐"
+    },
+    {
+      "source": "direct_line_B",
+      "label": "发电企业B专线",
+      "share_pct": 15,
+      "role": "直购专线"
+    }
+  ],
+  "offers": [
+    {
+      "id": "utility_retail",
+      "peak": 1.1858,
+      "flat": 0.7421,
+      "valley": 0.3856,
+      "service_fee": 0.0,
+      "remark": "目录电价，含政府性基金及附加（演示已并入单价）"
+    },
+    {
+      "id": "retailer_A",
+      "peak": 1.12,
+      "flat": 0.71,
+      "valley": 0.4,
+      "service_fee": 0.02,
+      "remark": "峰段更优，谷段略贵；另收撮合服务费 0.02 元/kWh"
+    },
+    {
+      "id": "direct_line_B",
+      "contract_avg": 0.68,
+      "peak": 0.92,
+      "flat": 0.66,
+      "valley": 0.48,
+      "service_fee": 0.0,
+      "remark": "专线直购，综合价低，谷段优势弱；需稳定负荷曲线"
+    }
+  ],
+  "compare_hint": "同为峰段一度电：市电1.1858、售电A约1.14（含服务费）、专线B约0.92。对话问「哪家更便宜」按此时段对比。"
+}

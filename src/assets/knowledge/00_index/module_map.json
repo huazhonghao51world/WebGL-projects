@@ -1,0 +1,64 @@
+{
+  "energy_query": [
+    "03_energy_timeseries",
+    "18_power_pricing",
+    "02_metering",
+    "05_assets"
+  ],
+  "intensity": [
+    "07_efficiency_benchmark",
+    "04_factors_methods",
+    "03_energy_timeseries"
+  ],
+  "analysis_reco": [
+    "18_power_pricing",
+    "08_strategy_opt",
+    "03_energy_timeseries",
+    "07_efficiency_benchmark"
+  ],
+  "benchmark": [
+    "07_efficiency_benchmark",
+    "05_assets"
+  ],
+  "flow": [
+    "06_flow_balance",
+    "01_site",
+    "05_assets"
+  ],
+  "balance_opt": [
+    "08_strategy_opt",
+    "06_flow_balance"
+  ],
+  "budget": [
+    "09_budget_forecast",
+    "10_carbon_inventory"
+  ],
+  "carbon_account": [
+    "10_carbon_inventory",
+    "04_factors_methods",
+    "05_assets"
+  ],
+  "product_cfp": [
+    "11_product_cfp",
+    "12_supply_chain"
+  ],
+  "supply_chain": [
+    "12_supply_chain",
+    "11_product_cfp"
+  ],
+  "verification": [
+    "13_verification",
+    "04_factors_methods",
+    "02_metering"
+  ],
+  "carbon_asset": [
+    "14_carbon_assets",
+    "09_budget_forecast"
+  ],
+  "verify": [
+    "08_strategy_opt",
+    "01_site",
+    "04_factors_methods",
+    "03_energy_timeseries"
+  ]
+}

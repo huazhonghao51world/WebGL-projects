@@ -1,0 +1,94 @@
+{
+  "title": "CNC-01 主轴热—结构耦合仿真（预热 60 min）",
+  "ambient": 22,
+  "fields": {
+    "Temperature": {
+      "label": "温度",
+      "unit": "℃"
+    },
+    "ThermalDisplacement": {
+      "label": "热变形",
+      "unit": "μm"
+    }
+  },
+  "frames": [
+    {
+      "frame": "frame_00.vtk",
+      "minute": 0,
+      "maxTemperature": 22,
+      "toolTipDriftUm": 0
+    },
+    {
+      "frame": "frame_01.vtk",
+      "minute": 5,
+      "maxTemperature": 29.1,
+      "toolTipDriftUm": 13
+    },
+    {
+      "frame": "frame_02.vtk",
+      "minute": 10,
+      "maxTemperature": 34.5,
+      "toolTipDriftUm": 22.8
+    },
+    {
+      "frame": "frame_03.vtk",
+      "minute": 15,
+      "maxTemperature": 38.6,
+      "toolTipDriftUm": 30.2
+    },
+    {
+      "frame": "frame_04.vtk",
+      "minute": 20,
+      "maxTemperature": 41.7,
+      "toolTipDriftUm": 35.8
+    },
+    {
+      "frame": "frame_05.vtk",
+      "minute": 25,
+      "maxTemperature": 44.1,
+      "toolTipDriftUm": 40.1
+    },
+    {
+      "frame": "frame_06.vtk",
+      "minute": 30,
+      "maxTemperature": 45.8,
+      "toolTipDriftUm": 43.3
+    },
+    {
+      "frame": "frame_07.vtk",
+      "minute": 35,
+      "maxTemperature": 47.2,
+      "toolTipDriftUm": 45.8
+    },
+    {
+      "frame": "frame_08.vtk",
+      "minute": 40,
+      "maxTemperature": 48.2,
+      "toolTipDriftUm": 47.6
+    },
+    {
+      "frame": "frame_09.vtk",
+      "minute": 45,
+      "maxTemperature": 49,
+      "toolTipDriftUm": 49
+    },
+    {
+      "frame": "frame_10.vtk",
+      "minute": 50,
+      "maxTemperature": 49.6,
+      "toolTipDriftUm": 50.1
+    },
+    {
+      "frame": "frame_11.vtk",
+      "minute": 55,
+      "maxTemperature": 50,
+      "toolTipDriftUm": 50.9
+    },
+    {
+      "frame": "frame_12.vtk",
+      "minute": 60,
+      "maxTemperature": 50.3,
+      "toolTipDriftUm": 51.5
+    }
+  ]
+}

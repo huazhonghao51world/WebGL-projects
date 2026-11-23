@@ -1,0 +1,13 @@
+{
+  "month": "2026-08",
+  "total_tce": 4120,
+  "unit_product": 1.28,
+  "unit_output": 0.086,
+  "unit_va": 0.142,
+  "vs_baseline_pct": {
+    "unit_product": -8,
+    "unit_output": -14,
+    "unit_va": -12
+  },
+  "year_progress_pct": 62
+}
