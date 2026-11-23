@@ -8,9 +8,6 @@
         <div class="xy-mark"><XYIcon name="overview" /></div>
         <div><h1>XY 工厂数字孪生平台</h1><p>XY FACTORY · DIGITAL TWIN</p></div>
       </div>
-      <nav class="xy-nav" aria-label="业务功能">
-        <button v-for="item in modules" :key="item.id" type="button" :aria-pressed="activeId === item.id" :title="item.name" @click="setModule(item.id)"><XYIcon :name="item.icon" /><span>{{ item.name }}</span></button>
-      </nav>
       <div class="xy-header-actions">
         <div class="xy-clock"><strong>{{ clock.time }}</strong><span>{{ clock.date }}</span></div>
         <div class="xy-weather"><strong>14.2°C</strong><span>多云 · AQI 46</span></div>
@@ -20,6 +17,11 @@
       </div>
     </header>
 
+    <!-- 业务模块切换：只切换两侧面板内容，不切换路由 -->
+    <nav class="xy-nav" aria-label="业务模块" :style="{ '--xy-tab': modules.findIndex((m) => m.id === activeId), '--xy-tabs': modules.length }">
+      <button v-for="item in modules" :key="item.id" type="button" :aria-pressed="activeId === item.id" :title="item.name" @click="setModule(item.id)"><XYIcon :name="item.icon" /><span>{{ item.name }}</span></button>
+    </nav>
+
     <!-- 面包屑：园区 / 楼栋 / 楼层 -->
     <div class="xy-crumb">
       <button type="button" @click="reset">XY 工厂园区</button>
@@ -28,7 +30,7 @@
       <span class="xy-asof">演示数据 · 截至 {{ asOf }}</span><span class="xy-live"><span class="dot" :class="{ online: isReady }"></span>{{ statusLabel }}<FpsCounter v-if="isReady" compact /><button v-if="sceneStatus.state === 'error'" type="button" @click="retry">重试</button></span>
     </div>
 
-    <XYDashboard v-if="!panelsHidden" :mod="activeId" :camera-count="cameras.length" :building-names="buildingNames" :alarms="alarmData"
+    <XYDashboard :class="{ 'is-collapsed': panelsHidden }" :mod="activeId" :camera-count="cameras.length" :building-names="buildingNames" :alarms="alarmData"
       @module="setModule" @locate="locate" @device="openDevice" @alarms="openAlarms" @cameras="openCameras" @pending="pending">
       <template #motion>
         <div class="xy-slot-card"><XYBusinessPanel :module="productionModule" :ready="isReady" :motion="motion" @motion="onMotion" /></div>
@@ -37,6 +39,10 @@
         <div class="xy-slot-card"><XYBusinessPanel :module="environmentModule" :ready="isReady" @time="setLightTime" @weather="setWeather" @reset-environment="restoreEnvironment" /></div>
       </template>
     </XYDashboard>
+    <template v-if="panelsHidden">
+      <button type="button" class="xy-edge-handle left" title="展开面板" @click="panelsHidden = false"><XYIcon name="chevron" /></button>
+      <button type="button" class="xy-edge-handle right" title="展开面板" @click="panelsHidden = false"><XYIcon name="chevron" /></button>
+    </template>
 
     <!-- 中部浮层：楼栋 / 摄像头 选中卡片 -->
     <div v-if="selected && !panelsHidden" class="xy-focus-card">
@@ -68,18 +74,20 @@
       </div>
       <div v-else-if="message" class="xy-note" role="status">{{ message }}</div>
       <nav class="xy-tools" aria-label="三维场景工具">
-        <div v-for="group in toolGroups.slice(0, 2)" :key="group.name" class="xy-tool-group">
-          <button v-for="t in group.items" :key="t.id" type="button" :aria-pressed="toolActive(t.id)" :disabled="t.scene && !isReady" :title="t.name" @click="runTool(t)">
+        <div v-for="group in toolGroups.slice(0, 2)" :key="group.name" class="xy-tool-group" :data-group="group.name">
+          <button v-for="t in group.items" :key="t.id" type="button" :aria-pressed="toolActive(t.id)" :disabled="t.scene && !isReady" :title="t.pending ? `${t.name}（建设中）` : t.name" @click="runTool(t)">
             <XYIcon :name="t.icon" /><span>{{ t.name }}</span><i v-if="t.pending" class="soon">建设中</i>
           </button>
         </div>
-        <div class="xy-tool-group">
+        <div class="xy-tool-group" :data-group="toolGroups[2].name">
           <button type="button" :aria-pressed="toolActive('cameras')" :disabled="!isReady" title="监控点" @click="toggleCameras"><XYIcon name="camera" /><span>监控点</span></button>
           <button type="button" :aria-pressed="layersOpen" :aria-expanded="layersOpen" title="专题图层" @click="layersOpen = !layersOpen"><XYIcon name="layout" /><span>专题图层</span></button>
         </div>
         <div v-if="layersOpen" class="xy-layer-pop" role="menu">
+          <header><strong>专题图层</strong><small>{{ toolGroups[2].items.filter((x) => x.pending).length }} 项建设中 · 点击了解规划</small></header>
           <button v-for="t in toolGroups[2].items.filter((x) => x.pending)" :key="t.id" type="button" role="menuitem" @click="layersOpen = false; runTool(t)"><XYIcon :name="t.icon" /><span>{{ t.name }}</span><i class="soon">建设中</i></button>
-        </div>      </nav>
+        </div>
+      </nav>
     </div>
 
     <!-- 弹窗：告警中心 -->
