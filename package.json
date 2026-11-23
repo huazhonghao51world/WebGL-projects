@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@antv/g2": "^5.2.12",
-    "@twin/web-sdk": "0.6.1",
+    "@twin/web-sdk": "0.6.2",
     "axios": "^1.6.8",
     "core-js": "^3.6.4",
     "dompurify": "^3.3.3",

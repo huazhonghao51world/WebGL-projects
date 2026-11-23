@@ -35,7 +35,8 @@ function imageLink(value) {
  * 公共 POI 创建接口。style 可指定 icon（url/activeUrl/size/visible）和 label
  * （backgroundUrl/size/offset/textOffset/color/fontSize/align/visible）。
  * offset 为图标底边中心到标签背景左下角的 CSS 像素位移（右、上为正）；
- * textOffset 为标签内部文字的横向留白与顶部留白。点位可覆盖批次样式。
+ * 不传 label.size 时标签宽高按文字自适应；textOffset 为左右 / 上下留白，文字在标签内垂直居中，
+ * align 默认 Center（水平居中）。点位可覆盖批次样式。
  */
 export function createPOIs(items, { entityName = "poi", labelColor = "ffffff", labelFontSize = 14, poiStyle = {}, style = {}, viewer = getViewer() } = {}) {
   const payload = items.map((item) => {
@@ -50,7 +51,7 @@ export function createPOIs(items, { entityName = "poi", labelColor = "ffffff", l
     if (label.size != null) sdkStyle.labelBgSize = label.size;
     if (label.offset != null) sdkStyle.labelBgOffset = label.offset;
     if (label.textOffset != null) sdkStyle.labelContentOffset = label.textOffset;
-    if (label.align != null) sdkStyle.labelContentJustification = label.align;
+    sdkStyle.labelContentJustification = label.align ?? sdkStyle.labelContentJustification ?? "Center";
     if (label.visible != null) sdkStyle.labelVisible = label.visible;
     sdkStyle.labelContent = [item.label ?? "", label.color ?? labelColor, String(label.fontSize ?? labelFontSize)];
     return {

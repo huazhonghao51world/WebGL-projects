@@ -328,6 +328,9 @@ export default {
 
 <style lang="scss">
 .dash {
+span,em,b,small { font-size:inherit; }
+.rows li > span { font-size:13px; }
+.rows li small { font-size:11px; }
 .dash-col { position:absolute; top:calc(var(--xy-head) + 14px); bottom:calc(var(--xy-dock) + 18px); width:clamp(300px,22vw,400px); display:flex; flex-direction:column; gap:10px; overflow-y:auto; pointer-events:auto; scrollbar-width:none; }
 .dash-left { left:var(--xy-gutter); }
 .dash-right { right:var(--xy-gutter); }
