@@ -8,10 +8,10 @@
 #   bash xy.sh install                首次安装（解压运行时、开机自启、防火墙、启动）
 #   bash xy.sh start|stop|restart [组件]   组件：platform studio dengta video panel（不写 = 全部）
 #   bash xy.sh status                 状态与访问地址
-#   bash xy.sh upgrade [--yes]        从 GitHub 拉取最新版本并替换（先备份数据，失败自动回退）
+#   bash xy.sh upgrade [--yes] [desktop]  从 GitHub 拉取最新版本（desktop = 用桌面上的离线更新包）；先备份数据，失败自动回退
 #   bash xy.sh rollback [版本号]       回退到上一个（或指定）程序版本，数据不动
 #   bash xy.sh versions               本机可回退的版本列表
-#   bash xy.sh import-data <目录>      导入 U 盘数据包（首次部署 / 整体迁移）
+#   bash xy.sh import-data [目录]      导入数据包（不写目录 = 自动找桌面上向日葵传来的 xy-data-日期 文件夹）
 #   bash xy.sh backup | restore <目录> 在线热备份 / 恢复平台数据
 #   bash xy.sh doctor                 一键体检，生成诊断报告（发给开发排查）
 #   bash xy.sh browser [参数]          全屏打开新耀工厂大屏（如 gpu=compact）
@@ -95,7 +95,7 @@ components() {
 }
 
 start_platform() {
-  [ -f "$DATA/platform.sqlite" ] || { c_err "  ✗ 数据目录缺失：$DATA（请先 bash xy.sh import-data <U盘数据包目录>）"; return 1; }
+  [ -f "$DATA/platform.sqlite" ] || { c_err "  ✗ 数据目录缺失：$DATA（请先把数据包传到桌面，再执行 bash xy.sh import-data）"; return 1; }
   # API 对外监听：交付接口（交付码 + Bearer）可被大屏直接调用；登录类接口只接受本机回环（经各站点同源代理访问）。
   TWIN_DATA_DIR="$DATA" TWIN_API_HOST=0.0.0.0 TWIN_API_PORT="$PORT_API" \
     TWIN_DEMO_PORT="$PORT_DEMO" TWIN_EDITOR_PORT="$PORT_EDITOR" TWIN_DEBUG_PORT="$PORT_DEBUG" \
@@ -193,12 +193,25 @@ restore() {
   cp -a "$src" "$DATA"
   c_ok "已恢复（原数据已改名保留在 $(dirname "$DATA")）"; start
 }
+desktop_dirs() { # 桌面目录（向日葵等远程工具默认把文件传到这里）
+  local d; d="$(xdg-user-dir DESKTOP 2>/dev/null || true)"
+  for x in "$d" "$HOME/桌面" "$HOME/Desktop"; do [ -n "$x" ] && [ -d "$x" ] && echo "$x"; done | awk '!seen[$0]++'
+}
+find_on_desktop() { # 通配名 → 桌面上最新的一个（也查找桌面下一层子目录）
+  local pattern="$1" d
+  for d in $(desktop_dirs); do find "$d" -maxdepth 2 -name "$pattern" -printf '%T@ %p\n' 2>/dev/null; done | sort -rn | head -n 1 | cut -d' ' -f2-
+}
 import_data() {
-  local src="${1:?用法：bash xy.sh import-data <U盘数据包目录>}"
+  local src="${1:-}"
+  if [ -z "$src" ]; then
+    src="$(dirname "$(find_on_desktop 'xy-data.sha256')" 2>/dev/null)"
+    [ -n "$src" ] && [ "$src" != "." ] || { c_err "桌面上没找到数据包（xy-data-日期 文件夹，里面有 xy-data.sha256）。请先用向日葵把整个文件夹传到桌面，或指定路径：bash xy.sh import-data <目录>"; exit 1; }
+    echo "· 找到桌面上的数据包：$src"
+  fi
   src="$(readlink -f "$src")"
-  [ -f "$src/xy-data.sha256" ] || { c_err "目录中没有 xy-data.sha256：$src（请指定 U 盘上的 xy-data-日期 目录）"; exit 1; }
+  [ -f "$src/xy-data.sha256" ] || { c_err "目录中没有 xy-data.sha256：$src（请指定 xy-data-日期 目录）"; exit 1; }
   echo "· 校验数据包（约 1–3 分钟）"
-  ( cd "$src" && sha256sum -c --quiet xy-data.sha256 ) || { c_err "数据包校验失败：文件损坏或没拷完整，请重新拷贝"; exit 1; }
+  ( cd "$src" && sha256sum -c --quiet xy-data.sha256 ) || { c_err "数据包校验失败：文件损坏或没传完整，请重新传输（向日葵传完后再执行）"; exit 1; }
   unpack_runtime
   stop
   [ -d "$DATA" ] && { mv "$DATA" "$DATA.before-import-$(date +%Y%m%d-%H%M%S)"; echo "· 原数据已改名保留"; }
@@ -220,8 +233,14 @@ git_ok() {
   [ -d "$ROOT/.git" ] || { c_err "本目录不是 git 仓库，无法在线更新（请按手册用 git clone 部署）"; exit 1; }
 }
 fix_modes() { chmod +x "$ROOT"/*.sh 2>/dev/null || true; }
-fetch() { # [离线更新包 .bundle]
-  if [ -n "${1:-}" ]; then git fetch -q "$(readlink -f "$1")" "$BRANCH"; else git fetch -q origin "$BRANCH"; fi
+fetch() { # [离线更新包 .bundle | desktop]
+  local b="${1:-}"
+  if [ "$b" = desktop ]; then
+    b="$(find_on_desktop 'xy-kylin-*.bundle')"
+    [ -n "$b" ] || { c_err "桌面上没找到离线更新包（xy-kylin-日期.bundle），请先用向日葵传到桌面"; return 1; }
+    echo "· 使用桌面上的离线更新包：$(basename "$b")"
+  fi
+  if [ -n "$b" ]; then git fetch -q "$(readlink -f "$b")" "$BRANCH"; else git fetch -q origin "$BRANCH"; fi
 }
 check() {
   git_ok; fetch "${1:-}" || { c_err "无法获取更新（网络 / 令牌问题，见手册：bash xy.sh set-token <令牌>）"; exit 1; }
@@ -291,7 +310,7 @@ install() {
   fix_modes; unpack_runtime
   "$NODE" -e 'require("node:sqlite")' 2>/dev/null || { c_err "Node 运行时异常（glibc 版本过低？执行 ldd --version 查看，需 ≥ 2.28）"; exit 1; }
   [ -f "$LOCAL/xy.env" ] || cp "$ROOT/xy.env.example" "$LOCAL/xy.env"
-  [ -f "$DATA/platform.sqlite" ] || { c_err "还没有数据。请先插入 U 盘执行：bash xy.sh import-data /media/<用户名>/<U盘>/xy-data-日期"; exit 1; }
+  [ -f "$DATA/platform.sqlite" ] || { c_err "还没有数据。请先用向日葵把数据包文件夹（xy-data-日期）传到桌面，再执行：bash xy.sh import-data"; exit 1; }
   if command -v systemctl >/dev/null; then
     local unit=/etc/systemd/system/xy-twin.service
     if printf '%s\n' "[Unit]" "Description=XY Twin Suite (TwinStudio + XY dashboard + video gateway + panel)" \
