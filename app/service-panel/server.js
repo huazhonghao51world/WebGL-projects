@@ -1,6 +1,6 @@
 // 本机服务控制面板：查看运行状态 / IP / 端口，一键启动、停止、重启。零依赖，Node ≥ 18；Windows 与 Linux（麒麟 / UOS）通用。
-// 用法：Windows 双击 start-panel.bat；Linux 执行 ./start-panel.sh（或 node server.js），然后打开 http://127.0.0.1:5099
-// 配置：默认读取同目录 services.json；可用环境变量 PANEL_CONFIG 指定其他文件（部署机使用 services.kylin.json）。
+// 用法：Windows 双击 start-panel.bat；Linux 执行 node server.js，然后打开 http://127.0.0.1:5099
+// 配置：默认读取同目录 services.json（可从 services.example.json 复制后按本机路径修改）；环境变量 PANEL_CONFIG 可指定其他文件（部署机使用 services.kylin.json）。
 const http = require('node:http');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -123,9 +123,9 @@ async function status() {
     const ports = [...new Set(instances.flatMap((i) => i.ports))].sort((a, b) => a - b);
     return {
       id: svc.id, name: svc.name, desc: svc.desc, cwd: cwdOf(svc), start: svc.start, noStart: Boolean(svc.noStart),
-      expectedPorts: svc.ports || {}, links: svc.links || [], instances, ports,
+      expectedPorts: svc.ports || {}, links: svc.links || [], instances, ports, multi: Boolean(svc.multi),
       state: busy.get(svc.id) || (instances.length ? (ports.length ? 'running' : 'starting') : 'stopped'),
-      hasLog: fs.existsSync(path.join(LOG_DIR, `${svc.id}.log`)),
+      hasLog: logFiles(svc).some((f) => fs.existsSync(f)),
     };
   });
   return { host: os.hostname(), platform: process.platform, ips: lanIps(), panelPort: PORT, services, at: Date.now() };
@@ -195,10 +195,15 @@ async function startService(id) {
   return { pid: child.pid, log: logFile };
 }
 
-function tail(file, lines = 300) {
-  if (!fs.existsSync(file)) return '';
-  const text = fs.readFileSync(file, 'utf8').replace(/\x1b\[[0-9;]*m/g, '');
-  return text.split(/\r?\n/).slice(-lines).join('\n');
+/** 服务日志：面板自身记录的启动日志 + services 配置中 logs 列出的日志文件（相对配置文件目录）。 */
+function logFiles(svc) {
+  return [path.join(LOG_DIR, `${svc.id}.log`), ...(svc.logs || []).map((f) => path.resolve(path.dirname(CONFIG_FILE), f))];
+}
+function tail(files, lines = 300) {
+  return files.filter((f) => fs.existsSync(f)).map((file) => {
+    const text = fs.readFileSync(file, 'utf8').replace(/\x1b\[[0-9;]*m/g, '');
+    return `===== ${path.basename(file)} =====\n${text.split(/\r?\n/).slice(-lines).join('\n')}`;
+  }).join('\n\n');
 }
 
 const send = (res, code, body, type = 'application/json; charset=utf-8') => {
@@ -215,7 +220,7 @@ http.createServer(async (req, res) => {
     if (m) {
       const [, id, action] = m;
       find(id);
-      if (action === 'log' && req.method === 'GET') return send(res, 200, tail(path.join(LOG_DIR, `${id}.log`)), 'text/plain; charset=utf-8');
+      if (action === 'log' && req.method === 'GET') return send(res, 200, tail(logFiles(find(id))), 'text/plain; charset=utf-8');
       if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
       if (action === 'start') return send(res, 200, await startService(id));
       if (action === 'stop') return send(res, 200, await stopService(id));

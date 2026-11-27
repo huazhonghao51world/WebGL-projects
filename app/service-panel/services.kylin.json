@@ -9,6 +9,8 @@
       "start": "bash xy.sh start platform",
       "stop": "bash xy.sh stop platform",
       "match": "app/platform/api/(server|worker)\\.js",
+      "multi": true,
+      "logs": ["../../logs/platform-api.log", "../../logs/platform-worker.log"],
       "ports": { "5184": "平台 API" },
       "links": [{ "label": "健康检查", "port": 5184, "path": "/api/health" }]
     },
@@ -20,6 +22,8 @@
       "start": "bash xy.sh start studio",
       "stop": "bash xy.sh stop studio",
       "match": "site-server\\.js --root \\S*app/platform/",
+      "multi": true,
+      "logs": ["../../logs/studio-editor.log", "../../logs/studio-debug.log", "../../logs/studio-demo.log"],
       "ports": { "5186": "编辑器", "5188": "API 联调台", "5185": "演示站" },
       "links": [
         { "label": "编辑器", "port": 5186, "path": "/" },
@@ -36,6 +40,7 @@
       "start": "bash xy.sh start dengta",
       "stop": "bash xy.sh stop dengta",
       "match": "site-server\\.js --root \\S*app/dengta",
+      "logs": ["../../logs/dengta.log"],
       "ports": { "3716": "新耀工厂大屏" },
       "links": [
         { "label": "打开大屏", "port": 3716, "path": "/#/xy-factory" },
@@ -50,6 +55,7 @@
       "start": "bash xy.sh start video",
       "stop": "bash xy.sh stop video",
       "match": "mediamtx",
+      "logs": ["../../logs/video-gateway.log"],
       "ports": { "8889": "WebRTC", "8888": "HLS", "8554": "RTSP" }
     }
   ]

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新耀工厂数字孪生 · 国产化一体机现场运维手册</title>
+<style>
+  :root { --bg:#0b1520; --card:#12202d; --line:#22384b; --text:#dbe8f5; --muted:#8aa7c2; --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --link:#5cc8ff; --code:#061019; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.75 "PingFang SC","Microsoft YaHei","Noto Sans CJK SC","WenQuanYi Micro Hei",sans-serif; }
+  .layout { display:grid; grid-template-columns:280px 1fr; min-height:100vh; }
+  nav { position:sticky; top:0; height:100vh; overflow:auto; padding:22px 16px; background:#08111a; border-right:1px solid var(--line); }
+  nav .brand { font-size:18px; font-weight:700; color:#fff; margin-bottom:4px; }
+  nav .sub { font-size:12px; color:var(--muted); margin-bottom:18px; }
+  nav a { display:block; padding:6px 10px; border-radius:6px; color:var(--muted); text-decoration:none; font-size:14px; }
+  nav a:hover { background:#13283a; color:#fff; }
+  nav .grp { margin:14px 0 4px 10px; font-size:12px; letter-spacing:2px; color:#5f8099; }
+  main { padding:32px 48px 80px; max-width:1100px; }
+  h1 { font-size:30px; margin:0 0 6px; color:#fff; }
+  h2 { font-size:23px; margin:56px 0 14px; padding-top:12px; color:#fff; border-top:1px solid var(--line); }
+  h3 { font-size:18px; margin:28px 0 10px; color:#e9f5ff; }
+  p { margin:10px 0; }
+  a { color:var(--link); }
+  code { background:var(--code); border:1px solid #1d3346; padding:1px 6px; border-radius:4px; font:14px/1.6 "JetBrains Mono",Consolas,"DejaVu Sans Mono",monospace; color:#c7f9e6; }
+  pre { position:relative; background:var(--code); border:1px solid #1d3346; border-radius:8px; padding:14px 16px; overflow:auto; font:14px/1.65 "JetBrains Mono",Consolas,"DejaVu Sans Mono",monospace; color:#c7f9e6; }
+  pre .c { color:#6b8aa3; }
+  .copy { position:absolute; top:8px; right:8px; padding:3px 10px; font-size:12px; border:1px solid #2a4a63; border-radius:5px; background:#0f2333; color:var(--muted); cursor:pointer; }
+  .copy:hover { color:#fff; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:15px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#102030; color:#fff; font-weight:600; }
+  tr:nth-child(even) td { background:#0e1b27; }
+  .box, .tip, .warn, .danger { border-radius:10px; padding:12px 16px; margin:14px 0; border:1px solid; }
+  .tip { background:#0e2a22; border-color:#1d6b52; } .tip::before { content:"💡 提示　"; font-weight:700; color:var(--ok); }
+  .warn { background:#2a220e; border-color:#7a5b16; } .warn::before { content:"⚠️ 注意　"; font-weight:700; color:var(--warn); }
+  .danger { background:#2a1214; border-color:#7a2a2e; } .danger::before { content:"⛔ 禁止　"; font-weight:700; color:var(--bad); }
+  .steps { counter-reset:s; list-style:none; padding:0; }
+  .steps > li { counter-increment:s; position:relative; padding:10px 0 10px 46px; border-bottom:1px dashed #1d3346; }
+  .steps > li::before { content:counter(s); position:absolute; left:0; top:10px; width:30px; height:30px; border-radius:50%; background:#1a4a6b; color:#fff; font-weight:700; text-align:center; line-height:30px; }
+  figure { margin:16px 0; } figure img { width:100%; border:1px solid var(--line); border-radius:8px; display:block; }
+  figcaption { font-size:13px; color:var(--muted); margin-top:6px; text-align:center; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  .card h4 { margin:0 0 6px; color:#fff; font-size:16px; }
+  .tag { display:inline-block; padding:0 8px; border-radius:10px; font-size:12px; margin-right:4px; }
+  .t-ok { background:#0e3a2c; color:var(--ok); } .t-warn { background:#3a2e0e; color:var(--warn); } .t-bad { background:#3a1416; color:var(--bad); }
+  details { background:var(--card); border:1px solid var(--line); border-radius:10px; margin:10px 0; padding:0 16px; }
+  details > summary { cursor:pointer; padding:12px 0; font-weight:600; color:#fff; list-style:none; }
+  details > summary::before { content:"▸ "; color:var(--link); } details[open] > summary::before { content:"▾ "; }
+  details[open] { padding-bottom:10px; }
+  .diagram { display:flex; flex-wrap:wrap; gap:10px; align-items:stretch; margin:14px 0; }
+  .diagram .node { flex:1 1 160px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; }
+  .diagram .node b { display:block; color:#fff; } .diagram .arrow { align-self:center; color:var(--link); font-size:22px; }
+  kbd { background:#1b2c3c; border:1px solid #2f4a61; border-bottom-width:2px; border-radius:4px; padding:0 6px; font-size:13px; }
+  .hero { background:linear-gradient(120deg,#11304a,#0b1520); border:1px solid var(--line); border-radius:14px; padding:22px 26px; }
+  .hero .meta { color:var(--muted); font-size:14px; }
+  @media (max-width: 900px) { .layout { grid-template-columns:1fr; } nav { position:static; height:auto; } main { padding:20px; } .grid2 { grid-template-columns:1fr; } }
+  @media print { nav, .copy { display:none; } .layout { display:block; } body { background:#fff; color:#000; } pre, code { color:#000; background:#f3f3f3; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+  <div class="brand">现场运维手册</div>
+  <div class="sub">新耀工厂数字孪生 · 国产化一体机</div>
+  <div class="grp">入门</div>
+  <a href="#overview">0. 这套系统是什么</a>
+  <a href="#daily">1. 每天怎么用（最常用）</a>
+  <a href="#terminal">2. 怎么打开终端</a>
+  <div class="grp">部署</div>
+  <a href="#install">3. 首次部署（只做一次）</a>
+  <a href="#token">4. GitHub 访问令牌</a>
+  <div class="grp">日常运维</div>
+  <a href="#control">5. 启动 / 停止 / 重启</a>
+  <a href="#panel">6. 服务控制面板</a>
+  <a href="#upgrade">7. 更新版本（修 BUG）</a>
+  <a href="#rollback">8. 回退到旧版本</a>
+  <a href="#backup">9. 数据备份与恢复</a>
+  <div class="grp">大屏</div>
+  <a href="#params">10. 地址参数（显存降档等）</a>
+  <a href="#browser">11. 浏览器与显卡</a>
+  <a href="#config">12. 现场配置（交付码 / 摄像头 / 密码 / AI）</a>
+  <a href="#scene">13. 场景包替换（一般不涉及）</a>
+  <div class="grp">出问题了</div>
+  <a href="#emergency">14. 突发情况处理大全</a>
+  <a href="#doctor">15. 体检报告与求助</a>
+  <div class="grp">附录</div>
+  <a href="#ports">A. 端口与目录一览</a>
+  <a href="#commands">B. 命令速查表</a>
+  <a href="#dev">C. 开发人员：发布新版本</a>
+</nav>
+
+<main>
+<div class="hero">
+  <h1>新耀工厂数字孪生 · 国产化一体机现场运维手册</h1>
+  <p class="meta">适用：银河麒麟 V10 / 统信 UOS（x86_64 海光、兆芯；aarch64 飞腾、鲲鹏）· 写给第一次接触 Linux 的同事 · 所有命令都可以点右上角「复制」</p>
+  <p>遇到问题先看 <a href="#emergency">第 14 节「突发情况处理大全」</a>，按症状找答案；解决不了就做 <a href="#doctor">第 15 节「体检报告」</a> 发给开发。</p>
+</div>
+
+<!-- ====================================================================== 0 -->
+<h2 id="overview">0. 这套系统是什么</h2>
+<p>一台国产化电脑上同时运行着整套数字孪生产品，<b>不依赖外网、不依赖其他服务器</b>：</p>
+<div class="diagram">
+  <div class="node"><b>新耀工厂大屏</b>（灯塔交付端）<br>端口 3716 · 现场人员看的大屏</div>
+  <div class="arrow">→</div>
+  <div class="node"><b>TwinStudio 平台</b><br>API 5184 · 案例、模型、发布版本、交付码、AI小新</div>
+  <div class="arrow">→</div>
+  <div class="node"><b>数据</b>（data 目录）<br>数据库 + 全部模型贴图，约 3.4 GB</div>
+</div>
+<div class="diagram">
+  <div class="node"><b>TwinStudio 编辑器</b> 5186<br>案例中心 / 资产库 / Agent 管理</div>
+  <div class="node"><b>API 联调台</b> 5188</div>
+  <div class="node"><b>平台演示站</b> 5185</div>
+  <div class="node"><b>视频网关</b> 8889 / 8888<br>监控摄像头 → 网页视频</div>
+  <div class="node"><b>服务控制面板</b> 5099<br>一键启停、看状态（仅本机）</div>
+</div>
+<p>程序更新走 <b>GitHub</b>：开发人员在公司修好 BUG、打包推送后，现场只需执行一条命令（或双击一个图标）就能更新；更新前自动备份数据，更新失败自动退回旧版本。</p>
+<div class="tip">数据（约 3.4 GB）不走 GitHub，首次部署用 U 盘拷贝；之后数据一直保存在一体机上，更新程序不会动数据。</div>
+
+<!-- ====================================================================== 1 -->
+<h2 id="daily">1. 每天怎么用（最常用）</h2>
+<p>部署目录（默认 <code>/opt/xy-twin</code>，以实际为准）里有一排带数字的图标，<b>双击 → 选择「在终端中运行」</b>即可：</p>
+<table>
+<tr><th style="width:240px">图标</th><th>作用</th><th style="width:220px">什么时候用</th></tr>
+<tr><td><b>1-一键安装启动.sh</b></td><td>第一次运行自动安装；之后启动全部服务，并全屏打开大屏</td><td>开机后大屏没出来 / 停过服务后</td></tr>
+<tr><td><b>2-停止全部服务.sh</b></td><td>停止所有服务</td><td>关机前（可不做）、维护时</td></tr>
+<tr><td><b>3-检查并更新版本.sh</b></td><td>从 GitHub 拉取最新版本，自动备份 → 替换 → 自检</td><td>开发通知「已发布新版本」时</td></tr>
+<tr><td><b>4-打开大屏.sh</b></td><td>全屏打开新耀工厂大屏（<kbd>Alt</kbd>+<kbd>F4</kbd> 退出）</td><td>大屏窗口被关掉了</td></tr>
+<tr><td><b>5-打开大屏-低显存模式.sh</b></td><td>以低显存模式打开（贴图降到 512、关抗锯齿、减少阴影）</td><td>大屏卡死、花屏、黑屏</td></tr>
+<tr><td><b>6-服务控制面板.sh</b></td><td>打开网页版控制面板（看状态、单独重启某个服务、看日志）</td><td>想看哪个服务挂了</td></tr>
+<tr><td><b>7-生成体检报告.sh</b></td><td>收集系统、显卡、服务、日志信息生成报告</td><td>出问题需要找开发时</td></tr>
+</table>
+<div class="warn">双击 .sh 文件时，如果系统直接用文本编辑器打开了它：右键 → 「属性」→「权限」勾选「允许作为程序执行」；或者在文件管理器「设置」里把「可执行文本文件」改成「询问」/「运行」。也可以直接用第 2 节的终端方式。</div>
+<p>开机后服务会<b>自动启动</b>（已注册为系统服务 <code>xy-twin</code>），一般只需要打开大屏即可。</p>
+<figure><img src="img/kylin-dashboard.jpg" alt="新耀工厂大屏正常运行画面"><figcaption>正常运行的新耀工厂大屏（右上角 FPS 为实时帧率）</figcaption></figure>
+
+<!-- ====================================================================== 2 -->
+<h2 id="terminal">2. 怎么打开终端</h2>
+<ol class="steps">
+  <li>在部署目录空白处<b>右键 → 「在终端中打开」</b>（麒麟：「打开终端」），终端会自动进入当前目录。</li>
+  <li>或者按 <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> 打开终端，再输入（目录以实际为准）：<pre>cd /opt/xy-twin</pre></li>
+  <li>输入命令后按 <kbd>回车</kbd>。需要管理员密码时会提示 <code>[sudo] password</code>，输入开机密码（<b>输入时屏幕上不显示</b>，输完直接回车）。</li>
+</ol>
+<div class="tip">终端里复制是 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>，粘贴是 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>（不是 Ctrl+V）。正在运行的命令按 <kbd>Ctrl</kbd>+<kbd>C</kbd> 中断。</div>
+<p>本手册里所有命令都形如 <code>bash xy.sh 动作</code>，必须<b>在部署目录里</b>执行。输入 <code>bash xy.sh</code> 不带参数会列出全部用法。</p>
+
+<!-- ====================================================================== 3 -->
+<h2 id="install">3. 首次部署（只做一次）</h2>
+<h3>3.1 准备</h3>
+<table>
+<tr><th>项目</th><th>要求</th></tr>
+<tr><td>系统</td><td>银河麒麟 V10 SP1 及以上 / 统信 UOS 20 及以上，<code>x86_64</code> 或 <code>aarch64</code>（终端输入 <code>uname -m</code> 查看）</td></tr>
+<tr><td>磁盘</td><td>部署目录所在磁盘可用空间 ≥ 20 GB（程序 0.3 GB + 数据 3.4 GB + 备份 7 份）</td></tr>
+<tr><td>内存</td><td>≥ 8 GB，推荐 16 GB</td></tr>
+<tr><td>显卡</td><td>已安装厂商显卡驱动（见 <a href="#browser">第 11 节</a>）</td></tr>
+<tr><td>浏览器</td><td>Chromium 内核：Chrome / Chromium / Edge / 奇安信 / 360 等（Firefox 不推荐）</td></tr>
+<tr><td>网络</td><td>首次部署和每次更新时能访问 github.com；平时可离线运行</td></tr>
+<tr><td>U 盘</td><td>开发提供的数据包目录 <code>xy-data-日期</code>（约 1.7 GB，含 <code>xy-data.sha256</code>）</td></tr>
+<tr><td>令牌</td><td>开发提供的 GitHub 只读令牌（以 <code>github_pat_</code> 或 <code>ghp_</code> 开头），见 <a href="#token">第 4 节</a></td></tr>
+</table>
+
+<h3>3.2 安装系统工具（一次）</h3>
+<pre><span class="c"># 麒麟 / UOS（apt 系）</span>
+sudo apt update
+sudo apt install -y git curl xz-utils iproute2 mesa-utils</pre>
+<div class="tip">提示「无法定位软件包」时可跳过 <code>mesa-utils</code>（只用于查看显卡信息）。麒麟个别版本用 <code>yum</code>：<code>sudo yum install -y git curl xz iproute</code>。</div>
+
+<h3>3.3 下载程序</h3>
+<pre><span class="c"># 把 <令牌> 换成开发给的令牌（整段复制后再改）</span>
+sudo mkdir -p /opt/xy-twin && sudo chown $USER:$USER /opt/xy-twin
+git clone -b deploy-kylin --single-branch https://x-access-token:<令牌>@github.com/huazhonghao51world/WebGL-projects.git /opt/xy-twin
+cd /opt/xy-twin</pre>
+<p>看到 <code>Receiving objects: 100%</code> 即下载完成（约 300 MB，视网速 1–10 分钟）。</p>
+
+<h3>3.4 导入数据（U 盘）</h3>
+<ol class="steps">
+  <li>插入 U 盘，桌面或文件管理器里会出现 U 盘图标，打开后找到 <code>xy-data-日期</code> 文件夹。</li>
+  <li>在该文件夹里右键 → 「在终端中打开」，输入 <code>pwd</code> 回车，得到完整路径（例如 <code>/media/kylin/U盘/xy-data-20261127-1130</code>）。</li>
+  <li>回到部署目录执行（路径换成上一步得到的，<b>有空格或中文时两边加英文引号</b>）：<pre>cd /opt/xy-twin
+bash xy.sh import-data "/media/kylin/U盘/xy-data-20261127-1130"</pre></li>
+  <li>会依次显示：校验数据包 → 解压运行时 → 解压数据 → <code>数据库完整性： ok</code> → 数据导入完成，然后自动启动服务。</li>
+</ol>
+<div class="warn">「数据包校验失败」= U 盘里的文件不完整或损坏。请让开发重新拷贝，<b>不要强行继续</b>。U 盘建议格式化为 exFAT 或 NTFS；FAT32 也可以（数据包已按 3.5 GB 分片）。</div>
+
+<h3>3.5 安装（开机自启 + 防火墙）</h3>
+<pre>bash xy.sh install</pre>
+<p>会提示输入一次开机密码（用于注册开机自启 <code>xy-twin.service</code> 和放行防火墙端口）。最后打印「服务状态」全部为 <span class="tag t-ok">运行中</span>，并给出访问地址：</p>
+<pre>服务状态：
+  platform-api     运行中 (pid 2301)
+  platform-worker  运行中 (pid 2348)
+  studio-editor    运行中 (pid 2350)
+  studio-debug     运行中 (pid 2352)
+  studio-demo      运行中 (pid 2354)
+  video-gateway    运行中 (pid 2357)
+  dengta           运行中 (pid 2359)
+  panel            运行中 (pid 2420)
+
+访问地址（机器换 IP 后用新 IP 访问即可，无需改配置）：
+  新耀工厂大屏        http://192.168.1.20:3716/#/xy-factory
+  TwinStudio 编辑器   http://192.168.1.20:5186
+  ...</pre>
+<div class="tip">第一次启动平台要读取全部数据，<b>可能需要 1–3 分钟</b>，期间会显示「…仍在等待 平台 API 启动（首次较慢）」，属正常现象。</div>
+
+<h3>3.6 打开大屏，检查</h3>
+<ol class="steps">
+  <li>双击 <b>4-打开大屏.sh</b>（或执行 <code>bash xy.sh browser</code>）。</li>
+  <li>先出现新耀 Logo 加载屏，进度到 100% 后进入大屏：<figure><img src="img/loader.jpg" alt="加载屏"><figcaption>加载屏：进度、当前阶段、已用时间。首次约 20–60 秒，之后有本地缓存会更快</figcaption></figure></li>
+  <li>右上角 FPS 稳定在两位数即正常。若加载中卡死 / 花屏，见 <a href="#params">第 10 节</a> 的低显存模式。</li>
+  <li>在局域网其他电脑上用 <code>http://一体机IP:3716/#/xy-factory</code> 也能访问。</li>
+</ol>
+
+<!-- ====================================================================== 4 -->
+<h2 id="token">4. GitHub 访问令牌</h2>
+<p>仓库是私有的，一体机拉取更新需要一个<b>只读令牌</b>（由开发在 GitHub 生成：Settings → Developer settings → Fine-grained tokens，仓库选 WebGL-projects，权限 Contents: Read-only）。</p>
+<table>
+<tr><th>情况</th><th>操作</th></tr>
+<tr><td>首次部署</td><td>令牌已写在 3.3 的 clone 地址里，不用另外设置</td></tr>
+<tr><td>令牌过期 / 被重置（更新时提示「无法获取更新」）</td><td><pre>bash xy.sh set-token 新令牌</pre>显示「令牌已更新，可以访问 GitHub」即可</td></tr>
+</table>
+<div class="danger">令牌等同于钥匙：不要拍照发群、不要写在桌面便签上。令牌只给「只读」权限，即使泄露也不能修改代码，但仍请发现后通知开发重置。</div>
+
+<!-- ====================================================================== 5 -->
+<h2 id="control">5. 启动 / 停止 / 重启</h2>
+<table>
+<tr><th style="width:42%">命令</th><th>作用</th></tr>
+<tr><td><code>bash xy.sh status</code></td><td>查看每个服务是否运行、访问地址，并做健康检查</td></tr>
+<tr><td><code>bash xy.sh start</code></td><td>启动全部（已运行的跳过）</td></tr>
+<tr><td><code>bash xy.sh stop</code></td><td>停止全部</td></tr>
+<tr><td><code>bash xy.sh restart</code></td><td>重启全部（改了配置后执行）</td></tr>
+<tr><td><code>bash xy.sh restart dengta</code></td><td>只重启大屏站点</td></tr>
+<tr><td><code>bash xy.sh restart platform</code></td><td>只重启平台 API + worker</td></tr>
+<tr><td><code>bash xy.sh restart studio</code></td><td>只重启编辑器 / 联调台 / 演示站</td></tr>
+<tr><td><code>bash xy.sh restart video</code></td><td>只重启视频网关</td></tr>
+<tr><td><code>bash xy.sh restart panel</code></td><td>只重启控制面板</td></tr>
+<tr><td><code>bash xy.sh logs dengta</code></td><td>实时查看日志（<kbd>Ctrl</kbd>+<kbd>C</kbd> 退出）。可选：platform-api、platform-worker、studio-editor、studio-debug、studio-demo、video-gateway、dengta、panel</td></tr>
+</table>
+<p>系统服务方式（与上面等价，开机自启就是它）：</p>
+<pre>sudo systemctl status xy-twin     <span class="c"># 查看</span>
+sudo systemctl restart xy-twin    <span class="c"># 重启全部</span>
+sudo systemctl disable xy-twin    <span class="c"># 取消开机自启（enable 恢复）</span></pre>
+
+<!-- ====================================================================== 6 -->
+<h2 id="panel">6. 服务控制面板（5099）</h2>
+<p>双击 <b>6-服务控制面板.sh</b>，或在一体机浏览器打开 <code>http://127.0.0.1:5099</code>。</p>
+<figure><img src="img/panel.jpg" alt="服务控制面板"><figcaption>服务控制面板：每个服务的状态、端口、快捷链接，可单独启动 / 停止 / 重启 / 看日志（截图为测试环境端口）</figcaption></figure>
+<ul>
+  <li><span class="tag t-ok">● 运行中</span> 绿色：正常；<span class="tag t-warn">● 启动中</span>：稍等几秒刷新；灰色「已停止」：点「启动」。</li>
+  <li>端口框为<b>虚线</b>表示该端口没在监听（服务没起来）。</li>
+  <li>「日志」按钮查看该服务最近 300 行日志。</li>
+  <li>面板默认只允许本机访问。如需局域网其他电脑打开：<code>local/xy.env</code> 中加 <code>PANEL_HOST=0.0.0.0</code> 后 <code>bash xy.sh restart panel</code>（仅限可信内网）。</li>
+</ul>
+
+<!-- ====================================================================== 7 -->
+<h2 id="upgrade">7. 更新版本（修 BUG）</h2>
+<p>开发人员修好 BUG 发布后，会通知「已发布新版本」。现场操作：</p>
+<ol class="steps">
+  <li>双击 <b>3-检查并更新版本.sh</b>（或终端执行 <code>bash xy.sh upgrade</code>）。</li>
+  <li>屏幕列出新版本及更新内容，例如：<pre>当前版本：2026.11.27-1136 · 大屏 175655e · 平台 772f243 · web-sdk 0.7.7
+有 1 个新版本：
+  11-28 10:20  2026.11.28-1020 修复注塑车间疏散路线
+确认更新？更新期间大屏约中断 1 分钟 [y/N]</pre>输入 <kbd>y</kbd> 回车。</li>
+  <li>自动执行四步：<b>备份数据</b>（不停机）→ <b>停止服务</b> → <b>替换程序</b> → <b>启动并自检</b>。</li>
+  <li>看到绿色「更新成功」即完成；大屏页面按 <kbd>F5</kbd> 刷新（全屏模式先 <kbd>Alt</kbd>+<kbd>F4</kbd> 再双击「4-打开大屏」）。</li>
+</ol>
+<div class="tip">自检失败时脚本会<b>自动退回旧版本</b>并提示「已回退」，现场照常使用，然后按第 15 节生成体检报告发给开发。</div>
+<p>其他用法：</p>
+<table>
+<tr><th style="width:42%">命令</th><th>说明</th></tr>
+<tr><td><code>bash xy.sh check</code></td><td>只检查有没有新版本，不更新</td></tr>
+<tr><td><code>bash xy.sh upgrade --yes</code></td><td>不询问直接更新（远程协助时用）</td></tr>
+<tr><td><code>bash xy.sh upgrade /media/…/xy-kylin-日期.bundle</code></td><td><b>离线更新</b>：一体机不能上网时，开发把更新包（.bundle 文件）用 U 盘带过来</td></tr>
+<tr><td><code>bash xy.sh version</code></td><td>查看当前版本号</td></tr>
+</table>
+<div class="warn">更新只替换程序，<b>不会动</b>：<code>data/</code>（数据）、<code>local/</code>（现场配置：交付码、摄像头、密码、端口）、<code>backups/</code>、<code>logs/</code>。不要手动修改 <code>app/</code> 目录里的文件，更新时会被覆盖。</div>
+
+<!-- ====================================================================== 8 -->
+<h2 id="rollback">8. 回退到旧版本</h2>
+<p>新版本有问题（例如某个功能不对），可立即退回，<b>数据不受影响</b>：</p>
+<pre>bash xy.sh rollback          <span class="c"># 退回到更新前的版本</span>
+bash xy.sh versions          <span class="c"># 列出本机可回退的版本（版本号 + 时间 + 说明）</span>
+bash xy.sh rollback a1b2c3d  <span class="c"># 退回到指定版本号</span></pre>
+<div class="tip">回退后，下次执行「检查并更新」仍会提示有新版本。等开发修复并发布更高版本后再更新即可。</div>
+
+<!-- ====================================================================== 9 -->
+<h2 id="backup">9. 数据备份与恢复</h2>
+<p>数据目录 <code>data/</code> 包含：数据库 <code>platform.sqlite</code>（案例、资产、发布版本、交付码、AI小新会话与模型配置）、<code>objects/</code>（全部模型、贴图、配置包）、<code>vtk-cache/</code>（仿真缓存）、<code>delivery-codes.json</code>（交付码）。</p>
+<table>
+<tr><th style="width:42%">命令</th><th>说明</th></tr>
+<tr><td><code>bash xy.sh backup</code></td><td>在线热备份到 <code>backups/data-时间</code>，<b>不用停服务</b>；自动校验数据库行数与完整性。自动保留最近 7 份</td></tr>
+<tr><td><code>bash xy.sh backup /media/…/U盘/xy-backup</code></td><td>直接备份到 U 盘 / 移动硬盘</td></tr>
+<tr><td><code>bash xy.sh restore backups/data-20261128-1020</code></td><td>恢复到某份备份（当前数据改名保留为 <code>data.before-restore-时间</code>，不会丢）</td></tr>
+<tr><td><code>bash xy.sh import-data &lt;数据包目录&gt;</code></td><td>用开发给的 U 盘数据包整体替换（例如公司那边新发布了案例）</td></tr>
+</table>
+<div class="tip">每次「更新版本」前都会自动备份一次（目录名 <code>data-before-upgrade-时间</code>）。重要操作（如在编辑器里大改案例）前建议手动备份。</div>
+<div class="danger">不要直接删除或复制正在运行的 <code>data/platform.sqlite</code>，会导致数据损坏。备份一律用 <code>bash xy.sh backup</code>。</div>
+
+<!-- ====================================================================== 10 -->
+<h2 id="params">10. 地址参数（显存降档等）</h2>
+<p>大屏地址可以带参数，用来<b>降档、排查问题</b>。参数写在 <code>#</code> 前面的 <code>?</code> 后面，多个参数用 <code>&amp;</code> 连接：</p>
+<pre>http://一体机IP:3716/?参数1=值&amp;参数2=值#/xy-factory
+<span class="c"># 例：低显存模式</span>
+http://127.0.0.1:3716/?gpu=compact#/xy-factory
+<span class="c"># 也可以写在路由后面（效果相同）</span>
+http://127.0.0.1:3716/#/xy-factory?gpu=compact</pre>
+<p>用脚本打开（自动全屏）：<code>bash xy.sh browser "gpu=compact"</code>，多个参数：<code>bash xy.sh browser "gpu=compact&amp;lite=1"</code>。</p>
+
+<h3>10.1 日常可用参数</h3>
+<table>
+<tr><th style="width:190px">参数</th><th>作用</th><th style="width:250px">什么时候用</th></tr>
+<tr><td><code>gpu=compact</code></td><td><b>低显存模式</b>：贴图最长边 512（默认 1024）、关闭抗锯齿、像素比 ≤ 1、阴影贴图缩小且只保留 1 盏主光 + 2 盏聚光灯投影、POI 图标走 CPU 生成</td><td>加载卡死、花屏、黑屏、马赛克、帧率个位数</td></tr>
+<tr><td><code>lite=1</code></td><td>关闭页面 UI 动效（面板动画、数字滚动）</td><td>CPU 较弱、界面操作不跟手</td></tr>
+</table>
+<div class="warn">系统<b>不会自动降档</b>：是否使用低显存模式完全由地址参数决定。确认需要降档后，用「5-打开大屏-低显存模式.sh」打开即可；如需固定为默认，联系开发修改桌面图标。</div>
+<figure><img src="img/dashboard-compact.jpg" alt="低显存模式"><figcaption>低显存模式（gpu=compact）：画面略模糊、阴影变少，但显存占用和卡死风险大幅降低</figcaption></figure>
+
+<h3>10.2 排查参数（开发远程指导时用）</h3>
+<table>
+<tr><th style="width:220px">参数</th><th>作用</th></tr>
+<tr><td><code>gldebug=1</code></td><td>在浏览器控制台（<kbd>F12</kbd>）打印 WebGL / 显卡诊断信息，并开放调试入口</td></tr>
+<tr><td><code>bare=1</code></td><td>只显示 SDK 加载的原始场景，<b>不执行任何业务</b>（POI、产线、面板逻辑、配置包都不运行）</td></tr>
+<tr><td><code>bare=1&amp;step=1</code> … <code>step=4</code></td><td>在 bare 基础上逐级加回：1 场景配置包；2 + POI 与点选；3 + 产线动画；4 + 渲染调优（阴影等）。用来定位哪一层导致卡顿</td></tr>
+<tr><td><code>noprofile=1</code></td><td>完整业务照常，只是不应用场景配置包（灯光、材质保持原始）</td></tr>
+<tr><td><code>only=lighting,l-building</code></td><td>场景配置包只执行列出的模块</td></tr>
+<tr><td><code>strip=shader</code> / <code>strip=all</code></td><td>去掉配置包的部分效果：env 环境贴图、envmap 反射、fog 雾、spot 聚光灯、shadow 阴影、shader 自定义着色器、extra 额外网格；all = 全部</td></tr>
+<tr><td><code>noenv=1</code></td><td>拦截天空背景与环境贴图</td></tr>
+<tr><td><code>hide=xy-shinei,xy-vfx</code></td><td>隐藏整个模型实体（xy-campus-exterior / xy-campus-core / xy-shinei / xy-prop-sq3 / xy-mesh / xy-vfx）</td></tr>
+<tr><td><code>perf=all</code> / <code>perf=prewarm,softShadow</code></td><td>关闭交付端额外渲染负担（prewarm 预编译、shadowOverride 大阴影、indoorShadow 室内投影、shadowRefresh、raycastWarm、softShadow）；<code>on=…</code> 重新打开</td></tr>
+<tr><td><code>xyDeliveryCode=TWN-…</code></td><td>临时换用另一个交付码（不改配置文件）</td></tr>
+</table>
+<div class="tip">排查参数只影响当前打开的这一个页面，关掉页面就恢复，不会改动任何配置或数据。</div>
+
+<!-- ====================================================================== 11 -->
+<h2 id="browser">11. 浏览器与显卡</h2>
+<h3>11.1 推荐浏览器</h3>
+<p>Chromium 内核（Chrome / Chromium / Edge / 奇安信可信浏览器 / 360 安全浏览器）。<code>bash xy.sh browser</code> 会自动找到已安装的浏览器，并带上以下启动参数：</p>
+<table>
+<tr><th style="width:260px">启动参数</th><th>作用</th></tr>
+<tr><td><code>--ignore-gpu-blocklist</code></td><td><b>关键</b>：国产显卡常被 Chromium 列入 GPU 黑名单，不加会退回 CPU 软件渲染，帧率只有 1–3</td></tr>
+<tr><td><code>--kiosk</code></td><td>无边框全屏（<kbd>Alt</kbd>+<kbd>F4</kbd> 退出）</td></tr>
+<tr><td><code>--enable-gpu-rasterization</code></td><td>页面绘制也走 GPU</td></tr>
+</table>
+<p>如果是手动打开浏览器，可在浏览器地址栏打开 <code>chrome://gpu</code> 检查：「WebGL」和「WebGL2」应为 <span class="tag t-ok">Hardware accelerated</span>；若显示 Software only，说明没用上显卡（驱动问题或被黑名单）。</p>
+<h3>11.2 显卡驱动</h3>
+<pre>lspci | grep -iE "vga|3d|display"     <span class="c"># 看显卡型号</span>
+glxinfo -B | grep -iE "renderer|version"   <span class="c"># 看驱动：renderer 不能是 llvmpipe（软件渲染）</span></pre>
+<div class="warn">renderer 显示 <code>llvmpipe</code> / <code>softpipe</code> = 显卡驱动没装好，大屏会极卡。请安装显卡厂商（芯动、摩尔线程、景嘉微、兆芯、海光配套 AMD 等）提供的麒麟版驱动后重启。</div>
+<h3>11.3 已知显卡情况</h3>
+<table>
+<tr><th>显卡</th><th>建议</th></tr>
+<tr><td>芯动 风华三号（Fantasy III）</td><td>默认模式可运行（约 15–30 FPS）；如加载时卡死用 <code>gpu=compact</code></td></tr>
+<tr><td>集成显卡 / 显存 ≤ 2 GB</td><td>建议 <code>gpu=compact</code></td></tr>
+<tr><td>独立显卡显存 ≥ 4 GB</td><td>默认模式</td></tr>
+</table>
+
+<!-- ====================================================================== 12 -->
+<h2 id="config">12. 现场配置（交付码 / 摄像头 / 密码 / AI）</h2>
+<p>现场配置统一放在 <code>local/</code> 目录，<b>更新程序不会覆盖</b>。改完后重启对应服务。</p>
+<table>
+<tr><th style="width:240px">文件</th><th>内容</th><th style="width:200px">改完执行</th></tr>
+<tr><td><code>local/xy.env</code></td><td>平台登录密码、AI小新大模型地址与密钥、端口、数据目录、面板是否允许局域网访问、备份保留份数</td><td><code>bash xy.sh restart</code></td></tr>
+<tr><td><code>local/dengta-config.json</code></td><td>大屏配置：交付码 <code>cases.xy.deliveryCode</code>、是否自动跟随新发布版本 <code>autoUpdate</code>、POI 遮挡等。<code>serverUrl</code> 保持 <code>/api</code> 不要改</td><td>大屏页面刷新即可</td></tr>
+<tr><td><code>local/xy-cameras.yml</code></td><td>监控摄像头 RTSP 地址（含账号密码）</td><td><code>bash xy.sh restart video</code></td></tr>
+</table>
+<h3>12.1 修改平台登录密码（交付客户前必做）</h3>
+<pre>nano local/xy.env
+<span class="c"># 找到这一行，去掉开头的 # 并改成强密码：</span>
+export TWIN_ADMIN_PASSWORD='Xy@2026!请改'
+<span class="c"># Ctrl+O 回车保存，Ctrl+X 退出</span>
+bash xy.sh restart platform</pre>
+<h3>12.2 AI小新（大模型）</h3>
+<p>推荐在编辑器（<code>http://一体机IP:5186</code> 登录后）「Agent 管理 → 模型配置」里填写，保存在数据库中，立即生效。没有外网时 AI小新会自动退回本地规则模式（能执行常用指令，但不能自由对话）。</p>
+<figure><img src="img/editor.jpg" alt="TwinStudio 编辑器登录页"><figcaption>TwinStudio 编辑器（5186）：账号 admin，默认密码 admin123（务必按 12.1 修改）</figcaption></figure>
+<h3>12.3 摄像头</h3>
+<p>编辑 <code>local/xy-cameras.yml</code>，把 <code>rtsp://admin:密码@IP:554</code> 改成现场摄像头地址。密码里有 <code>@</code> 要写成 <code>%40</code>。浏览器不支持 H.265，配置中已用 ffmpeg 转成 H.264。</p>
+<div class="tip">摄像头不通不影响大屏其他功能，只是监控画面黑屏。<code>bash xy.sh logs video-gateway</code> 查看原因（常见：IP 不通、密码错、摄像头离线）。</div>
+
+<!-- ====================================================================== 13 -->
+<h2 id="scene">13. 场景包替换（一般不涉及）</h2>
+<p>场景（模型、灯光材质配置包）保存在平台数据里。场景组出新版本时，<b>推荐由开发在公司发布</b>，然后二选一带到现场：</p>
+<div class="grid2">
+  <div class="card"><h4>方式 A：整体数据包（推荐）</h4>开发重新打 U 盘数据包 → 现场 <code>bash xy.sh import-data &lt;目录&gt;</code>。原数据自动改名保留。</div>
+  <div class="card"><h4>方式 B：现场用编辑器导入</h4>在编辑器（5186）里导入新模型 / 配置包并「发布」。大屏开启了自动跟随（<code>autoUpdate</code>），30 秒内会自动换上新版本，无需刷新。</div>
+</div>
+<div class="warn">场景组配置包按 three.js r187 开发，SDK 也必须是 r187（web-sdk ≥ 0.7.1）。版本不一致会导致国产显卡卡死。方式 B 导入前请与开发确认配置包版本号（配置包 <code>version</code> 必须比当前高）。</div>
+<p>出问题可以立即回到旧场景：编辑器「案例 → 发布记录」重新发布上一版本；或 <code>bash xy.sh restore backups/…</code> 恢复导入前的数据。</p>
+
+<!-- ====================================================================== 14 -->
+<h2 id="emergency">14. 突发情况处理大全</h2>
+<p>按症状找，从上往下试。每一步做完都刷新大屏看看是否恢复。</p>
+
+<details open><summary>大屏打不开：浏览器显示「无法访问此网站」/「拒绝连接」</summary>
+<ol class="steps">
+<li><code>bash xy.sh status</code>，看哪些显示 <span class="tag t-bad">未运行</span>。</li>
+<li><code>bash xy.sh start</code> 启动（已运行的会跳过）。</li>
+<li>还不行：<code>bash xy.sh restart</code>。</li>
+<li>还不行：<code>bash xy.sh logs dengta</code> 看最后几行；若提示 <code>EADDRINUSE</code> = 端口被占用，见下面「端口被占用」。</li>
+<li>其他电脑访问不了、本机可以：防火墙没放行，执行 <code>bash xy.sh install</code>（会重新放行端口）；或确认两台电脑在同一网段（互相 <code>ping</code> 得通）。</li>
+</ol></details>
+
+<details><summary>大屏一直停在加载屏 / 进度不动</summary>
+<ol class="steps">
+<li>看加载屏上的阶段文字：停在「正在校验交付码」→ 平台没起来，<code>bash xy.sh restart platform</code>。</li>
+<li>停在「正在下载 / 解析模型」超过 3 分钟 → 磁盘或内存紧张，<code>free -h</code>、<code>df -h</code> 查看；关闭其他程序后刷新。</li>
+<li>停在「正在显示场景」→ 显卡压力过大，改用 <b>5-打开大屏-低显存模式.sh</b>。</li>
+<li>首次加载约 20–60 秒属正常（之后有缓存）。</li>
+</ol></details>
+
+<details><summary>加载过程中电脑卡死 / 鼠标不动 / 花屏 / 马赛克 / 黑屏</summary>
+<ol class="steps">
+<li>等 30 秒；仍无响应按 <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F2</kbd> 切到文字终端登录（或长按电源键重启）。</li>
+<li>重启后用 <b>5-打开大屏-低显存模式.sh</b> 打开（<code>gpu=compact</code>）。</li>
+<li>仍卡：检查显卡驱动（第 11.2 节），renderer 不能是 llvmpipe。</li>
+<li>仍卡：用排查参数 <code>bash xy.sh browser "gpu=compact&amp;bare=1"</code>，能打开说明是业务层，再试 <code>step=1</code>…<code>step=4</code> 定位，把结果告诉开发。</li>
+</ol></details>
+
+<details><summary>页面提示「WebGL 上下文丢失」或画面突然全黑</summary>
+<p>显存不足或显卡驱动重置。系统<b>不会</b>自动降档，请：<kbd>F5</kbd> 刷新一次；频繁出现就固定使用 <b>低显存模式</b>。同时关闭其他占用显卡的程序（视频播放器、其他浏览器标签页）。</p></details>
+
+<details><summary>帧率很低（FPS 个位数）、操作卡顿</summary>
+<ol class="steps">
+<li>浏览器打开 <code>chrome://gpu</code>：WebGL 若为 Software only → 浏览器没用上显卡，必须用 <code>bash xy.sh browser</code> 打开（带 <code>--ignore-gpu-blocklist</code>）。</li>
+<li>加载完成后前几秒帧率低属正常（后台在准备），10 秒后仍低再处理。</li>
+<li>用低显存模式；再加 <code>lite=1</code> 关闭界面动效。</li>
+<li>大屏分辨率过高（4K）时，在显示设置里改为 1920×1080。</li>
+</ol></details>
+
+<details><summary>监控视频黑屏 / 播放不了</summary>
+<ol class="steps">
+<li><code>bash xy.sh status</code> 看 video-gateway 是否运行；未运行 → <code>bash xy.sh restart video</code>。</li>
+<li>提示「未配置摄像头」→ 没有 <code>local/xy-cameras.yml</code>，按 12.3 配置。</li>
+<li><code>bash xy.sh logs video-gateway</code>：出现 <code>connection refused / timeout</code> = 摄像头 IP 不通；<code>401</code> = 账号密码错。</li>
+<li>局域网其他电脑看不了视频但本机可以：放行 UDP/TCP 8189（<code>bash xy.sh install</code> 会自动放行），不通时页面会自动改用 HLS（延迟稍高）。</li>
+</ol></details>
+
+<details><summary>编辑器（5186）登录不了 / 提示 Origin not allowed</summary>
+<ol class="steps">
+<li>密码是否被改过（看 <code>local/xy.env</code> 的 <code>TWIN_ADMIN_PASSWORD</code>）。</li>
+<li>必须通过 <code>http://IP:5186</code> 访问，不要直接访问 5184。</li>
+<li><code>bash xy.sh restart studio platform</code>。</li>
+</ol></details>
+
+<details><summary>AI小新不回答 / 只能执行固定指令</summary>
+<p>没有外网或大模型未配置时会退回本地规则模式。检查编辑器「Agent 管理 → 模型配置」，或 <code>local/xy.env</code> 中的 <code>TWIN_AGENT_LLM_*</code>。大模型服务需要一体机能访问其地址。</p></details>
+
+<details><summary>更新失败：「无法获取更新」/「无法连接 GitHub」</summary>
+<ol class="steps">
+<li>浏览器能否打开 https://github.com ；不能 → 网络问题（代理、内网限制），联系网管或用<b>离线更新包</b>（第 7 节）。</li>
+<li>能打开 → 令牌过期，<code>bash xy.sh set-token 新令牌</code>（第 4 节）。</li>
+<li>提示 <code>Your local changes would be overwritten</code> 等 → 有人改了 app/ 下的文件，更新会强制恢复，直接重试 <code>bash xy.sh upgrade</code>。</li>
+</ol></details>
+
+<details><summary>更新后功能异常</summary>
+<p><code>bash xy.sh rollback</code> 立即退回旧版本（数据不变），再通知开发。</p></details>
+
+<details><summary>端口被占用（日志里出现 EADDRINUSE / address already in use）</summary>
+<pre>sudo ss -ltnp | grep 3716     <span class="c"># 看谁占用了 3716（换成提示里的端口）</span>
+bash xy.sh stop; bash xy.sh start</pre>
+<p>若是其他程序占用，可在 <code>local/xy.env</code> 改端口（如 <code>PORT_DENGTA=3726</code>）后 <code>bash xy.sh restart</code>，并告知使用人员新地址。</p></details>
+
+<details><summary>磁盘满了（No space left on device）</summary>
+<pre>df -h .                       <span class="c"># 看剩余空间</span>
+du -sh backups/* logs/*       <span class="c"># 看哪些占空间</span>
+ls -dt backups/data-* | tail -n +4 | xargs rm -rf   <span class="c"># 只保留最近 3 份备份</span>
+rm -f logs/*.log.old logs/doctor-*.txt</pre>
+<p>数据太大时可把数据目录迁到大磁盘：停服务 → <code>mv data /data/xy-twin</code> → <code>local/xy.env</code> 写 <code>TWIN_DATA_DIR=/data/xy-twin</code> → 启动。</p></details>
+
+<details><summary>一体机换了 IP / 搬到新网络</summary>
+<p><b>不需要改任何配置</b>，用新 IP 访问即可（<code>bash xy.sh status</code> 会显示新地址）。所有站点通过同源代理访问平台，不绑定 IP。</p></details>
+
+<details><summary>停电 / 非正常关机后</summary>
+<ol class="steps">
+<li>开机后服务自动启动；<code>bash xy.sh status</code> 确认全部运行。</li>
+<li>数据库使用 WAL 日志，异常断电一般不会损坏；如平台起不来且日志出现 <code>database disk image is malformed</code>，用最近备份恢复：<code>bash xy.sh restore backups/最新的目录</code>。</li>
+</ol></details>
+
+<details><summary>开机后服务没有自动启动</summary>
+<pre>sudo systemctl status xy-twin     <span class="c"># 看状态与报错</span>
+bash xy.sh install                <span class="c"># 重新注册开机自启</span></pre></details>
+
+<details><summary>时间不对（页面时间、日志时间错误）</summary>
+<pre>timedatectl                                   <span class="c"># 查看</span>
+sudo timedatectl set-timezone Asia/Shanghai
+sudo timedatectl set-time "2026-11-28 10:00:00"   <span class="c"># 无网络时手动设置</span></pre></details>
+
+<details><summary>误删了文件 / 程序目录乱了</summary>
+<pre>git status                        <span class="c"># 看哪些程序文件被改或删</span>
+git reset --hard HEAD; bash xy.sh restart   <span class="c"># 恢复程序文件（不影响 data/ local/ backups/）</span></pre></details>
+
+<!-- ====================================================================== 15 -->
+<h2 id="doctor">15. 体检报告与求助</h2>
+<ol class="steps">
+<li>双击 <b>7-生成体检报告.sh</b>（或 <code>bash xy.sh doctor</code>）。</li>
+<li>报告保存在 <code>logs/doctor-日期时间.txt</code>，包含：版本、系统、CPU、内存、磁盘、显卡与驱动、服务状态、端口、最近备份、各服务最后 40 行日志。</li>
+<li>把这个文件 + 问题截图（拍照也行）+ 用的什么地址参数 发给开发人员。</li>
+</ol>
+<div class="tip">大屏的浏览器报错：按 <kbd>F12</kbd> → Console（控制台），截图红色报错；或用 <code>gldebug=1</code> 参数打开后再截图，信息更全。</div>
+
+<!-- ====================================================================== A -->
+<h2 id="ports">A. 端口与目录一览</h2>
+<table>
+<tr><th>端口</th><th>服务</th><th>访问范围</th></tr>
+<tr><td>3716</td><td>新耀工厂大屏（含 /api、/xy-video 同源代理）</td><td>局域网</td></tr>
+<tr><td>5186</td><td>TwinStudio 编辑器</td><td>局域网</td></tr>
+<tr><td>5188</td><td>API 联调台</td><td>局域网</td></tr>
+<tr><td>5185</td><td>平台演示站</td><td>局域网</td></tr>
+<tr><td>5184</td><td>平台 API（交付接口对外，登录接口仅本机）</td><td>局域网</td></tr>
+<tr><td>5099</td><td>服务控制面板</td><td>仅本机（可配置）</td></tr>
+<tr><td>8889 / 8888 / 8554</td><td>视频网关 WebRTC / HLS / RTSP</td><td>本机（经 3716 代理）</td></tr>
+<tr><td>8189 UDP+TCP</td><td>WebRTC 媒体</td><td>局域网（可选）</td></tr>
+</table>
+<pre>/opt/xy-twin/
+├─ 1-一键安装启动.sh … 7-生成体检报告.sh   ← 双击使用
+├─ xy.sh                ← 管理脚本（所有命令）
+├─ VERSION              ← 当前版本号与更新内容
+├─ app/                 ← 程序（更新时整体替换，勿改）
+│  ├─ dengta/            新耀工厂大屏
+│  ├─ platform/          平台 API + 编辑器 / 联调台 / 演示站
+│  ├─ service-panel/     控制面板
+│  └─ bin/               站点服务器、备份工具
+├─ packages/            ← 运行时安装包（Node 22 / MediaMTX / ffmpeg）
+├─ docs/运维手册.html   ← 本手册
+├─ data/                ← 【数据】数据库 + 模型（不进仓库）
+├─ local/               ← 【现场配置】xy.env / dengta-config.json / xy-cameras.yml（不进仓库）
+├─ backups/             ← 自动 / 手动备份
+├─ logs/                ← 日志、体检报告
+├─ run/                 ← 运行状态（pid、版本记录）
+└─ runtime/             ← 解压后的运行时（自动生成）</pre>
+
+<!-- ====================================================================== B -->
+<h2 id="commands">B. 命令速查表</h2>
+<table>
+<tr><th style="width:44%">命令</th><th>作用</th></tr>
+<tr><td><code>bash xy.sh status</code></td><td>状态 + 地址 + 健康检查</td></tr>
+<tr><td><code>bash xy.sh start | stop | restart [组件]</code></td><td>启停；组件 platform / studio / dengta / video / panel</td></tr>
+<tr><td><code>bash xy.sh logs [服务名]</code></td><td>实时日志</td></tr>
+<tr><td><code>bash xy.sh browser ["参数"]</code></td><td>全屏打开大屏</td></tr>
+<tr><td><code>bash xy.sh check</code></td><td>检查新版本</td></tr>
+<tr><td><code>bash xy.sh upgrade [--yes] [更新包]</code></td><td>更新（自动备份、失败回退）</td></tr>
+<tr><td><code>bash xy.sh rollback [版本号]</code></td><td>回退程序</td></tr>
+<tr><td><code>bash xy.sh versions</code> / <code>version</code></td><td>版本列表 / 当前版本</td></tr>
+<tr><td><code>bash xy.sh set-token &lt;令牌&gt;</code></td><td>更新 GitHub 令牌</td></tr>
+<tr><td><code>bash xy.sh backup [目录]</code></td><td>在线备份</td></tr>
+<tr><td><code>bash xy.sh restore &lt;备份目录&gt;</code></td><td>恢复数据</td></tr>
+<tr><td><code>bash xy.sh import-data &lt;数据包目录&gt;</code></td><td>导入 U 盘数据包</td></tr>
+<tr><td><code>bash xy.sh install</code></td><td>安装 / 重新注册开机自启与防火墙</td></tr>
+<tr><td><code>bash xy.sh doctor</code></td><td>体检报告</td></tr>
+</table>
+
+<!-- ====================================================================== C -->
+<h2 id="dev">C. 开发人员：发布新版本</h2>
+<p>源码仓库：<code>WebGL-TwinSDK</code>（SDK、TwinStudio 平台与前端、服务控制面板 tools/service-panel）、<code>WebGL-projects</code> main 分支（灯塔交付端 / 新耀工厂大屏、部署脚本 tools/deploy/kylin）。场景组源码不在仓库中。</p>
+<h3>C.1 修 BUG → 发布（开发电脑，Windows PowerShell）</h3>
+<pre><span class="c"># 1) 在源码仓库修改、自测、提交并推送 main</span>
+<span class="c"># 2) 构建并发布到 deploy-kylin 分支（全部 / 只大屏 / 只平台 / 只脚本）</span>
+powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "修复注塑车间疏散路线"
+powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Only dengta
+powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Only platform
+<span class="c"># 先生成不推送（自测）：-NoPush；同时生成离线更新包：-Bundle；带 arm64 运行时：-WithArm64</span></pre>
+<p>脚本会：构建大屏（vue-cli）与平台（tsc + vite + esbuild 单文件打包）→ 同步到 <code>E:\All_in_wdp\deploy-build\kylin-repo</code> → 写入 VERSION（含两个源码仓库的提交号，有未提交改动会标「-未提交」）→ 提交并推送 <code>deploy-kylin</code>。</p>
+<h3>C.2 数据包</h3>
+<pre>powershell -File tools\deploy\kylin\pack-data.ps1 -Out F:\     <span class="c"># F: 为 U 盘；服务运行中即可（热快照）</span></pre>
+<h3>C.3 SDK 版本</h3>
+<p>SDK（@twin/web-sdk）先在 threejs-twin-p0 执行 <code>npm run build:web-sdk</code>、核对 dist 版本号与 <code>REVISION = "187"</code> 后 <code>npm publish -w @twin/web-sdk</code>；交付端 <code>npm install @twin/web-sdk@x.y.z --save-exact</code> 后再执行 C.1。</p>
+<div class="warn">一体机上不需要 npm / Verdaccio：大屏与平台都以构建产物形式发布，运行时只用随包的 Node 22。</div>
+
+<p style="margin-top:48px;color:var(--muted);font-size:13px">手册随程序版本一起更新 · 本文件位于部署目录 docs/运维手册.html</p>
+</main>
+</div>
+<script>
+  document.querySelectorAll('pre').forEach((pre) => {
+    const btn = document.createElement('button');
+    btn.className = 'copy'; btn.textContent = '复制';
+    btn.onclick = () => {
+      const text = [...pre.childNodes].filter((n) => !(n.classList && n.classList.contains('copy'))).map((n) => n.textContent).join('')
+        .split('\n').map((l) => l.replace(/\s+#\s.*$/, '').replace(/^#.*$/, '')).filter((l) => l.trim()).join('\n');
+      const done = () => { btn.textContent = '已复制'; setTimeout(() => (btn.textContent = '复制'), 1500); };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done);
+      else { const a = document.createElement('textarea'); a.value = text; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); done(); }
+    };
+    pre.appendChild(btn);
+  });
+</script>
+</body>
+</html>

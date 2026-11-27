@@ -83,7 +83,7 @@ function render() {
       const port = s.ports.includes(l.port) || !s.ports.length ? l.port : s.ports[0];
       return live ? `<a href="http://${linkHost}:${port}${l.path}" target="_blank">${esc(l.label)} ↗</a>` : `<span class="desc">${esc(l.label)}</span>`;
     }).join('') + (s.ports.length && !s.links.length ? '' : '');
-    const dup = s.instances.length > 1 ? `<div class="warn">检测到 ${s.instances.length} 个实例在运行（可能重复启动），停止会全部结束</div>` : '';
+    const dup = s.instances.length > 1 && !s.multi ? `<div class="warn">检测到 ${s.instances.length} 个实例在运行（可能重复启动），停止会全部结束</div>` : '';
     const meta = s.instances.map((i) => `PID ${i.pid}（${i.processes} 个进程）${i.ports.length ? ' · 端口 ' + i.ports.join(', ') : ''}`).join('<br>');
     const running = s.instances.length > 0;
     return `<section class="card">
