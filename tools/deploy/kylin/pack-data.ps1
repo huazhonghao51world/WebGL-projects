@@ -7,7 +7,7 @@
 # 用法：powershell -File tools\deploy\kylin\pack-data.ps1 [-Out <输出目录>]
 # 传输：向日葵「远程文件」把整个 xy-data-<日期> 文件夹拖到一体机桌面 → 一体机执行 bash xy.sh import-data（自动找桌面）
 param(
-  [string]$Out = 'E:\All_in_wdp\deploy-build\data-packs',
+  [string]$Out = 'E:\All_in_wdp\wdpapi_sdk\threejs-twin-research\xy-deploy-data-package',
   [string]$Source = 'E:\All_in_wdp\wdpapi_sdk\threejs-twin-p0\.data'
 )
 $ErrorActionPreference = 'Stop'
