@@ -1,0 +1,59 @@
+# XY 工厂监控 · 演示视频源（开源工厂视频循环推流，无需真实摄像头，可外网演示）
+# 素材见 videos/README.md（Wikimedia Commons，CC BY / CC BY-SA，已转码为 H.264 720p 无音频）
+# 本机：start-xy-cameras-demo.bat；一体机：bash xy.sh camera demo（切回真实摄像头：bash xy.sh camera live）
+logLevel: warn
+api: false
+metrics: false
+pprof: false
+playback: false
+rtsp: true
+rtspAddress: :8554
+rtspTransports: [tcp]
+rtmp: false
+srt: false
+moq: false
+hls: true
+hlsAddress: :8888
+hlsAllowOrigins: ["*"]
+hlsVariant: lowLatency
+webrtc: true
+webrtcAddress: :8889
+webrtcAllowOrigins: ["*"]
+webrtcLocalUDPAddress: :8189
+webrtcLocalTCPAddress: :8189
+
+pathDefaults:
+  sourceOnDemand: no
+
+paths:
+  # 4 路素材按需循环推流（-c copy 不转码，CPU 几乎为 0）
+  demo-press:
+    runOnDemand: ./ffmpeg.exe -hide_banner -loglevel error -re -stream_loop -1 -i ./videos/press.mp4 -c copy -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemandRestart: yes
+    runOnDemandCloseAfter: 15s
+  demo-packaging:
+    runOnDemand: ./ffmpeg.exe -hide_banner -loglevel error -re -stream_loop -1 -i ./videos/packaging.mp4 -c copy -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemandRestart: yes
+    runOnDemandCloseAfter: 15s
+  demo-pulper:
+    runOnDemand: ./ffmpeg.exe -hide_banner -loglevel error -re -stream_loop -1 -i ./videos/pulper.mp4 -c copy -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemandRestart: yes
+    runOnDemandCloseAfter: 15s
+  demo-workshop:
+    runOnDemand: ./ffmpeg.exe -hide_banner -loglevel error -re -stream_loop -1 -i ./videos/workshop.mp4 -c copy -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemandRestart: yes
+    runOnDemandCloseAfter: 15s
+  # cam1–cam13 轮流复用 4 路素材
+  cam1: { source: rtsp://127.0.0.1:8554/demo-press, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam2: { source: rtsp://127.0.0.1:8554/demo-packaging, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam3: { source: rtsp://127.0.0.1:8554/demo-pulper, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam4: { source: rtsp://127.0.0.1:8554/demo-workshop, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam5: { source: rtsp://127.0.0.1:8554/demo-press, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam6: { source: rtsp://127.0.0.1:8554/demo-packaging, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam7: { source: rtsp://127.0.0.1:8554/demo-pulper, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam8: { source: rtsp://127.0.0.1:8554/demo-workshop, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam9: { source: rtsp://127.0.0.1:8554/demo-press, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam10: { source: rtsp://127.0.0.1:8554/demo-packaging, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam11: { source: rtsp://127.0.0.1:8554/demo-pulper, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam12: { source: rtsp://127.0.0.1:8554/demo-workshop, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }
+  cam13: { source: rtsp://127.0.0.1:8554/demo-press, sourceOnDemand: yes, sourceOnDemandCloseAfter: 15s, rtspTransport: tcp }

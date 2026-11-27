@@ -100,6 +100,11 @@ New-Item -ItemType Directory -Force "$App\bin", "$App\service-panel", "$Work\pac
 Copy-Item "$Proj\tools\deploy\site-server.js", "$Proj\tools\deploy\snapshot-data.mjs" "$App\bin" -Force
 foreach ($f in 'server.js', 'index.html', 'README.md', 'package.json') { Copy-Item "$Twin\tools\service-panel\$f" "$App\service-panel" -Force }
 Copy-Item "$Kylin\services.kylin.json" "$App\service-panel" -Force
+# 监控演示视频源（bash xy.sh camera demo）：Linux 下 ffmpeg 在 PATH 中，不带 ./ 与 .exe
+New-Item -ItemType Directory -Force "$App\video\videos" | Out-Null
+$demo = [IO.File]::ReadAllText("$Proj\tools\rtsp\xy-cameras.demo.yml") -replace '\./ffmpeg\.exe', 'ffmpeg'
+[IO.File]::WriteAllText("$App\video\xy-cameras.demo.yml", $demo, (New-Object Text.UTF8Encoding $false))
+Copy-Item "$Proj\tools\rtsp\videos\*.mp4", "$Proj\tools\rtsp\videos\README.md" "$App\video\videos" -Force
 Get-ChildItem $Kylin -File | Where-Object { $_.Name -match '\.sh$|^xy\.env\.example$|^\.gitattributes$' } | Copy-Item -Destination $Work -Force
 if (Test-Path "$Kylin\运维手册") { Mirror "$Kylin\运维手册" "$Work\docs" }
 $arches = @('x64'); if ($WithArm64 -or (Test-Path "$Work\packages\node-arm64.tar.xz")) { $arches += 'arm64' }
