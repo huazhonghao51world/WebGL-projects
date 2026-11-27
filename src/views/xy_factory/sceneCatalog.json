@@ -1,0 +1,1860 @@
+{
+ "source": "xy-delivery-1.1.0",
+ "devices": [
+  {
+   "id": "AGV-01",
+   "g": "AGV",
+   "name": "AGV 叉车",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "AGV车",
+   "min": [
+    95.83,
+    19.35,
+    -51.67
+   ],
+   "max": [
+    97.45,
+    21.05,
+    -50.75
+   ],
+   "center": [
+    96.64,
+    20.2,
+    -51.21
+   ]
+  },
+  {
+   "id": "CSGZJ-01",
+   "g": "CSGZJ",
+   "name": "除湿干燥机 01",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_CSGZJ_01",
+   "min": [
+    57.51,
+    14.16,
+    17.07
+   ],
+   "max": [
+    58.78,
+    16.93,
+    17.9
+   ],
+   "center": [
+    58.14,
+    15.55,
+    17.48
+   ]
+  },
+  {
+   "id": "CSGZJ-02",
+   "g": "CSGZJ",
+   "name": "除湿干燥机 02",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_CSGZJ_2",
+   "min": [
+    60.8,
+    14.16,
+    16.94
+   ],
+   "max": [
+    62.07,
+    16.93,
+    17.77
+   ],
+   "center": [
+    61.43,
+    15.55,
+    17.35
+   ]
+  },
+  {
+   "id": "CSGZJ-03",
+   "g": "CSGZJ",
+   "name": "除湿干燥机 03",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_CSGZJ_3",
+   "min": [
+    71.55,
+    14.16,
+    16.51
+   ],
+   "max": [
+    72.82,
+    16.93,
+    17.35
+   ],
+   "center": [
+    72.19,
+    15.55,
+    16.93
+   ]
+  },
+  {
+   "id": "DDJ-01",
+   "g": "DDJ",
+   "name": "堆垛机",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "一级",
+   "min": [
+    25.89,
+    13.66,
+    -55.87
+   ],
+   "max": [
+    28.66,
+    30.31,
+    -53.15
+   ],
+   "center": [
+    27.27,
+    21.98,
+    -54.51
+   ]
+  },
+  {
+   "id": "GZJ-01",
+   "g": "GZJ",
+   "name": "干燥机 01",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_GZJ_01",
+   "min": [
+    7.35,
+    13.86,
+    -23.6
+   ],
+   "max": [
+    7.73,
+    15.96,
+    -22.48
+   ],
+   "center": [
+    7.54,
+    14.91,
+    -23.04
+   ]
+  },
+  {
+   "id": "GZJ-02",
+   "g": "GZJ",
+   "name": "干燥机 02",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_GZJ_2",
+   "min": [
+    7.44,
+    13.86,
+    -21.15
+   ],
+   "max": [
+    7.83,
+    15.96,
+    -20.04
+   ],
+   "center": [
+    7.64,
+    14.91,
+    -20.59
+   ]
+  },
+  {
+   "id": "GZJ-03",
+   "g": "GZJ",
+   "name": "干燥机 03",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_GZJ_3",
+   "min": [
+    7.53,
+    13.86,
+    -18.98
+   ],
+   "max": [
+    7.91,
+    15.96,
+    -17.86
+   ],
+   "center": [
+    7.72,
+    14.91,
+    -18.42
+   ]
+  },
+  {
+   "id": "JXB-A",
+   "g": "JXB",
+   "name": "组装机械臂 A",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "机械臂A",
+   "min": [
+    88.07,
+    20.74,
+    -49.72
+   ],
+   "max": [
+    90.04,
+    22.61,
+    -48.85
+   ],
+   "center": [
+    89.05,
+    21.67,
+    -49.29
+   ]
+  },
+  {
+   "id": "JXB-B",
+   "g": "JXB",
+   "name": "组装机械臂 B",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "机械臂B底座",
+   "min": [
+    89.05,
+    20.73,
+    -54.7
+   ],
+   "max": [
+    89.84,
+    21.17,
+    -53.95
+   ],
+   "center": [
+    89.44,
+    20.95,
+    -54.32
+   ]
+  },
+  {
+   "id": "SSYT-01",
+   "g": "SSYT",
+   "name": "三机一体除湿干燥机 01",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_SSYTSCSGZJ_1",
+   "min": [
+    36.5,
+    13.88,
+    17.95
+   ],
+   "max": [
+    37.44,
+    16.19,
+    18.54
+   ],
+   "center": [
+    36.97,
+    15.03,
+    18.24
+   ]
+  },
+  {
+   "id": "SSYT-02",
+   "g": "SSYT",
+   "name": "三机一体除湿干燥机 02",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_SSYTSCSGZJ_2",
+   "min": [
+    38.19,
+    13.88,
+    17.89
+   ],
+   "max": [
+    39.12,
+    16.19,
+    18.47
+   ],
+   "center": [
+    38.66,
+    15.03,
+    18.18
+   ]
+  },
+  {
+   "id": "TSJ-01",
+   "g": "TSJ",
+   "name": "提升机 1F",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_LK_TSJ_1F",
+   "min": [
+    80.82,
+    13.65,
+    -13.48
+   ],
+   "max": [
+    91.96,
+    22.11,
+    9.72
+   ],
+   "center": [
+    86.39,
+    17.88,
+    -1.88
+   ]
+  },
+  {
+   "id": "TSJ-02",
+   "g": "TSJ",
+   "name": "提升机 2F",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_LK_TSJ_2F",
+   "min": [
+    82.95,
+    17.94,
+    -25.89
+   ],
+   "max": [
+    91.25,
+    22.72,
+    -8.17
+   ],
+   "center": [
+    87.1,
+    20.33,
+    -17.03
+   ]
+  },
+  {
+   "id": "ZJXB-C",
+   "g": "ZJXB",
+   "name": "中转机械臂 C",
+   "entityId": "xy-mesh",
+   "nodeName": "中转机械臂C",
+   "min": [
+    72.25,
+    14.44,
+    -0.25
+   ],
+   "max": [
+    72.77,
+    15.68,
+    0.48
+   ],
+   "center": [
+    72.51,
+    15.06,
+    0.11
+   ]
+  },
+  {
+   "id": "ZJXB-E",
+   "g": "ZJXB",
+   "name": "中转机械臂 E",
+   "entityId": "xy-mesh",
+   "nodeName": "中转机械臂E",
+   "min": [
+    69.34,
+    14.44,
+    0.51
+   ],
+   "max": [
+    69.98,
+    15.68,
+    0.86
+   ],
+   "center": [
+    69.66,
+    15.06,
+    0.68
+   ]
+  },
+  {
+   "id": "ZSJ-A",
+   "g": "ZSJ-F",
+   "name": "注塑机 A（FANUC-13）",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "注塑机A",
+   "min": [
+    33.89,
+    13.65,
+    8.87
+   ],
+   "max": [
+    36.55,
+    16.62,
+    15.38
+   ],
+   "center": [
+    35.22,
+    15.13,
+    12.12
+   ]
+  },
+  {
+   "id": "ZSJ-B",
+   "g": "ZSJ-F",
+   "name": "注塑机 B（FANUC-14）",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "注塑机B",
+   "min": [
+    37.42,
+    13.65,
+    8.73
+   ],
+   "max": [
+    40.08,
+    16.62,
+    15.24
+   ],
+   "center": [
+    38.75,
+    15.13,
+    11.98
+   ]
+  },
+  {
+   "id": "ZSJ-F01",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-01",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_01",
+   "min": [
+    -6.96,
+    13.65,
+    12.91
+   ],
+   "max": [
+    -4.32,
+    16.62,
+    19.42
+   ],
+   "center": [
+    -5.64,
+    15.13,
+    16.16
+   ]
+  },
+  {
+   "id": "ZSJ-F02",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-02",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_2",
+   "min": [
+    -3.37,
+    13.65,
+    12.76
+   ],
+   "max": [
+    -0.73,
+    16.62,
+    19.28
+   ],
+   "center": [
+    -2.05,
+    15.13,
+    16.02
+   ]
+  },
+  {
+   "id": "ZSJ-F03",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-03",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_3",
+   "min": [
+    0.24,
+    13.65,
+    12.62
+   ],
+   "max": [
+    2.88,
+    16.62,
+    19.14
+   ],
+   "center": [
+    1.56,
+    15.13,
+    15.88
+   ]
+  },
+  {
+   "id": "ZSJ-F04",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-04",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_4",
+   "min": [
+    3.32,
+    13.65,
+    12.5
+   ],
+   "max": [
+    5.96,
+    16.62,
+    19.02
+   ],
+   "center": [
+    4.64,
+    15.13,
+    15.76
+   ]
+  },
+  {
+   "id": "ZSJ-F05",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-05",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_5",
+   "min": [
+    -5.84,
+    13.65,
+    -12.13
+   ],
+   "max": [
+    -3.2,
+    16.62,
+    -5.61
+   ],
+   "center": [
+    -4.52,
+    15.13,
+    -8.87
+   ]
+  },
+  {
+   "id": "ZSJ-F06",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-06",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_6",
+   "min": [
+    6.99,
+    13.65,
+    10.27
+   ],
+   "max": [
+    9.63,
+    16.62,
+    16.78
+   ],
+   "center": [
+    8.31,
+    15.13,
+    13.52
+   ]
+  },
+  {
+   "id": "ZSJ-F07",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-07",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_7",
+   "min": [
+    10.7,
+    13.65,
+    10.12
+   ],
+   "max": [
+    13.35,
+    16.62,
+    16.64
+   ],
+   "center": [
+    12.02,
+    15.13,
+    13.38
+   ]
+  },
+  {
+   "id": "ZSJ-F08",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-08",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_8",
+   "min": [
+    14.53,
+    13.65,
+    9.97
+   ],
+   "max": [
+    17.17,
+    16.62,
+    16.48
+   ],
+   "center": [
+    15.85,
+    15.13,
+    13.23
+   ]
+  },
+  {
+   "id": "ZSJ-F09",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-09",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_9",
+   "min": [
+    18.54,
+    13.65,
+    9.81
+   ],
+   "max": [
+    21.18,
+    16.62,
+    16.33
+   ],
+   "center": [
+    19.86,
+    15.13,
+    13.07
+   ]
+  },
+  {
+   "id": "ZSJ-F10",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-10",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_10",
+   "min": [
+    22.87,
+    13.65,
+    9.3
+   ],
+   "max": [
+    25.51,
+    16.62,
+    15.82
+   ],
+   "center": [
+    24.19,
+    15.13,
+    12.56
+   ]
+  },
+  {
+   "id": "ZSJ-F11",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-11",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_11",
+   "min": [
+    26.06,
+    13.65,
+    9.18
+   ],
+   "max": [
+    28.7,
+    16.62,
+    15.69
+   ],
+   "center": [
+    27.38,
+    15.13,
+    12.43
+   ]
+  },
+  {
+   "id": "ZSJ-F12",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-12",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_12",
+   "min": [
+    29.67,
+    13.65,
+    9.03
+   ],
+   "max": [
+    32.31,
+    16.62,
+    15.55
+   ],
+   "center": [
+    30.99,
+    15.13,
+    12.29
+   ]
+  },
+  {
+   "id": "ZSJ-F15",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-15",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_15",
+   "min": [
+    41.12,
+    13.65,
+    8.58
+   ],
+   "max": [
+    43.76,
+    16.62,
+    15.1
+   ],
+   "center": [
+    42.44,
+    15.13,
+    11.84
+   ]
+  },
+  {
+   "id": "ZSJ-F16",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-16",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_16",
+   "min": [
+    45.55,
+    13.65,
+    8.4
+   ],
+   "max": [
+    48.2,
+    16.62,
+    14.92
+   ],
+   "center": [
+    46.87,
+    15.13,
+    11.66
+   ]
+  },
+  {
+   "id": "ZSJ-F17",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-17",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_17",
+   "min": [
+    49.03,
+    13.65,
+    8.27
+   ],
+   "max": [
+    51.67,
+    16.62,
+    14.78
+   ],
+   "center": [
+    50.35,
+    15.13,
+    11.53
+   ]
+  },
+  {
+   "id": "ZSJ-F18",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-18",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_18",
+   "min": [
+    52.16,
+    13.65,
+    8.14
+   ],
+   "max": [
+    54.8,
+    16.62,
+    14.66
+   ],
+   "center": [
+    53.48,
+    15.13,
+    11.4
+   ]
+  },
+  {
+   "id": "ZSJ-F19",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-19",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_19",
+   "min": [
+    55.82,
+    13.65,
+    8
+   ],
+   "max": [
+    58.46,
+    16.62,
+    14.52
+   ],
+   "center": [
+    57.14,
+    15.13,
+    11.26
+   ]
+  },
+  {
+   "id": "ZSJ-F20",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-20",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_20",
+   "min": [
+    60.41,
+    13.65,
+    7.82
+   ],
+   "max": [
+    63.05,
+    16.62,
+    14.34
+   ],
+   "center": [
+    61.73,
+    15.13,
+    11.08
+   ]
+  },
+  {
+   "id": "ZSJ-F21",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-21",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_21",
+   "min": [
+    63.38,
+    13.65,
+    7.7
+   ],
+   "max": [
+    66.02,
+    16.62,
+    14.22
+   ],
+   "center": [
+    64.7,
+    15.13,
+    10.96
+   ]
+  },
+  {
+   "id": "ZSJ-F22",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-22",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_22",
+   "min": [
+    67.35,
+    13.65,
+    7.79
+   ],
+   "max": [
+    69.99,
+    16.62,
+    14.31
+   ],
+   "center": [
+    68.67,
+    15.13,
+    11.05
+   ]
+  },
+  {
+   "id": "ZSJ-F23",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-23",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_23",
+   "min": [
+    70.08,
+    13.65,
+    7.82
+   ],
+   "max": [
+    72.72,
+    16.62,
+    14.34
+   ],
+   "center": [
+    71.4,
+    15.13,
+    11.08
+   ]
+  },
+  {
+   "id": "ZSJ-F24",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-24",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_24",
+   "min": [
+    -2.89,
+    13.65,
+    -12.24
+   ],
+   "max": [
+    -0.25,
+    16.62,
+    -5.72
+   ],
+   "center": [
+    -1.57,
+    15.13,
+    -8.98
+   ]
+  },
+  {
+   "id": "ZSJ-F25",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-25",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_25",
+   "min": [
+    0.27,
+    13.65,
+    -12.37
+   ],
+   "max": [
+    2.91,
+    16.62,
+    -5.85
+   ],
+   "center": [
+    1.59,
+    15.13,
+    -9.11
+   ]
+  },
+  {
+   "id": "ZSJ-F26",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-26",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_26",
+   "min": [
+    3.24,
+    13.65,
+    -12.48
+   ],
+   "max": [
+    5.89,
+    16.62,
+    -5.97
+   ],
+   "center": [
+    4.56,
+    15.13,
+    -9.23
+   ]
+  },
+  {
+   "id": "ZSJ-F27",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-27",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_27",
+   "min": [
+    43.82,
+    13.65,
+    -25
+   ],
+   "max": [
+    46.46,
+    16.62,
+    -18.48
+   ],
+   "center": [
+    45.14,
+    15.13,
+    -21.74
+   ]
+  },
+  {
+   "id": "ZSJ-F28",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-28",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_28",
+   "min": [
+    46.45,
+    13.65,
+    -25.11
+   ],
+   "max": [
+    49.09,
+    16.62,
+    -18.59
+   ],
+   "center": [
+    47.77,
+    15.13,
+    -21.85
+   ]
+  },
+  {
+   "id": "ZSJ-F29",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-29",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_29",
+   "min": [
+    49.06,
+    13.65,
+    -25.21
+   ],
+   "max": [
+    51.7,
+    16.62,
+    -18.69
+   ],
+   "center": [
+    50.38,
+    15.13,
+    -21.95
+   ]
+  },
+  {
+   "id": "ZSJ-F30",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-30",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_30",
+   "min": [
+    51.68,
+    13.65,
+    -25.31
+   ],
+   "max": [
+    54.32,
+    16.62,
+    -18.8
+   ],
+   "center": [
+    53,
+    15.13,
+    -22.05
+   ]
+  },
+  {
+   "id": "ZSJ-F31",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-31",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_31",
+   "min": [
+    54.27,
+    13.65,
+    -25.41
+   ],
+   "max": [
+    56.91,
+    16.62,
+    -18.9
+   ],
+   "center": [
+    55.59,
+    15.13,
+    -22.16
+   ]
+  },
+  {
+   "id": "ZSJ-F32",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-32",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_32",
+   "min": [
+    56.83,
+    13.65,
+    -25.52
+   ],
+   "max": [
+    59.47,
+    16.62,
+    -19
+   ],
+   "center": [
+    58.15,
+    15.13,
+    -22.26
+   ]
+  },
+  {
+   "id": "ZSJ-F33",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-33",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_33",
+   "min": [
+    59.54,
+    13.65,
+    -25.62
+   ],
+   "max": [
+    62.18,
+    16.62,
+    -19.11
+   ],
+   "center": [
+    60.86,
+    15.13,
+    -22.36
+   ]
+  },
+  {
+   "id": "ZSJ-F34",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-34",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_34",
+   "min": [
+    62.14,
+    13.65,
+    -26.08
+   ],
+   "max": [
+    65.07,
+    16.95,
+    -18.83
+   ],
+   "center": [
+    63.61,
+    15.3,
+    -22.46
+   ]
+  },
+  {
+   "id": "ZSJ-F35",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-35",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_35",
+   "min": [
+    65.08,
+    13.65,
+    -25.84
+   ],
+   "max": [
+    67.72,
+    16.62,
+    -19.32
+   ],
+   "center": [
+    66.4,
+    15.13,
+    -22.58
+   ]
+  },
+  {
+   "id": "ZSJ-F36",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-36",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_36",
+   "min": [
+    67.79,
+    13.65,
+    -25.95
+   ],
+   "max": [
+    70.43,
+    16.62,
+    -19.43
+   ],
+   "center": [
+    69.11,
+    15.13,
+    -22.69
+   ]
+  },
+  {
+   "id": "ZSJ-F37",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-37",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_37",
+   "min": [
+    70.25,
+    13.65,
+    -26.05
+   ],
+   "max": [
+    72.89,
+    16.62,
+    -19.53
+   ],
+   "center": [
+    71.57,
+    15.13,
+    -22.79
+   ]
+  },
+  {
+   "id": "ZSJ-F38",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-38",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_38",
+   "min": [
+    72.99,
+    13.65,
+    -26.15
+   ],
+   "max": [
+    75.63,
+    16.62,
+    -19.64
+   ],
+   "center": [
+    74.31,
+    15.13,
+    -22.9
+   ]
+  },
+  {
+   "id": "ZSJ-F39",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-39",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_39",
+   "min": [
+    75.85,
+    13.65,
+    -26.27
+   ],
+   "max": [
+    78.49,
+    16.62,
+    -19.75
+   ],
+   "center": [
+    77.17,
+    15.13,
+    -23.01
+   ]
+  },
+  {
+   "id": "ZSJ-F40",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-40",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_40",
+   "min": [
+    78.58,
+    13.65,
+    -26.38
+   ],
+   "max": [
+    81.22,
+    16.62,
+    -19.86
+   ],
+   "center": [
+    79.9,
+    15.13,
+    -23.12
+   ]
+  },
+  {
+   "id": "ZSJ-F41",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-41",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_41",
+   "min": [
+    41.86,
+    13.65,
+    -12.56
+   ],
+   "max": [
+    48.38,
+    16.62,
+    -9.92
+   ],
+   "center": [
+    45.12,
+    15.13,
+    -11.24
+   ]
+  },
+  {
+   "id": "ZSJ-F42",
+   "g": "ZSJ-F",
+   "name": "注塑机 FANUC-42",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZSJ_FANUC_42",
+   "min": [
+    41.99,
+    13.65,
+    -9.3
+   ],
+   "max": [
+    48.51,
+    16.62,
+    -6.66
+   ],
+   "center": [
+    45.25,
+    15.13,
+    -7.98
+   ]
+  },
+  {
+   "id": "ZSJ-Z01",
+   "g": "ZSJ-Z",
+   "name": "注塑机 ZHAFIR-01",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZSJ_ZHAFIR_01",
+   "min": [
+    21.04,
+    13.64,
+    -24.93
+   ],
+   "max": [
+    23.97,
+    16.94,
+    -17.69
+   ],
+   "center": [
+    22.51,
+    15.29,
+    -21.31
+   ]
+  },
+  {
+   "id": "ZSJ-Z02",
+   "g": "ZSJ-Z",
+   "name": "注塑机 ZHAFIR-02",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZSJ_ZHAFIR_2",
+   "min": [
+    24.91,
+    13.64,
+    -25.09
+   ],
+   "max": [
+    27.85,
+    16.94,
+    -17.84
+   ],
+   "center": [
+    26.38,
+    15.29,
+    -21.47
+   ]
+  },
+  {
+   "id": "ZSJ-Z03",
+   "g": "ZSJ-Z",
+   "name": "注塑机 ZHAFIR-03",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZSJ_ZHAFIR_3",
+   "min": [
+    28.77,
+    13.64,
+    -25.24
+   ],
+   "max": [
+    31.7,
+    16.94,
+    -18
+   ],
+   "center": [
+    30.23,
+    15.29,
+    -21.62
+   ]
+  },
+  {
+   "id": "ZSJ-Z04",
+   "g": "ZSJ-Z",
+   "name": "注塑机 ZHAFIR-04",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZSJ_ZHAFIR_4",
+   "min": [
+    32.65,
+    13.64,
+    -25.39
+   ],
+   "max": [
+    35.58,
+    16.94,
+    -18.15
+   ],
+   "center": [
+    34.11,
+    15.29,
+    -21.77
+   ]
+  },
+  {
+   "id": "ZSJ-Z05",
+   "g": "ZSJ-Z",
+   "name": "注塑机 ZHAFIR-05",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZSJ_ZHAFIR_5",
+   "min": [
+    36.7,
+    13.64,
+    -25.61
+   ],
+   "max": [
+    39.63,
+    16.94,
+    -18.37
+   ],
+   "center": [
+    38.17,
+    15.29,
+    -21.99
+   ]
+  },
+  {
+   "id": "ZSJ-Z06",
+   "g": "ZSJ-Z",
+   "name": "注塑机 ZHAFIR-06",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZSJ_ZHAFIR_6",
+   "min": [
+    40.28,
+    13.64,
+    -25.75
+   ],
+   "max": [
+    43.21,
+    16.94,
+    -18.51
+   ],
+   "center": [
+    41.74,
+    15.29,
+    -22.13
+   ]
+  },
+  {
+   "id": "ZYGL-01",
+   "g": "ZYGL",
+   "name": "中央供料系统 01",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZYGL_01",
+   "min": [
+    4.77,
+    13.65,
+    -21.24
+   ],
+   "max": [
+    5.94,
+    17.83,
+    -19.59
+   ],
+   "center": [
+    5.35,
+    15.74,
+    -20.42
+   ]
+  },
+  {
+   "id": "ZYGL-02",
+   "g": "ZYGL",
+   "name": "中央供料系统 02",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_BLF_ZYGL_2",
+   "min": [
+    11.42,
+    13.65,
+    18.77
+   ],
+   "max": [
+    12.58,
+    16.58,
+    19.59
+   ],
+   "center": [
+    12,
+    15.11,
+    19.18
+   ]
+  },
+  {
+   "id": "ZYJ-01",
+   "g": "ZYJ",
+   "name": "转运机 1",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "转运机1",
+   "min": [
+    78.6,
+    19.48,
+    -45.77
+   ],
+   "max": [
+    79.64,
+    21.79,
+    -43.67
+   ],
+   "center": [
+    79.12,
+    20.63,
+    -44.72
+   ]
+  },
+  {
+   "id": "ZYJ-02",
+   "g": "ZYJ",
+   "name": "转运机 2",
+   "entityId": "xy-prop-sq3",
+   "nodeName": "转运机2",
+   "min": [
+    85.52,
+    19.48,
+    -45.44
+   ],
+   "max": [
+    86.56,
+    21.78,
+    -43.34
+   ],
+   "center": [
+    86.04,
+    20.63,
+    -44.39
+   ]
+  },
+  {
+   "id": "ZZXA",
+   "g": "ZZX",
+   "name": "组装线 A",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZZXA",
+   "min": [
+    69.24,
+    13.63,
+    -3.29
+   ],
+   "max": [
+    77.01,
+    16.81,
+    10.44
+   ],
+   "center": [
+    73.12,
+    15.22,
+    3.58
+   ]
+  },
+  {
+   "id": "ZZXB",
+   "g": "ZZX",
+   "name": "组装线 B",
+   "entityId": "xy-shinei",
+   "nodeName": "SM_XY_ZZXB",
+   "min": [
+    51.99,
+    13.65,
+    -4.34
+   ],
+   "max": [
+    69.05,
+    16.83,
+    12.24
+   ],
+   "center": [
+    60.52,
+    15.24,
+    3.95
+   ]
+  }
+ ],
+ "facilities": [
+  {
+   "kind": "hydrant",
+   "name": "消火栓",
+   "floor": "2F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_BJ_XHS_生产楼_2F",
+   "min": [
+    -8.01,
+    19.43,
+    -8.11
+   ],
+   "max": [
+    92.4,
+    21.47,
+    23.68
+   ],
+   "center": [
+    42.2,
+    20.45,
+    7.78
+   ]
+  },
+  {
+   "kind": "alarm",
+   "name": "消防报警器",
+   "floor": "2F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_BJ_XFBJQ_生产楼_2F",
+   "min": [
+    -9.67,
+    20.07,
+    -11.82
+   ],
+   "max": [
+    88.1,
+    20.63,
+    8.95
+   ],
+   "center": [
+    39.22,
+    20.35,
+    -1.44
+   ]
+  },
+  {
+   "kind": "alarm",
+   "name": "消防报警器",
+   "floor": "2F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_BJ_BJQ_生产楼_2F",
+   "min": [
+    -9.45,
+    21.43,
+    -6.22
+   ],
+   "max": [
+    88.11,
+    21.53,
+    8.94
+   ],
+   "center": [
+    39.33,
+    21.48,
+    1.36
+   ]
+  },
+  {
+   "kind": "exit",
+   "name": "安全出口",
+   "floor": "2F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_BJ_AQCK_生产楼_2F",
+   "min": [
+    -9.52,
+    19.74,
+    -8.06
+   ],
+   "max": [
+    90.49,
+    21.75,
+    9.66
+   ],
+   "center": [
+    40.49,
+    20.75,
+    0.8
+   ]
+  },
+  {
+   "kind": "alarm",
+   "name": "消防报警器",
+   "floor": "1F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_BJQ_01_生产楼_1F",
+   "min": [
+    -11.49,
+    15.87,
+    -6.71
+   ],
+   "max": [
+    90.77,
+    16.21,
+    24.24
+   ],
+   "center": [
+    39.64,
+    16.04,
+    8.76
+   ]
+  },
+  {
+   "kind": "alarm",
+   "name": "消防报警器",
+   "floor": "1F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_XFBJQ_01_生产楼_1F",
+   "min": [
+    -11.64,
+    14.95,
+    -15.57
+   ],
+   "max": [
+    90.76,
+    15.34,
+    24.22
+   ],
+   "center": [
+    39.56,
+    15.15,
+    4.33
+   ]
+  },
+  {
+   "kind": "exit",
+   "name": "安全出口",
+   "floor": "1F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_AQCK_01_生产楼_1F",
+   "min": [
+    -11.56,
+    14.18,
+    -8.29
+   ],
+   "max": [
+    92.72,
+    16.44,
+    24.23
+   ],
+   "center": [
+    40.58,
+    15.31,
+    7.97
+   ]
+  },
+  {
+   "kind": "hydrant",
+   "name": "消火栓",
+   "floor": "1F",
+   "entityId": "xy-campus-core",
+   "nodeName": "SM_xiaohuoshuan_01_生产楼_1F",
+   "min": [
+    -11.59,
+    13.75,
+    -8.21
+   ],
+   "max": [
+    91.14,
+    15.97,
+    24.13
+   ],
+   "center": [
+    39.78,
+    14.86,
+    7.96
+   ]
+  }
+ ],
+ "regions": {
+  "racks": {
+   "min": [
+    -36.71,
+    13.65,
+    -59.04
+   ],
+   "max": [
+    75.27,
+    30.3,
+    -38.52
+   ],
+   "center": [
+    19.28,
+    21.98,
+    -48.78
+   ]
+  },
+  "warehouse": {
+   "min": [
+    -43.41,
+    13.48,
+    -62.64
+   ],
+   "max": [
+    101.19,
+    32.98,
+    -10.66
+   ],
+   "center": [
+    28.89,
+    23.23,
+    -36.65
+   ]
+  },
+  "production": {
+   "min": [
+    -24.46,
+    13.43,
+    -29.48
+   ],
+   "max": [
+    99.72,
+    29.42,
+    27.78
+   ],
+   "center": [
+    37.63,
+    21.42,
+    -0.85
+   ]
+  },
+  "assemblyFeeder": {
+   "min": [
+    67.26,
+    13.61,
+    -0.17
+   ],
+   "max": [
+    70.02,
+    16.36,
+    6.71
+   ],
+   "center": [
+    68.64,
+    14.98,
+    3.27
+   ]
+  }
+ },
+ "cutaway": {
+  "production": [
+   "SM_XYBK_Build05_03_Wall_生产楼_副楼",
+   "SM_XYBK_Build05_03_NJ_生产楼_副楼",
+   "SM_XYBK_Build05_01_Ding_生产楼_3F",
+   "SM_BJ_KT_生产楼_3F",
+   "SM_BJ_LB_生产楼_3F",
+   "SM_BJ_KTFD_生产楼_3F",
+   "SM_BJ_D_生产楼_3F",
+   "SM_BJ_PFK_生产楼_3F",
+   "SM_XYBK_Build05_02_Ding_生产楼_3F",
+   "SM_BJ_TFTB_生产楼_3F",
+   "SM_BJ_WXLYQ_生产楼_3F",
+   "XYBK_Build05_01_guangfu_01",
+   "SM_XYBK_Build05_01_Wall_生产楼_2F",
+   "SM_BJ_PFKa_生产楼_2F",
+   "SM_WXLYQ_01_生产楼_2F",
+   "SM_D_01_生产楼_2F",
+   "SM_BJ_01_生产楼_2F",
+   "SM_XYBK_Build05_02_Glass_生产楼_2F",
+   "SM_XYBK_Build05_02_Sn_生产楼_2F",
+   "SM_XYBK_Build05_02_Wall_生产楼_2F",
+   "SM_XYBK_Build05_02_NJ_生产楼_2F",
+   "SM_XYBK_Build05_01_NJ_生产楼_2F",
+   "SM_XYBK_Build05_01_2F_DT_03_生产楼_2F",
+   "SM_DT_02_生产楼_2F",
+   "SM_PFK_01_生产楼_2F",
+   "SM_BJ_LBa_生产楼_2F",
+   "SM_YWBJQ_01_生产楼_2F",
+   "SM_BJ_05_生产楼_2F",
+   "SM_BJ_06_生产楼_2F",
+   "SM_BJ_07_生产楼_2F",
+   "SM_BJ_B_生产楼_2F",
+   "SM_XYBK_Build05_01_Sn_生产楼_2F",
+   "SM_BJ_04_生产楼_2F",
+   "SM_XYBK_Build05_01_Glass_生产楼_2F",
+   "SM_BJ_XHS_生产楼_2F",
+   "SM_BJ_XFBJQ_生产楼_2F",
+   "SM_BJ_BJQ_生产楼_2F",
+   "SM_BJ_DX_生产楼_2F",
+   "SM_BJ_MP_生产楼_2F",
+   "SM_BJ_AQCK_生产楼_2F",
+   "SM_BJ_02_生产楼_2F",
+   "SM_BJ_03_生产楼_2F",
+   "SM_XYBK_Build05_01_2F_DT_02_生产楼_2F",
+   "SM_DT_01_生产楼_2F",
+   "SM_XYBK_Build05_01_Wall_生产楼_1F",
+   "SM_XYBK_Build05_02_Glass_生产楼_1F",
+   "SM_XYBK_Build05_02_Sn_1F_生产楼_1F",
+   "SM_XYBK_Build05_02_Wall_1F_生产楼_1F",
+   "SM_XYBK_Build05_02_NJ_生产楼_1F"
+  ],
+  "warehouse": [
+   "SM_XYBK_Build04_屋顶_库区楼_4F",
+   "SM_光伏板_库区楼_4F",
+   "SM_XYBK_Build04_SW_库区楼_3F",
+   "SM_XYBK_Build04_3F_库区楼_4F",
+   "SM_XYBK_Build04_SW_3F_WindowGlass_库区楼_4F",
+   "SM_XYBK_Build04_SB_2F02_库区楼_4F",
+   "SM_XYBK_Build04_SW_1F_库区楼_1F",
+   "SM_XYBK_Build04_SW_WindowGlass_库区楼_1F",
+   "SM_XYBK_Build04_SW_2F_库区楼_2F",
+   "SM_LOGO_库区楼_2F",
+   "SM_XYBK_Build04_SW_2F_WindowGlass1_库区楼_2F",
+   "SM_XYBK_Build04_SW_2F_WindowGlass2_库区楼_2F"
+  ]
+ }
+}

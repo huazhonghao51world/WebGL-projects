@@ -1,0 +1,42 @@
+# XY 工厂监控视频测试流（本机）。
+# 公网上的免费 RTSP 测试源均已失效（rtsp.stream / wowza 演示流实测不可用），因此在本机用 MediaMTX 提供一组真实 RTSP 流：
+#   rtsp://<本机>:8554/cam1 … cam13   ← 真实 RTSP（VLC / NVR / 第三方平台可直接拉）
+# 浏览器不能直接播放 RTSP，同一路流由 MediaMTX 转封装为 WebRTC（低延迟）供页面播放：
+#   http://<本机>:8889/cam1/whep
+# 接入真实摄像头时，把 cam 路径的 source 改成摄像头 RTSP 地址即可（页面与配置无需改动），例如：
+#   cam1: { source: rtsp://admin:<摄像头密码>@192.168.1.64:554/Streaming/Channels/101, sourceOnDemand: yes }
+logLevel: warn
+api: false
+metrics: false
+pprof: false
+playback: false
+rtsp: true
+rtspAddress: :8554
+rtspTransports: [tcp]
+rtmp: false
+srt: false
+hls: true
+hlsAddress: :8888
+hlsAllowOrigins: ["*"]
+hlsVariant: lowLatency
+webrtc: true
+webrtcAddress: :8889
+webrtcAllowOrigins: ["*"]
+webrtcLocalUDPAddress: :8189
+webrtcLocalTCPAddress: :8189
+
+pathDefaults:
+  sourceOnDemand: no
+
+paths:
+  # 现场前台摄像头为 H.265（HEVC 2560×1440），浏览器 WebRTC 不支持 HEVC：
+  # 由 ffmpeg 按需拉取前台流、转码为 H.264（1280×720，低延迟），推回本网关的 feed 路径；13 路监控共用该路。
+  feed:
+    runOnDemand: ./ffmpeg.exe -hide_banner -loglevel error -rtsp_transport tcp -i rtsp://admin:<摄像头密码>@10.67.15.4:554 -an -vf scale=1280:-2 -c:v libx264 -preset ultrafast -tune zerolatency -g 50 -b:v 2500k -f rtsp rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemandRestart: yes
+    runOnDemandCloseAfter: 15s
+  "~^cam(\\d+)$":
+    source: rtsp://127.0.0.1:8554/feed
+    sourceOnDemand: yes
+    sourceOnDemandCloseAfter: 15s
+    rtspTransport: tcp

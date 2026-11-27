@@ -19,6 +19,19 @@ module.exports = {
             errors: true,
         },
         disableHostCheck: true,
+        // 视频网关同源代理（与交付服务器 tools/deploy/xy-server.js 一致）。
+        proxy: {
+            '/xy-video/webrtc': { target: 'http://127.0.0.1:8889', pathRewrite: { '^/xy-video/webrtc': '' }, changeOrigin: true },
+            '/xy-video/hls': { target: 'http://127.0.0.1:8888', pathRewrite: { '^/xy-video/hls': '' }, changeOrigin: true,
+                // MediaMTX 首次请求会 302 到绝对路径 /camN/index.m3u8?cookieCheck=1 并下发 Secure Cookie：
+                // 需把跳转补回代理前缀，并去掉 Secure（http 页面下浏览器会丢弃 Secure Cookie，导致 manifestParsingError）。
+                onProxyRes(proxyRes) {
+                    const loc = proxyRes.headers.location;
+                    if (loc && loc.startsWith('/')) proxyRes.headers.location = '/xy-video/hls' + loc;
+                    const sc = proxyRes.headers['set-cookie'];
+                    if (sc) proxyRes.headers['set-cookie'] = sc.map((c) => c.replace(/;\s*Secure/gi, '').replace(/;\s*Partitioned/gi, '').replace(/SameSite=None/gi, 'SameSite=Lax'));
+                } },
+        },
     },
     lintOnSave: false,
     configureWebpack: {

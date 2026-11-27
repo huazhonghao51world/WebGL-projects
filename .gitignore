@@ -35,3 +35,12 @@ __pycache__/
 
 
 serve.log
+
+# 视频测试网关二进制（mediamtx / ffmpeg，按 tools/rtsp/README 下载）
+tools/rtsp/*.exe
+tools/rtsp/LICENSE
+
+# 鐜板満鎽勫儚澶撮厤缃惈瀵嗙爜锛屽彧鎻愪氦鑴辨晱妯℃澘 xy-cameras.example.yml
+tools/rtsp/xy-cameras.yml
+tools/rtsp/auto.key
+

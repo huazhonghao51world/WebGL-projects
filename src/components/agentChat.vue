@@ -20,7 +20,7 @@
         <header class="ai-head">
           <span class="ai-head__avatar"><span class="ai-orb" :class="{ 'is-thinking': busy }"><i></i></span></span>
           <div class="ai-head__info">
-            <div class="ai-head__title">场景智能助手</div>
+            <div class="ai-head__title">{{ caseInfo.name || "场景智能助手" }}</div>
             <div class="ai-head__status" :title="modeTitle">
               <span class="ai-status-dot" :class="statusClass"></span>{{ statusText }}
             </div>
@@ -39,8 +39,8 @@
         <div ref="list" class="ai-list" @scroll="onScroll">
           <!-- 欢迎卡片 -->
           <div class="ai-welcome">
-            <div class="ai-welcome__hi">你好，我是灯塔工厂场景助手</div>
-            <p>用一句话操控三维场景：查找与聚焦设备、生成标注覆盖物、驱动设备状态与报警、爆炸拆解、透视管网、产线仿真、布局编辑与测量。</p>
+            <div class="ai-welcome__hi">{{ caseInfo.title }}</div>
+            <p>{{ caseInfo.welcome }}</p>
           </div>
 
           <transition-group name="ai-msg" tag="div" class="ai-msgs">
@@ -213,6 +213,7 @@
 import { mapState } from "vuex";
 import { createSceneAgent, describeStep, RATING_OPTIONS, REASON_OPTIONS } from "@twin/web-sdk/agent";
 import { getTwinApp } from "@/utils/twin/app";
+import { currentAgentCase, mergeCustomApi } from "@/utils/twin/agentCases";
 import { emitter } from "@/utils/eventBus";
 
 const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -232,11 +233,21 @@ const SUGGESTION_GROUPS = [
 
 /**
  * 场景 AI 助手：逻辑来自 SDK（@twin/web-sdk/agent），大模型由平台网关代理；
- * 灯塔案例的专属函数（customApi）由 SDK 自动作为 case_* 工具提供给 Agent。
+ * 案例的专属函数由 SDK 自动作为 case_* 工具提供给 Agent：平台场景配置包（app.customApi）
+ * 与案例页面注册的业务能力（utils/twin/agentCases）合并后传入，页面能力优先。
  * 每轮对话记录到平台，用户可评价（满意 / 部分满足 / 不符合），在平台「Agent 管理」中统计与复核。
  */
+const LIGHTHOUSE_CASE = {
+  key: "lighthouse",
+  title: "你好，我是灯塔工厂场景助手",
+  welcome: "用一句话操控三维场景：查找与聚焦设备、生成标注覆盖物、驱动设备状态与报警、爆炸拆解、透视管网、产线仿真、布局编辑与测量。",
+  suggestions: SUGGESTION_GROUPS,
+  clientName: "dengta-twinProject",
+};
+
 export default {
   name: "AgentChat",
+  props: { caseKey: { type: String, default: "lighthouse" } },
   data() {
     return {
       open: false,
@@ -251,13 +262,20 @@ export default {
       suggestTab: 0,
       pendingSteps: [],
       messages: [],
-      suggestionGroups: SUGGESTION_GROUPS,
+      registered: currentAgentCase(),
       ratingOptions: RATING_OPTIONS,
       reasonOptions: REASON_OPTIONS,
     };
   },
   computed: {
     ...mapState(["isSceneAlready"]),
+    caseInfo() {
+      const page = this.registered && this.registered.key === this.caseKey ? this.registered : null;
+      return page || LIGHTHOUSE_CASE;
+    },
+    suggestionGroups() {
+      return this.caseInfo.suggestions || SUGGESTION_GROUPS;
+    },
     ready() {
       return this.isSceneAlready;
     },
@@ -276,17 +294,24 @@ export default {
     },
   },
   watch: {
+    open(value) { emitter.emit("agentState", value); },
     ready(value) {
       if (value) this.initAgent();
     },
   },
   mounted() {
     emitter.on("sceneUpdated", this.onSceneUpdated);
+    emitter.on("agentCaseChanged", this.onCaseChanged);
+    emitter.on("agentOpen", this.onOpenRequest);
+    // 案例页可能在本组件 data() 与订阅之间完成注册，这里补读一次
+    this.registered = currentAgentCase();
     window.addEventListener("keydown", this.onHotkey);
     if (this.ready) this.initAgent();
   },
   beforeDestroy() {
     emitter.off("sceneUpdated", this.onSceneUpdated);
+    emitter.off("agentCaseChanged", this.onCaseChanged);
+    emitter.off("agentOpen", this.onOpenRequest);
     window.removeEventListener("keydown", this.onHotkey);
     if (this.abort) this.abort.abort();
     if (this.agent) this.agent.dispose();
@@ -297,8 +322,9 @@ export default {
     ensureAgent() {
       if (!this.agent) {
         const app = getTwinApp();
-        // customApi 传 getter：案例换版后 app.customApi 会被替换，Agent 始终使用最新函数集
-        this.agent = createSceneAgent({ app, customApi: () => app && app.customApi, clientName: "dengta-twinProject" });
+        // customApi 传 getter：案例换版后 app.customApi 会被替换、页面注册的能力随路由变化，Agent 始终使用最新函数集
+        const page = () => (this.registered && this.registered.key === this.caseKey ? this.registered : null);
+        this.agent = createSceneAgent({ app, customApi: () => mergeCustomApi(app && app.customApi, page()), clientName: this.caseInfo.clientName || "dengta-twinProject", persona: this.caseInfo.persona || "" });
         if (process.env.NODE_ENV === "development") {
           window.__sceneAgent = this.agent;
           window.__runAgentScenarios = (ids) => import("@twin/web-sdk/agent").then((m) => m.runAgentScenarios(this.agent, ids));
@@ -313,6 +339,16 @@ export default {
     },
     onSceneUpdated() {
       if (this.agent) this.agent.invalidateCatalog();
+    },
+    onCaseChanged(definition) {
+      this.registered = definition;
+      this.suggestTab = 0;
+    },
+    onOpenRequest(question) {
+      if (this.open && !question) { this.open = false; return; }
+      this.openPanel();
+      if (question) this.$nextTick(() => this.send(question));
+      else this.$nextTick(this.focusInput);
     },
     onHotkey(e) {
       if (e.altKey && (e.key === "a" || e.key === "A")) {
@@ -517,6 +553,45 @@ $spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   font-size: px2rem(13);
   color: $c-text;
   font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  // XY 工厂：对齐底部场景工具条右侧空间（工具条右缘与右栏之间），与工具条垂直居中
+  // XY（新耀工厂）：由底部工具栏「AI小新」按钮唤起，不显示悬浮按钮；面板贴右栏内侧、位于工具栏上方，避开右上信息卡。
+  &.ai-in-xy {
+    left: auto;
+    right: calc(clamp(316px, 21vw, 404px) + 2 * clamp(12px, 0.9vw, 18px));
+    bottom: calc(clamp(12px, 0.9vw, 18px) + 114px);
+    z-index: 30;
+    .ai-fab { display: none !important; }
+    .ai-panel { width: 380px; height: min(540px, calc(100vh - 300px)); max-height: none; transform-origin: 100% 100%; }
+    .ai-suggest__list { max-height: 64px; overflow: hidden; }
+    .ai-panel.is-wide { width: min(560px, calc(100vw - 2 * clamp(316px, 21vw, 404px) - 80px)); }
+
+    // 统一 XY 玻璃拟态风格：深色玻璃底、细描边、12px 圆角、青蓝主色
+    .ai-fab {
+      flex-direction: column;
+      gap: 4px;
+      width: 56px;
+      padding: 10px 0 8px;
+      border-radius: 16px;
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 32px rgba(2, 6, 23, 0.45);
+      .ai-fab__orb { width: 30px; height: 30px; }
+      .ai-fab__text { text-align: center; b { font-size: 12px; } small { display: none; } }
+    }
+    .ai-panel {
+      right: -4px;
+      bottom: 0;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(15, 23, 42, 0.86);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 24px 56px rgba(2, 6, 23, 0.6), 0 0 0 1px rgba(56, 189, 248, 0.08);
+    }
+    .ai-panel__glow { opacity: 0.35; }
+    .ai-head { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  }
 
   svg {
     width: 1em;

@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@antv/g2": "^5.2.12",
-    "@twin/web-sdk": "0.6.3",
+    "@twin/web-sdk": "0.7.7",
     "axios": "^1.6.8",
     "core-js": "^3.6.4",
     "dompurify": "^3.3.3",
@@ -17,6 +17,7 @@
     "echarts-gl": "^2.0.9",
     "element-ui": "^2.15.14",
     "flv.js": "^1.6.2",
+    "hls.js": "^1.5.20",
     "markdown-it": "^14.1.1",
     "mitt": "^3.0.1",
     "regenerator-runtime": "^0.13.3",

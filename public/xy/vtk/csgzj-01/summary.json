@@ -1,0 +1,100 @@
+{
+ "title": "除湿干燥机 01 表面温度 · 料斗干燥 120 °C",
+ "fields": {
+  "Temperature": {
+   "label": "表面温度",
+   "unit": "°C",
+   "range": [
+    25,
+    140
+   ],
+   "colorMap": "turbo"
+  }
+ },
+ "frames": [
+  {
+   "frame": "frame_00.vtk",
+   "time": 0,
+   "maxTemperature": 103.9,
+   "meanTemperature": 48.3,
+   "hotPct": 0
+  },
+  {
+   "frame": "frame_01.vtk",
+   "time": 1.1,
+   "maxTemperature": 105.5,
+   "meanTemperature": 50,
+   "hotPct": 0
+  },
+  {
+   "frame": "frame_02.vtk",
+   "time": 2.2,
+   "maxTemperature": 114.6,
+   "meanTemperature": 51.7,
+   "hotPct": 1.5
+  },
+  {
+   "frame": "frame_03.vtk",
+   "time": 3.3,
+   "maxTemperature": 126,
+   "meanTemperature": 53.4,
+   "hotPct": 3.6
+  },
+  {
+   "frame": "frame_04.vtk",
+   "time": 4.4,
+   "maxTemperature": 129.2,
+   "meanTemperature": 53.9,
+   "hotPct": 4.1
+  },
+  {
+   "frame": "frame_05.vtk",
+   "time": 5.5,
+   "maxTemperature": 120.2,
+   "meanTemperature": 52.5,
+   "hotPct": 1.9
+  },
+  {
+   "frame": "frame_06.vtk",
+   "time": 6.6,
+   "maxTemperature": 113.3,
+   "meanTemperature": 51.5,
+   "hotPct": 1.3
+  },
+  {
+   "frame": "frame_07.vtk",
+   "time": 7.7,
+   "maxTemperature": 108.4,
+   "meanTemperature": 50.7,
+   "hotPct": 0.6
+  },
+  {
+   "frame": "frame_08.vtk",
+   "time": 8.8,
+   "maxTemperature": 105.6,
+   "meanTemperature": 50.2,
+   "hotPct": 0
+  },
+  {
+   "frame": "frame_09.vtk",
+   "time": 9.9,
+   "maxTemperature": 105.2,
+   "meanTemperature": 49.7,
+   "hotPct": 0
+  },
+  {
+   "frame": "frame_10.vtk",
+   "time": 11,
+   "maxTemperature": 104.8,
+   "meanTemperature": 49.4,
+   "hotPct": 0
+  },
+  {
+   "frame": "frame_11.vtk",
+   "time": 12.1,
+   "maxTemperature": 104.5,
+   "meanTemperature": 49.1,
+   "hotPct": 0
+  }
+ ]
+}

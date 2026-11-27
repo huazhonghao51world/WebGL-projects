@@ -1,0 +1,100 @@
+{
+ "title": "注塑机 A（FANUC-13）表面温度 · 正常运行",
+ "fields": {
+  "Temperature": {
+   "label": "表面温度",
+   "unit": "°C",
+   "range": [
+    25,
+    240
+   ],
+   "colorMap": "turbo"
+  }
+ },
+ "frames": [
+  {
+   "frame": "frame_00.vtk",
+   "time": 0,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.5,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_01.vtk",
+   "time": 1.1,
+   "maxTemperature": 195.5,
+   "meanTemperature": 33.2,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_02.vtk",
+   "time": 2.2,
+   "maxTemperature": 195.5,
+   "meanTemperature": 33.1,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_03.vtk",
+   "time": 3.3,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.9,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_04.vtk",
+   "time": 4.4,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.8,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_05.vtk",
+   "time": 5.5,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.8,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_06.vtk",
+   "time": 6.6,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.7,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_07.vtk",
+   "time": 7.7,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.6,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_08.vtk",
+   "time": 8.8,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.6,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_09.vtk",
+   "time": 9.9,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.6,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_10.vtk",
+   "time": 11,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.6,
+   "hotPct": 0.1
+  },
+  {
+   "frame": "frame_11.vtk",
+   "time": 12.1,
+   "maxTemperature": 195.5,
+   "meanTemperature": 32.6,
+   "hotPct": 0.1
+  }
+ ]
+}

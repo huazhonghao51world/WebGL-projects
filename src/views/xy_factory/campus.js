@@ -54,4 +54,5 @@ export function publishedAnchors(viewer) {
 export const campus = buildCampus(snapshot);
 export const { anchors, buildings, cameras, demoDevice } = campus;
 
-export const overview = { id: "xy-overview", name: "园区全景", position: [164, 220, 284], target: [10, 17, -16] };
+// 场景加载完成后的初始镜头，也是“全景”复位的目标。
+export const overview = { id: "xy-overview", name: "园区全景", position: [174.49, 140.58, 127.86], target: [64.2, 17, 12.15] };

@@ -188,7 +188,7 @@ export default {
       const path = this.$route.path;
 
       if (this.isXY) {
-        this.subTitle = "XY工厂 · 园区数字孪生";
+        this.subTitle = "新耀工厂 · 园区数字孪生";
       } else if (path.startsWith("/page_1")) {
         this.subTitle = "51集团";
       } else if (path.startsWith("/page_2/4")) {

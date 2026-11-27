@@ -14,7 +14,12 @@
     "xy": {
       "sceneId": "xy-factory",
       "deliveryCode": "TWN-CHZN-KURZ-BEXA",
-      "autoUpdate": true
+      "autoUpdate": true,
+      "poiOcclusion": {
+        "enabled": true,
+        "kinds": { "building": true, "camera": true, "device": true, "layer": true },
+        "tolerance": { "building": 3, "camera": 1, "device": 1.2, "layer": 1.2 }
+      }
     }
   }
 }

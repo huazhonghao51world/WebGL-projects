@@ -1,5 +1,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import { installGlDebug } from './utils/glDebug';
+installGlDebug();
 import router from './router';
 import store from './store';
 import axios from 'axios';

@@ -1,5 +1,5 @@
-﻿<template>
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path :d="paths[name] || paths.overview" /></svg>
+<template>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path :d="paths[name] || paths.overview" pathLength="1" /></svg>
 </template>
 
 <script>
@@ -19,6 +19,7 @@ const paths = {
   search: "M15.5 15.5 21 21M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z",
   chevron: "m9 6 6 6-6 6",
   target: "M12 3v4m0 10v4M3 12h4m10 0h4m-3 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-5 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z",
+  init: "M4 4v5h5M20 20v-5h-5M5.5 15a7.5 7.5 0 0 0 13.4 1.6M18.5 9A7.5 7.5 0 0 0 5.1 7.4",
   measure: "m3 15 12-12 6 6L9 21l-6-6Zm7-7 2 2m1-5 2 2m-8 4 2 2m-5 1 2 2",
   position: "m4 10 16-6-6 16-3-7-7-3Z",
   route: "M7 20h10a3 3 0 0 0 0-6H7a3 3 0 0 1 0-6h10M4 20a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM16 8a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z",

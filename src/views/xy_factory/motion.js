@@ -4,15 +4,15 @@ import { getTwinApp } from "@/utils/twin/app";
 // 序列清单与切镜表由发布流程（scripts/release-xy-scene.cjs）写入各模型实体的 customData.sequences：
 // 切镜点按镜头开始运动的时刻自动推断，SQ_3 使用 UE Camera Cuts 的人工切镜表。
 const CLIP_LABELS = {
-  SQ_3_likuquanjing_0: "库区全景",
+  SQ_3_likuquanjing: "库区全景",
 };
 // 旧发布版没有 customData.sequences 时的兜底（SQ_3，第 900 帧切镜）。
 const LEGACY = [{ entityId: "xy-prop-sq3", clip: "SQ_3_likuquanjing_0", durationMs: 0, shots: [{ camera: "CineCameraActor_SQ3_1", fromMs: 0 }, { camera: "CineCameraActor_SQ3_2", fromMs: 30100 }] }];
 
 const labelOf = (clip) => {
   const code = /^(SQ_?\d+)/i.exec(clip);
-  const name = CLIP_LABELS[clip];
-  return name ? `${code ? code[1].replace("_", "") : clip} ${name}` : clip.replace(/_0$/, "");
+  const name = CLIP_LABELS[clip.replace(/_\d+$/, "")];
+  return name ? `${code ? code[1].replace("_", "") : clip} ${name}` : clip.replace(/_\d+$/, "");
 };
 
 /** 已发布场景中可播放的全部序列（按 SQ 序号排序）。 */

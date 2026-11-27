@@ -6,7 +6,9 @@
       </div>
     </template>
 
-    <router-view></router-view>
+    <!-- XY：场景完全加载（模型 + 光照 + 配置包 + 全部实体显示）前不挂载页面，面板、定时器与业务逻辑都不执行；
+         加载失败时也挂载（页面以静态预览方式降级）。 -->
+    <router-view v-if="caseKey !== 'xy' || xyPageReady"></router-view>
 
     <template v-slot:scene>
       <div class="content-scene">
@@ -15,8 +17,8 @@
 
     </template>
 
-    <!-- 场景 AI 助手（twinSDK）：自然语言 → 大模型编排 → 调度三维场景 -->
-    <AgentChat v-if="!vendorOffline && caseKey !== 'xy'" />
+    <!-- 场景 AI 助手（twinSDK）：自然语言 → 大模型编排 → 调度三维场景；按案例重建，加载该案例注册的专属能力。XY 场景就绪前不挂载。 -->
+    <AgentChat v-if="!vendorOffline && (caseKey !== 'xy' || xyPageReady)" :key="caseKey" :case-key="caseKey" :class="{ 'ai-in-xy': caseKey === 'xy' }" />
 
     <!--  右侧工具栏 -->
     <template v-slot:aside-right-tools>
@@ -65,6 +67,7 @@ export default {
   data() {
     return {
       vendorOffline: process.env.VUE_APP_VENDOR_OFFLINE === 'true',
+      xyMounted: false,
       cameraInfo: null,
       timeInput: "",
       timeResult: "",
@@ -72,8 +75,16 @@ export default {
   },
 
   computed: {
-    ...mapState(["isShowScene"]),
+    ...mapState(["isShowScene", "sceneStatus"]),
     caseKey() { return this.$route.meta.caseKey || "lighthouse"; },
+    xyPageReady() {
+      // 首次就绪后保持挂载（换版、重试时由全屏加载层遮挡，页面自行 detach / attach）。
+      return this.xyMounted || (this.sceneStatus.caseKey === "xy" && ["ready", "error", "preview"].includes(this.sceneStatus.state));
+    },
+  },
+  watch: {
+    xyPageReady(ready) { if (ready) this.xyMounted = true; },
+    caseKey() { this.xyMounted = false; },
   },
   beforeRouteUpdate(to, from, next) {
     if (to.meta.caseKey !== from.meta.caseKey) this.$store.commit("isSceneAlready", false);

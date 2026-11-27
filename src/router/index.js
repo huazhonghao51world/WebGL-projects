@@ -62,7 +62,7 @@ const routes = [
         path: "xy-factory",
         name: "xy-factory",
         component: () => import("@/views/xy_factory/index.vue"),
-        meta: { title: "XY工厂", caseKey: "xy", requiresAuth: false },
+        meta: { title: "新耀工厂", caseKey: "xy", requiresAuth: false },
       },
       /* 单图模式：隐藏 /page_1
       {

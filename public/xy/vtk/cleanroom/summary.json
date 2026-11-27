@@ -1,0 +1,129 @@
+{
+ "title": "组装洁净区压差与气流（开门扰动 60 s）",
+ "fields": {
+  "Pressure": {
+   "label": "相对压差",
+   "unit": "Pa",
+   "range": [
+    4,
+    16
+   ],
+   "colorMap": "coolwarm"
+  },
+  "Velocity": {
+   "label": "气流速度",
+   "unit": "m/s",
+   "range": [
+    0,
+    0.8
+   ],
+   "colorMap": "viridis"
+  }
+ },
+ "frames": [
+  {
+   "frame": "frame_00.vtk",
+   "time": 0,
+   "minPressure": 12.9,
+   "meanPressure": 13.9,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_01.vtk",
+   "time": 5,
+   "minPressure": 12.9,
+   "meanPressure": 13.9,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_02.vtk",
+   "time": 10,
+   "minPressure": 12.9,
+   "meanPressure": 13.9,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_03.vtk",
+   "time": 15,
+   "minPressure": 4.5,
+   "meanPressure": 11.8,
+   "belowLimitPct": 8.4,
+   "door": "开"
+  },
+  {
+   "frame": "frame_04.vtk",
+   "time": 20,
+   "minPressure": 4.5,
+   "meanPressure": 11.8,
+   "belowLimitPct": 8.4,
+   "door": "开"
+  },
+  {
+   "frame": "frame_05.vtk",
+   "time": 25,
+   "minPressure": 4.5,
+   "meanPressure": 11.8,
+   "belowLimitPct": 8.4,
+   "door": "开"
+  },
+  {
+   "frame": "frame_06.vtk",
+   "time": 30,
+   "minPressure": 7,
+   "meanPressure": 12.5,
+   "belowLimitPct": 5.8,
+   "door": "关"
+  },
+  {
+   "frame": "frame_07.vtk",
+   "time": 35,
+   "minPressure": 10.3,
+   "meanPressure": 13.3,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_08.vtk",
+   "time": 40,
+   "minPressure": 11.8,
+   "meanPressure": 13.6,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_09.vtk",
+   "time": 45,
+   "minPressure": 12.4,
+   "meanPressure": 13.8,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_10.vtk",
+   "time": 50,
+   "minPressure": 12.7,
+   "meanPressure": 13.8,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_11.vtk",
+   "time": 55,
+   "minPressure": 12.8,
+   "meanPressure": 13.8,
+   "belowLimitPct": 0,
+   "door": "关"
+  },
+  {
+   "frame": "frame_12.vtk",
+   "time": 60,
+   "minPressure": 12.9,
+   "meanPressure": 13.9,
+   "belowLimitPct": 0,
+   "door": "关"
+  }
+ ]
+}

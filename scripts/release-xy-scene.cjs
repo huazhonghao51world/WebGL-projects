@@ -97,7 +97,11 @@ function readProfile(dir) {
   const hash = crypto.createHash('sha256').update(Buffer.from(code, 'utf8')).digest('hex');
   if (hash !== manifest.sha256) problems.push(`入口文件 sha256 与 manifest 不一致（实际 ${hash}），请场景组重新构建`);
   if (problems.length) throw new Error(`场景配置包不符合约定：\n- ${problems.join('\n- ')}`);
-  return { manifest, code };
+  // 场景组构建工具附带的构建记录（buildMode、sourceAssets 等）不属于平台 manifest，上传前去掉；不影响入口代码与 sha256。
+  const allowed = ['schema', 'packageId', 'version', 'title', 'description', 'contract', 'entry', 'sha256', 'functions'];
+  const extra = Object.keys(manifest).filter((key) => !allowed.includes(key));
+  if (extra.length) log(`场景配置包 manifest 中的构建记录字段不上传：${extra.join(', ')}`);
+  return { manifest: Object.fromEntries(Object.entries(manifest).filter(([key]) => allowed.includes(key))), code };
 }
 
 /* ------------------------------------------------------------------ animation precision guard */
@@ -119,6 +123,8 @@ function assertAnimationPrecision(file) {
 /* ------------------------------------------------------------------ camera cuts (UE exports motion tracks, not a Camera Cuts track) */
 // Bump when the inference rule changes: published entities are re-derived without re-importing the model.
 const SEQUENCES_RULE = 2;
+// 上传格式：变化时已发布的模型会按原件重新导入（meshopt = 保留 EXT_meshopt_compression，需要 @twin/web-sdk ≥ 0.6.5）。
+const UPLOAD_FORMAT = 'meshopt';
 // Same rule as the scene team's engine/cameraCuts.ts: a camera "takes over" when its motion starts.
 const sanitize = (name) => String(name || '');
 function readGlb(file) {
@@ -192,7 +198,10 @@ function readSequences(file, overrides = {}) {
     shots.sort((a, b) => a.fromMs - b.fromMs);
     if (shots.length) shots[0].fromMs = 0;
     const clip = animation.name || `animation_${sequences.length}`;
-    sequences.push({ clip, durationMs: Math.round(duration * 1000), shots: overrides[clip] || shots, cutsSource: overrides[clip] ? 'override' : 'inferred' });
+    // UE 导出的片段序号会变（_0 → _1）：切镜覆盖表按去序号的基名匹配。
+    const base = (name) => name.replace(/_\d+$/, '');
+    const override = overrides[clip] || Object.entries(overrides).find(([key]) => base(key) === base(clip))?.[1];
+    sequences.push({ clip, durationMs: Math.round(duration * 1000), shots: override || shots, cutsSource: override ? 'override' : 'inferred' });
   }
   return sequences;
 }
@@ -212,10 +221,11 @@ async function plan(draft, published, assets) {
     }
     const source = { file: model.file, sha256: await sha256(file) };
     const current = entity && entity.customData && entity.customData.source;
-    if (current && current.sha256 === source.sha256) {
+    if (current && current.sha256 === source.sha256 && entity.customData.uploadFormat === UPLOAD_FORMAT) {
       if (entity.customData.sequencesRule !== SEQUENCES_RULE) changes.push({ type: 'sequences', model, file, source, entity, reason: '重算动画序列与切镜' });
       continue;
     }
+    if (current && current.sha256 === source.sha256) { changes.push({ type: 'model', model, file, source, entity, reason: '改为 Meshopt 压缩上传' }); continue; }
     assertAnimationPrecision(file);
     // Entities imported before fingerprints existed: the platform keeps the original's hash, so an identical
     // file only needs its fingerprint recorded, not a re-import.
@@ -236,7 +246,7 @@ async function plan(draft, published, assets) {
     const live = (published.definitions || []).find((item) => item.package && item.package.packageId === config.profile.packageId);
     if (live && pkg.manifest.sha256 === live.package.hash) {
       if (pkg.manifest.version !== live.package.packageVersion) log(`场景配置包 ${pkg.manifest.version} 的代码与已发布的 ${live.package.packageVersion} 相同，无需发布`);
-    } else if (!live || newer(pkg.manifest.version, live.package.packageVersion)) changes.push({ type: 'profile', pkg, from: live ? live.package.packageVersion : null, reason: live ? `${live.package.packageVersion} → ${pkg.manifest.version}` : `首次 ${pkg.manifest.version}` });
+    } else if (!live || newer(pkg.manifest.version, live.package.packageVersion) || pkg.manifest.version === live.package.packageVersion) changes.push({ type: 'profile', pkg, from: live ? live.package.packageVersion : null, reason: live && pkg.manifest.version === live.package.packageVersion ? `同版本 ${pkg.manifest.version} 代码已更新，重新发布` : live ? `${live.package.packageVersion} → ${pkg.manifest.version}` : `首次 ${pkg.manifest.version}` });
     else log(`场景配置包 ${pkg.manifest.version} 未高于已发布的 ${live.package.packageVersion}，未上传（请场景组提升版本号）`);
   }
   return changes;
@@ -248,8 +258,11 @@ async function importModel(change, work) {
   const name = path.basename(file);
   const normalized = path.join(work, `${model.entityId}-normalized`);
   run('prepare-xy-assets.cjs', [path.dirname(file), normalized, config.platformRoot, name]);
-  const upload = path.join(normalized, name);
-  const sequences = readSequences(upload, model.cutOverrides);
+  // 切镜分析读解压后的副本；上传保留 Meshopt 压缩的版本（平台运行时 0.6.5 起直接解码，体积约为解压后的 40%）。
+  const sequences = readSequences(path.join(normalized, name), model.cutOverrides);
+  const compressed = path.join(work, `${model.entityId}-meshopt`);
+  run('prepare-xy-assets.cjs', [path.dirname(file), compressed, config.platformRoot, '--keep-meshopt', name]);
+  const upload = path.join(compressed, name);
   if (sequences.length) log(`${name}：${sequences.length} 段动画（${sequences.map((s) => `${s.clip} ${s.shots.length} 镜`).join('，')}）`);
   const form = new FormData();
   form.append('model', await fs.openAsBlob(upload), name);
@@ -302,11 +315,11 @@ async function main() {
     for (const change of changes.filter((item) => item.type === 'model')) {
       const { sequences, ...ref } = await importModel(change, work);
       doc.assets = doc.assets.filter((asset) => asset.assetId !== ref.assetId).concat(ref);
-      const previous = change.entity || { entityId: change.model.entityId, kind: 'model', transform: {}, customData: {} };
+      const previous = change.entity || { entityId: change.model.entityId, kind: 'model', transform: {}, customData: {}, ...(change.model.visible === false ? { visible: false } : {}) };
       const { sequences: _old, ...rest } = previous.customData || {};
       upsertEntity(doc, {
         ...previous, name: change.model.name, assetRef: { assetId: ref.assetId, assetRevision: ref.assetRevision },
-        customData: { ...rest, source: change.source, sequencesRule: SEQUENCES_RULE, ...(sequences.length ? { sequences } : {}) },
+        customData: { ...rest, source: change.source, uploadFormat: UPLOAD_FORMAT, sequencesRule: SEQUENCES_RULE, ...(sequences.length ? { sequences } : {}) },
       });
     }
     for (const change of changes.filter((item) => item.type === 'sequences')) {
