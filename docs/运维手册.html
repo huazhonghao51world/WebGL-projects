@@ -80,7 +80,7 @@
   <div class="grp">大屏</div>
   <a href="#params">10. 地址参数（显存降档等）</a>
   <a href="#browser">11. 浏览器与显卡</a>
-  <a href="#config">12. 现场配置（交付码 / 摄像头 / 密码 / AI）</a>
+  <a href="#config">12. 现场配置（交付码 / 摄像头 / 密码）</a>
   <a href="#scene">13. 场景包替换（一般不涉及）</a>
   <div class="grp">出问题了</div>
   <a href="#emergency">14. 突发情况处理大全</a>
@@ -368,8 +368,8 @@ glxinfo -B | grep -iE "renderer|version"   <span class="c"># 看驱动：rendere
 export TWIN_ADMIN_PASSWORD='Xy@2026!请改'
 <span class="c"># Ctrl+O 回车保存，Ctrl+X 退出</span>
 bash xy.sh restart platform</pre>
-<h3>12.2 AI小新（大模型）</h3>
-<p>推荐在编辑器（<code>http://一体机IP:5186</code> 登录后）「Agent 管理 → 模型配置」里填写，保存在数据库中，立即生效。没有外网时 AI小新会自动退回本地规则模式（能执行常用指令，但不能自由对话）。</p>
+<h3>12.2 AI小新（大模型）· 当前版本未开放</h3>
+<p>大屏上的 AI小新 入口当前版本<b>已隐藏、不对外开放</b>，现场无需配置大模型。后续如开放，由开发发布新版本后，在编辑器「Agent 管理 → 模型配置」里填写即可。</p>
 <figure><img src="img/editor.jpg" alt="TwinStudio 编辑器登录页"><figcaption>TwinStudio 编辑器（5186）：账号 admin，默认密码 admin123（务必按 12.1 修改）</figcaption></figure>
 <h3>12.3 摄像头</h3>
 <p>编辑 <code>local/xy-cameras.yml</code>，把 <code>rtsp://admin:密码@IP:554</code> 改成现场摄像头地址。密码里有 <code>@</code> 要写成 <code>%40</code>。浏览器不支持 H.265，配置中已用 ffmpeg 转成 H.264。</p>
@@ -439,9 +439,6 @@ bash xy.sh restart platform</pre>
 <li>必须通过 <code>http://IP:5186</code> 访问，不要直接访问 5184。</li>
 <li><code>bash xy.sh restart studio platform</code>。</li>
 </ol></details>
-
-<details><summary>AI小新不回答 / 只能执行固定指令</summary>
-<p>没有外网或大模型未配置时会退回本地规则模式。检查编辑器「Agent 管理 → 模型配置」，或 <code>local/xy.env</code> 中的 <code>TWIN_AGENT_LLM_*</code>。大模型服务需要一体机能访问其地址。</p></details>
 
 <details><summary>更新失败：「无法获取更新」/「无法连接 GitHub」</summary>
 <ol class="steps">
