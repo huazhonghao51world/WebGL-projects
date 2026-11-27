@@ -17,8 +17,9 @@
 
     </template>
 
-    <!-- 场景 AI 助手（twinSDK）：自然语言 → 大模型编排 → 调度三维场景；按案例重建，加载该案例注册的专属能力。XY 场景就绪前不挂载。 -->
-    <AgentChat v-if="!vendorOffline && (caseKey !== 'xy' || xyPageReady)" :key="caseKey" :case-key="caseKey" :class="{ 'ai-in-xy': caseKey === 'xy' }" />
+    <!-- 场景 AI 助手（twinSDK）：自然语言 → 大模型编排 → 调度三维场景；按案例重建，加载该案例注册的专属能力。
+         XY（新耀工厂）的 AI小新 暂不开放（法务要求），不挂载；恢复时去掉 caseKey !== 'xy' 条件，改回 (caseKey !== 'xy' || xyPageReady)。 -->
+    <AgentChat v-if="!vendorOffline && caseKey !== 'xy'" :key="caseKey" :case-key="caseKey" />
 
     <!--  右侧工具栏 -->
     <template v-slot:aside-right-tools>

@@ -35,9 +35,10 @@ export const toolGroups = [
     { id: "area", name: "面积测量", icon: "layout", scene: true },
     { id: "coords", name: "取点工具", icon: "target", scene: true },
   ] },
-  { name: "AI", items: [
-    { id: "assistant", name: "AI小新", icon: "assistant" },
-  ] },
+  // AI 分组（AI小新）暂不开放（法务要求）：恢复时取消注释，并在 views/index.vue 恢复 XY 的 AgentChat 挂载。
+  // { name: "AI", items: [
+  //   { id: "assistant", name: "AI小新", icon: "assistant" },
+  // ] },
 ];
 
 // 业务模块内的专题功能（显示在对应模块面板的“专题”卡中）。
