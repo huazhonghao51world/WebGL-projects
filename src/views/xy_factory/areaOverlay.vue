@@ -15,9 +15,10 @@
 <script>
 export default {
   name: "XYAreaOverlay",
-  props: { result: { type: Object, required: true } },
+  props: { result: { type: Object, required: true }, scale: { type: Number, default: 1 } },
   computed: {
-    points() { return this.result.screen; },
+    // 屏幕坐标为视口像素，所在容器已按 scale 放大，需换算回容器坐标。
+    points() { return this.result.screen.map(({ x, y }) => ({ x: x / this.scale, y: y / this.scale })); },
     vertices() { return this.points.slice(0, this.result.count); },
     ring() { return this.points.map(({ x, y }) => `${x},${y}`).join(" "); },
     center() {

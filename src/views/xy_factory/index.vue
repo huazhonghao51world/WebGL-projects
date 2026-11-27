@@ -1,8 +1,8 @@
 <template>
 
   <section v-if="bare" class="xy-campus xy-bare" aria-label="新耀工厂园区（排查模式）"></section>
-  <section v-else class="xy-campus" :class="{ 'xy-clean-view': panelsHidden, 'xy-no-motion': !uiMotion }" aria-label="新耀工厂园区">
-    <XYAreaOverlay v-if="areaResult" :result="areaResult" />
+  <section v-else class="xy-campus" :class="{ 'xy-clean-view': panelsHidden, 'xy-no-motion': !uiMotion }" :style="{ zoom: uiScale }" aria-label="新耀工厂园区">
+    <XYAreaOverlay v-if="areaResult" :result="areaResult" :scale="uiScale" />
 
     <!-- 顶栏：品牌 + 业务模块（居中） + 时间、帧率、UI 动效与操作 -->
     <header class="xy-header">
@@ -202,7 +202,7 @@
     </aside>
 
     <!-- 监控视频：跟随监控 POI 弹出 -->
-    <div v-if="camPop" class="xy-cam-pop" :style="{ left: `${camPop.x}px`, top: `${camPop.y}px` }">
+    <div v-if="camPop" class="xy-cam-pop" :style="{ left: `${camPop.x / uiScale}px`, top: `${camPop.y / uiScale}px` }">
       <header><strong>{{ camPop.name }}</strong><small>RTSP</small><button type="button" title="三维监控视角" @click="cameraView(camPop.point)"><XYIcon name="target" /></button><button type="button" aria-label="关闭" @click="closeCamPop">×</button></header>
       <XYVideo :key="camPop.id" :whep="whepUrl(camPop.point)" :hls="hlsUrl(camPop.point)" />
     </div>
@@ -390,6 +390,7 @@ export default {
     camPop: null, explodeView: null, thermalView: null, moldView: "", moldGl: null, areaOn: "", taskId: "", taskStep: -1, facilityId: "", envOn: "", envRules: d.envRules, layerOption: {}, replayEvents: [], tourStep: null, tourPaused: false, tourChapters: TOUR_CHAPTERS,
     layerId: "", layerInfo: "", layerBusy: false, vtk: { ...idleVtk }, replay: { active: false, index: -1, total: 0, playing: false }, strategy: null,
     bare: /[?&]bare=1/.test(window.location.search + window.location.hash),
+    uiScale: 1,
     bareStep: Number(((window.location.search + window.location.hash).match(/[?&]step=(\d+)/) || [])[1] || 0),
   }),
   computed: {
@@ -489,8 +490,11 @@ export default {
       try { console.log("[xy-camera]", JSON.stringify(v.camera.getPose())); } catch (e) { /* 场景切换中 */ }
     }, 5000);
     window.addEventListener("keydown", this.onKey);
+    window.addEventListener("resize", this.fitUi);
+    this.fitUi();
   },
   beforeDestroy() {
+    window.removeEventListener("resize", this.fitUi);
     clearInterval(this.clockTimer);
     clearInterval(this.poseTimer);
     window.removeEventListener("keydown", this.onKey);
@@ -1305,6 +1309,13 @@ export default {
       this.message = "";
     },
     onVisibility() { if (document.hidden) this.stopTour(); },
+    // 界面按 1920×1080 设计：大屏（2K/4K）等比放大，保持与 1K 屏相同的视觉比例；小于 1K 不缩小。
+    // 地址参数 ui=1.5 可手动指定倍数。
+    fitUi() {
+      const forced = Number(((window.location.search + window.location.hash).match(/[?&]ui=([\d.]+)/) || [])[1]);
+      const auto = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      this.uiScale = forced > 0 ? forced : Math.max(1, Math.round(auto * 100) / 100);
+    },
     setLightTime(time) { if (this.adapter) this.run(() => this.adapter.setTime(time)); },
     setWeather(weather) { if (this.adapter) this.run(() => this.adapter.setWeather(weather)); },
     restoreEnvironment() {
