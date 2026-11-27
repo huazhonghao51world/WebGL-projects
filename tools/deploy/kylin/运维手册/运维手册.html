@@ -116,7 +116,7 @@
   <div class="node"><b>服务控制面板</b> 5099<br>一键启停、看状态（仅本机）</div>
 </div>
 <p>程序更新走 <b>GitHub</b>：开发人员在公司修好 BUG、打包推送后，现场只需执行一条命令（或双击一个图标）就能更新；更新前自动备份数据，更新失败自动退回旧版本。</p>
-<div class="tip">数据（约 3.4 GB）不走 GitHub，首次部署用 U 盘拷贝；之后数据一直保存在一体机上，更新程序不会动数据。</div>
+<div class="tip">数据（约 3.4 GB）不走 GitHub，首次部署时用<b>向日葵</b>把数据包传到一体机桌面；之后数据一直保存在一体机上，更新程序不会动数据。</div>
 
 <!-- ====================================================================== 1 -->
 <h2 id="daily">1. 每天怎么用（最常用）</h2>
@@ -156,7 +156,7 @@
 <tr><td>显卡</td><td>已安装厂商显卡驱动（见 <a href="#browser">第 11 节</a>）</td></tr>
 <tr><td>浏览器</td><td>Chromium 内核：Chrome / Chromium / Edge / 奇安信 / 360 等（Firefox 不推荐）</td></tr>
 <tr><td>网络</td><td>首次部署和每次更新时能访问 github.com；平时可离线运行</td></tr>
-<tr><td>U 盘</td><td>开发提供的数据包目录 <code>xy-data-日期</code>（约 1.7 GB，含 <code>xy-data.sha256</code>）</td></tr>
+<tr><td>远程工具</td><td>一体机安装<b>向日葵</b>（用于远程协助和传文件）。数据包文件夹 <code>xy-data-日期</code>（约 1.7 GB）由开发通过向日葵传到一体机桌面</td></tr>
 <tr><td>令牌</td><td>GitHub 只读令牌（以 <code>github_pat_</code> 开头）。没有的话先按 <a href="#token">第 4.1 节</a> 生成</td></tr>
 </table>
 
@@ -173,15 +173,19 @@ git clone -b deploy-kylin --single-branch https://x-access-token:&lt;令牌&gt;@
 cd /opt/xy-twin</pre>
 <p>看到 <code>Receiving objects: 100%</code> 即下载完成（约 300 MB，视网速 1–10 分钟）。</p>
 
-<h3>3.4 导入数据（U 盘）</h3>
+<h3>3.4 导入数据（向日葵传到桌面）</h3>
+<p>数据包是一个文件夹 <code>xy-data-日期</code>（约 1.7 GB），里面有 <code>xy-data.tar.gz.part-000</code>、<code>xy-data.sha256</code>、<code>说明.txt</code>。用向日葵把<b>整个文件夹</b>传到一体机桌面：</p>
 <ol class="steps">
-  <li>插入 U 盘，桌面或文件管理器里会出现 U 盘图标，打开后找到 <code>xy-data-日期</code> 文件夹。</li>
-  <li>在该文件夹里右键 → 「在终端中打开」，输入 <code>pwd</code> 回车，得到完整路径（例如 <code>/media/kylin/U盘/xy-data-20261127-1130</code>）。</li>
-  <li>回到部署目录执行（路径换成上一步得到的，<b>有空格或中文时两边加英文引号</b>）：<pre>cd /opt/xy-twin
-bash xy.sh import-data "/media/kylin/U盘/xy-data-20261127-1130"</pre></li>
-  <li>会依次显示：校验数据包 → 解压运行时 → 解压数据 → <code>数据库完整性： ok</code> → 数据导入完成，然后自动启动服务。</li>
+  <li>一体机上安装并登录向日葵（麒麟版：<a href="https://sunlogin.oray.com/download" target="_blank">sunlogin.oray.com/download</a> 选 Linux → 对应系统与架构），记下识别码与验证码；开发电脑用向日葵连上它。</li>
+  <li>在开发电脑的向日葵远程窗口顶部工具栏点 <b>「文件」</b>（或「文件传输」），打开双栏文件管理器：左边是开发电脑，右边是一体机。</li>
+  <li>右边进入一体机的 <b>桌面</b>（<code>/home/用户名/桌面</code> 或 <code>/home/用户名/Desktop</code>）。</li>
+  <li>左边找到 <code>xy-data-日期</code> 文件夹，<b>整个拖到右边桌面</b>。等进度条到 100%（1.7 GB，内网约 2–5 分钟，外网视带宽 10–60 分钟）。<b>传输未完成不要关闭窗口。</b></li>
+  <li>一体机终端执行（<b>不用写路径</b>，脚本会自动在桌面上找最新的数据包）：<pre>cd /opt/xy-twin
+bash xy.sh import-data</pre></li>
+  <li>会依次显示：找到桌面上的数据包 → 校验数据包 → 解压运行时 → 解压数据 → <code>数据库完整性： ok</code> → 数据导入完成，然后自动启动服务。</li>
 </ol>
-<div class="warn">「数据包校验失败」= U 盘里的文件不完整或损坏。请让开发重新拷贝，<b>不要强行继续</b>。U 盘建议格式化为 exFAT 或 NTFS；FAT32 也可以（数据包已按 3.5 GB 分片）。</div>
+<div class="warn">「数据包校验失败」= 文件没传完整或传输中断。删掉一体机桌面上的该文件夹，重新传一次，<b>不要强行继续</b>。导入成功后桌面上的数据包文件夹可以删除，释放约 1.7 GB 空间。</div>
+<div class="tip">数据包放在其他位置时也可以指定路径：<code>bash xy.sh import-data "/home/kylin/下载/xy-data-20261127-1130"</code>（有空格或中文时两边加英文引号）。</div>
 
 <h3>3.5 安装（开机自启 + 防火墙）</h3>
 <pre>bash xy.sh install</pre>
@@ -297,7 +301,7 @@ sudo systemctl disable xy-twin    <span class="c"># 取消开机自启（enable 
 <tr><th style="width:42%">命令</th><th>说明</th></tr>
 <tr><td><code>bash xy.sh check</code></td><td>只检查有没有新版本，不更新</td></tr>
 <tr><td><code>bash xy.sh upgrade --yes</code></td><td>不询问直接更新（远程协助时用）</td></tr>
-<tr><td><code>bash xy.sh upgrade /media/…/xy-kylin-日期.bundle</code></td><td><b>离线更新</b>：一体机不能上网时，开发把更新包（.bundle 文件）用 U 盘带过来</td></tr>
+<tr><td><code>bash xy.sh upgrade desktop</code></td><td><b>离线更新</b>：一体机不能访问 GitHub 时，开发用向日葵把更新包 <code>xy-kylin-日期.bundle</code> 传到一体机桌面，再执行此命令（自动使用桌面上最新的更新包）</td></tr>
 <tr><td><code>bash xy.sh version</code></td><td>查看当前版本号</td></tr>
 </table>
 <div class="warn">更新只替换程序，<b>不会动</b>：<code>data/</code>（数据）、<code>local/</code>（现场配置：交付码、摄像头、密码、端口）、<code>backups/</code>、<code>logs/</code>。不要手动修改 <code>app/</code> 目录里的文件，更新时会被覆盖。</div>
@@ -316,9 +320,9 @@ bash xy.sh rollback a1b2c3d  <span class="c"># 退回到指定版本号</span></
 <table>
 <tr><th style="width:42%">命令</th><th>说明</th></tr>
 <tr><td><code>bash xy.sh backup</code></td><td>在线热备份到 <code>backups/data-时间</code>，<b>不用停服务</b>；自动校验数据库行数与完整性。自动保留最近 7 份</td></tr>
-<tr><td><code>bash xy.sh backup /media/…/U盘/xy-backup</code></td><td>直接备份到 U 盘 / 移动硬盘</td></tr>
+<tr><td><code>bash xy.sh backup ~/桌面/xy-backup</code></td><td>备份到桌面，再用向日葵把该文件夹传回开发电脑留存</td></tr>
 <tr><td><code>bash xy.sh restore backups/data-20261128-1020</code></td><td>恢复到某份备份（当前数据改名保留为 <code>data.before-restore-时间</code>，不会丢）</td></tr>
-<tr><td><code>bash xy.sh import-data &lt;数据包目录&gt;</code></td><td>用开发给的 U 盘数据包整体替换（例如公司那边新发布了案例）</td></tr>
+<tr><td><code>bash xy.sh import-data &lt;数据包目录&gt;</code></td><td>用开发传到桌面的新数据包整体替换（例如公司那边新发布了案例）。不写目录时自动找桌面</td></tr>
 </table>
 <div class="tip">每次「更新版本」前都会自动备份一次（目录名 <code>data-before-upgrade-时间</code>）。重要操作（如在编辑器里大改案例）前建议手动备份。</div>
 <div class="danger">不要直接删除或复制正在运行的 <code>data/platform.sqlite</code>，会导致数据损坏。备份一律用 <code>bash xy.sh backup</code>。</div>
@@ -407,7 +411,7 @@ bash xy.sh restart platform</pre>
 <h2 id="scene">13. 场景包替换（一般不涉及）</h2>
 <p>场景（模型、灯光材质配置包）保存在平台数据里。场景组出新版本时，<b>推荐由开发在公司发布</b>，然后二选一带到现场：</p>
 <div class="grid2">
-  <div class="card"><h4>方式 A：整体数据包（推荐）</h4>开发重新打 U 盘数据包 → 现场 <code>bash xy.sh import-data &lt;目录&gt;</code>。原数据自动改名保留。</div>
+  <div class="card"><h4>方式 A：整体数据包（推荐）</h4>开发重新打数据包，用向日葵传到一体机桌面 → 现场 <code>bash xy.sh import-data</code>。原数据自动改名保留。</div>
   <div class="card"><h4>方式 B：现场用编辑器导入</h4>在编辑器（5186）里导入新模型 / 配置包并「发布」。大屏开启了自动跟随（<code>autoUpdate</code>），30 秒内会自动换上新版本，无需刷新。</div>
 </div>
 <div class="warn">场景组配置包按 three.js r187 开发，SDK 也必须是 r187（web-sdk ≥ 0.7.1）。版本不一致会导致国产显卡卡死。方式 B 导入前请与开发确认配置包版本号（配置包 <code>version</code> 必须比当前高）。</div>
@@ -468,9 +472,17 @@ bash xy.sh restart platform</pre>
 <li><code>bash xy.sh restart studio platform</code>。</li>
 </ol></details>
 
+<details><summary>向日葵传文件失败 / 很慢 / 桌面上找不到</summary>
+<ol class="steps">
+<li>向日葵连接后顶部没有「文件」按钮：一体机向日葵需登录账号，或在向日葵设置里开启「允许文件传输」。</li>
+<li>传输中断：删掉桌面上不完整的文件夹重传；数据包只有一个 1.7 GB 分片，网络不稳时建议在内网（同一局域网）传输。</li>
+<li>传完了但 <code>bash xy.sh import-data</code> 提示「桌面上没找到」：确认传到的是当前登录用户的桌面（<code>ls ~/桌面 ~/Desktop</code> 查看），或直接写路径 <code>bash xy.sh import-data "/实际/路径/xy-data-日期"</code>。</li>
+<li>磁盘空间：导入需要「数据包 1.7 GB + 解压后 3.4 GB」的空间，导入成功后删除桌面上的数据包即可释放。</li>
+</ol></details>
+
 <details><summary>更新失败：「无法获取更新」/「无法连接 GitHub」</summary>
 <ol class="steps">
-<li>浏览器能否打开 https://github.com ；不能 → 网络问题（代理、内网限制），联系网管或用<b>离线更新包</b>（第 7 节）。</li>
+<li>浏览器能否打开 https://github.com ；不能 → 网络问题（代理、内网限制），联系网管；或让开发生成<b>离线更新包</b>，用向日葵传到桌面后执行 <code>bash xy.sh upgrade desktop</code>（第 7 节）。</li>
 <li>能打开 → 令牌过期，<code>bash xy.sh set-token 新令牌</code>（第 4 节）。</li>
 <li>提示 <code>Your local changes would be overwritten</code> 等 → 有人改了 app/ 下的文件，更新会强制恢复，直接重试 <code>bash xy.sh upgrade</code>。</li>
 </ol></details>
@@ -561,13 +573,13 @@ git reset --hard HEAD; bash xy.sh restart   <span class="c"># 恢复程序文件
 <tr><td><code>bash xy.sh logs [服务名]</code></td><td>实时日志</td></tr>
 <tr><td><code>bash xy.sh browser ["参数"]</code></td><td>全屏打开大屏</td></tr>
 <tr><td><code>bash xy.sh check</code></td><td>检查新版本</td></tr>
-<tr><td><code>bash xy.sh upgrade [--yes] [更新包]</code></td><td>更新（自动备份、失败回退）</td></tr>
+<tr><td><code>bash xy.sh upgrade [--yes] [desktop]</code></td><td>更新（自动备份、失败回退）</td></tr>
 <tr><td><code>bash xy.sh rollback [版本号]</code></td><td>回退程序</td></tr>
 <tr><td><code>bash xy.sh versions</code> / <code>version</code></td><td>版本列表 / 当前版本</td></tr>
 <tr><td><code>bash xy.sh set-token &lt;令牌&gt;</code></td><td>更新 GitHub 令牌</td></tr>
 <tr><td><code>bash xy.sh backup [目录]</code></td><td>在线备份</td></tr>
 <tr><td><code>bash xy.sh restore &lt;备份目录&gt;</code></td><td>恢复数据</td></tr>
-<tr><td><code>bash xy.sh import-data &lt;数据包目录&gt;</code></td><td>导入 U 盘数据包</td></tr>
+<tr><td><code>bash xy.sh import-data &lt;数据包目录&gt;</code></td><td>导入数据包（不写目录 = 自动找桌面）</td></tr>
 <tr><td><code>bash xy.sh install</code></td><td>安装 / 重新注册开机自启与防火墙</td></tr>
 <tr><td><code>bash xy.sh doctor</code></td><td>体检报告</td></tr>
 </table>
@@ -584,7 +596,7 @@ powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Only platform
 <span class="c"># 先生成不推送（自测）：-NoPush；同时生成离线更新包：-Bundle；带 arm64 运行时：-WithArm64</span></pre>
 <p>脚本会：构建大屏（vue-cli）与平台（tsc + vite + esbuild 单文件打包）→ 同步到 <code>E:\All_in_wdp\deploy-build\kylin-repo</code> → 写入 VERSION（含两个源码仓库的提交号，有未提交改动会标「-未提交」）→ 提交并推送 <code>deploy-kylin</code>。</p>
 <h3>C.2 数据包</h3>
-<pre>powershell -File tools\deploy\kylin\pack-data.ps1 -Out F:\     <span class="c"># F: 为 U 盘；服务运行中即可（热快照）</span></pre>
+<pre>powershell -File tools\deploy\kylin\pack-data.ps1     <span class="c"># 服务运行中即可（热快照）；输出 E:\All_in_wdp\deploy-build\data-packs\xy-data-日期</span></pre><p>然后用向日葵「文件」把整个 <code>xy-data-日期</code> 文件夹传到一体机桌面，现场执行 <code>bash xy.sh import-data</code>。离线更新包（<code>-Bundle</code> 生成的 <code>.bundle</code>）同样传到桌面，现场执行 <code>bash xy.sh upgrade desktop</code>。</p>
 <h3>C.3 SDK 版本</h3>
 <p>SDK（@twin/web-sdk）先在 threejs-twin-p0 执行 <code>npm run build:web-sdk</code>、核对 dist 版本号与 <code>REVISION = "187"</code> 后 <code>npm publish -w @twin/web-sdk</code>；交付端 <code>npm install @twin/web-sdk@x.y.z --save-exact</code> 后再执行 C.1。</p>
 <div class="warn">一体机上不需要 npm / Verdaccio：大屏与平台都以构建产物形式发布，运行时只用随包的 Node 22。</div>

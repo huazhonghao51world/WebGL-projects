@@ -7,7 +7,7 @@
 #   powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "修复注塑车间疏散路线"              # 构建大屏 + 平台并发布
 #   powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Only dengta                 # 只更新大屏（最快）
 #   powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -NoPush                      # 只生成不推送（先自测）
-#   powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Bundle                      # 另存离线更新包（一体机不能上网时用 U 盘带过去）
+#   powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Bundle                      # 另存离线更新包（一体机不能上网时，用向日葵传到桌面后 bash xy.sh upgrade desktop）
 #   powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -WithArm64                   # 同时带 arm64 运行时（飞腾 / 鲲鹏机器）
 param(
   [Parameter(Mandatory)][string]$Note,
@@ -117,7 +117,7 @@ $readme = @"
 本分支只包含**构建好的程序**（新耀工厂大屏、TwinStudio 平台与前端、服务控制面板、运行时、运维脚本），不含源码与数据。
 
 - 运维手册：用浏览器打开 ``docs/运维手册.html``
-- 首次部署：``bash xy.sh import-data <U盘数据包目录>`` → ``bash xy.sh install``
+- 首次部署：数据包文件夹传到桌面 → ``bash xy.sh import-data`` → ``bash xy.sh install``
 - 更新版本：``bash xy.sh upgrade``（或双击「3-检查并更新版本.sh」）
 - 当前版本：见 ``VERSION``
 "@
@@ -140,7 +140,7 @@ if ($Bundle) {
   $out = "E:\All_in_wdp\deploy-build\updates\xy-kylin-$stamp.bundle"
   New-Item -ItemType Directory -Force (Split-Path $out) | Out-Null
   G -C $Work bundle create $out $Branch | Out-Null; Must '生成离线更新包'
-  "离线更新包：$out（{0:N1} MB）→ 拷到一体机后：bash xy.sh upgrade <文件>" -f ((Get-Item $out).Length / 1MB)
+  "离线更新包：$out（{0:N1} MB）→ 向日葵传到一体机桌面后：bash xy.sh upgrade desktop" -f ((Get-Item $out).Length / 1MB)
 }
 if (-not $NoPush) {
   Step "推送到 GitHub（$Branch）"

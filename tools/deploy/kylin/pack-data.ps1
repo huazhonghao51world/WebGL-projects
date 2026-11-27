@@ -1,10 +1,11 @@
-﻿# 打包平台全部数据为 U 盘离线数据包（在开发电脑执行；服务运行中即可，热快照不停机）
+﻿# 打包平台全部数据为离线数据包（在开发电脑执行；服务运行中即可，热快照不停机），再用向日葵把整个文件夹传到一体机桌面
 #
 # 内容：platform.sqlite（一致性快照）+ objects/（全部模型、贴图、配置包、发布版本）+ vtk-cache + 交付码 / 访问密钥
 #       + 现场配置模板 _site/（dengta-config.json、xy-cameras.yml，一体机上没有时才导入）
-# 输出：<Out>\xy-data-<日期>\xy-data.tar.gz.part-000…（每片 ≤ 3.5 GB，兼容 FAT32 U 盘）+ xy-data.sha256 + 说明.txt
+# 输出：<Out>\xy-data-<日期>\xy-data.tar.gz.part-000…（每片 ≤ 3.5 GB）+ xy-data.sha256 + 说明.txt
 #
-# 用法：powershell -File tools\deploy\kylin\pack-data.ps1 [-Out F:\]       # F: 为 U 盘
+# 用法：powershell -File tools\deploy\kylin\pack-data.ps1 [-Out <输出目录>]
+# 传输：向日葵「远程文件」把整个 xy-data-<日期> 文件夹拖到一体机桌面 → 一体机执行 bash xy.sh import-data（自动找桌面）
 param(
   [string]$Out = 'E:\All_in_wdp\deploy-build\data-packs',
   [string]$Source = 'E:\All_in_wdp\wdpapi_sdk\threejs-twin-p0\.data'
@@ -59,7 +60,8 @@ $readme = @"
 
 包含：数据库（案例、资产、发布版本、交付码、AI小新会话与模型配置）、全部模型与贴图对象、仿真缓存、现场配置模板。
 导入（一体机终端，部署目录下执行）：
-  bash xy.sh import-data "<本目录完整路径>"
+  bash xy.sh import-data            （本文件夹在桌面上时可直接执行，会自动找到）
+  bash xy.sh import-data "<本目录完整路径>"   （放在其他位置时）
 导入前会自动校验文件完整性；本机原有数据会改名保留（data.before-import-时间），不会丢失。
 "@
 [IO.File]::WriteAllText("$dst\说明.txt", ($readme -replace "`r`n", "`n"), $Utf8)
