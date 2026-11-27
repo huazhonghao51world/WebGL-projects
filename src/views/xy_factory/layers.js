@@ -124,10 +124,10 @@ export const evacuationCases = [
 ];async function emergency({ adapter, cutaway, options = {} }) {
   const plan = evacuationCases.find((x) => x.id === options.case) || evacuationCases[0];
   cutaway(["production"]);
-  // 疏散路线：SDK flow_light 预设（近乎透明的通道 + 细亮芯 + 朝出口滑动的柔和流光），简约、有透感。
+  // 疏散路线：与「今日立库任务」路径同款 logistics_flow 样式（绿色，朝出口流动）。
   const paths = await adapter.addCoverings(plan.routes.map((route) => ({
     type: "Path", entityName: "XY疏散路线", polyline: { coordinates: route.points },
-    pathStyle: { preset: "flow_light", width: 1.4, color: "2ef0a0ff" },
+    pathStyle: { preset: "logistics_flow", color: "4ade80ff", width: 1.1, speedupFactor: 1.4 },
   })));
   // 事故点：火情用 SDK Fire 覆盖物（火焰 + 烟柱 + 地面光晕 + 闪烁光源）；泄漏用红色警戒区 + 小火苗（酒精挥发燃点低，示意引燃风险）。
   const hazard = await adapter.addCoverings(plan.leak ? [

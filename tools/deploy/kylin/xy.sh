@@ -114,7 +114,7 @@ start_studio() {
   site studio-debug debug "$PORT_DEBUG"
   site studio-demo demo "$PORT_DEMO"
 }
-camera_mode() { cat "$LOCAL/camera-mode" 2>/dev/null || echo live; }
+camera_mode() { cat "$LOCAL/camera-mode" 2>/dev/null || echo demo; } # 默认演示视频，接入真实摄像头后 camera live
 start_video() {
   if [ "$(camera_mode)" = demo ]; then
     # 演示源：开源工厂视频循环推流到 cam1–cam13（不依赖真实摄像头）
