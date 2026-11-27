@@ -398,6 +398,12 @@ bash xy.sh restart platform</pre>
 <h3>12.3 摄像头</h3>
 <p>编辑 <code>local/xy-cameras.yml</code>，把 <code>rtsp://admin:密码@IP:554</code> 改成现场摄像头地址。密码里有 <code>@</code> 要写成 <code>%40</code>。浏览器不支持 H.265，配置中已用 ffmpeg 转成 H.264。</p>
 <div class="tip">摄像头不通不影响大屏其他功能，只是监控画面黑屏。<code>bash xy.sh logs video-gateway</code> 查看原因（常见：IP 不通、密码错、摄像头离线）。</div>
+<h3>12.4 演示视频（没有真实摄像头 / 外网演示时）</h3>
+<p>系统自带 4 段开源工厂视频（冲压、包装、制浆、车间，Wikimedia Commons CC 授权），循环播放到 13 路监控画面，不需要任何摄像头：</p>
+<pre>bash xy.sh camera demo   # 切到演示视频
+bash xy.sh camera live   # 切回真实摄像头
+bash xy.sh camera        # 查看当前是哪种</pre>
+<p>切换后刷新大屏即可，设置会保留（重启、更新后不变）。素材署名见 <code>app/video/videos/README.md</code>，对外演示请保留。</p>
 
 <!-- ====================================================================== 13 -->
 <h2 id="scene">13. 场景包替换（一般不涉及）</h2>
@@ -452,7 +458,7 @@ bash xy.sh restart platform</pre>
 <details><summary>监控视频黑屏 / 播放不了</summary>
 <ol class="steps">
 <li><code>bash xy.sh status</code> 看 video-gateway 是否运行；未运行 → <code>bash xy.sh restart video</code>。</li>
-<li>提示「未配置摄像头」→ 没有 <code>local/xy-cameras.yml</code>，按 12.3 配置。</li>
+<li>提示「未配置摄像头」→ 没有 <code>local/xy-cameras.yml</code>，按 12.3 配置；或先用 <code>bash xy.sh camera demo</code> 显示演示视频。</li>
 <li><code>bash xy.sh logs video-gateway</code>：出现 <code>connection refused / timeout</code> = 摄像头 IP 不通；<code>401</code> = 账号密码错。</li>
 <li>局域网其他电脑看不了视频但本机可以：放行 UDP/TCP 8189（<code>bash xy.sh install</code> 会自动放行），不通时页面会自动改用 HLS（延迟稍高）。</li>
 </ol></details>
@@ -556,6 +562,7 @@ git reset --hard HEAD; bash xy.sh restart   <span class="c"># 恢复程序文件
 <tr><td><code>bash xy.sh start | stop | restart [组件]</code></td><td>启停；组件 platform / studio / dengta / video / panel</td></tr>
 <tr><td><code>bash xy.sh logs [服务名]</code></td><td>实时日志</td></tr>
 <tr><td><code>bash xy.sh browser ["参数"]</code></td><td>全屏打开大屏</td></tr>
+<tr><td><code>bash xy.sh camera demo | live</code></td><td>监控画面切演示视频 / 真实摄像头</td></tr>
 <tr><td><code>bash xy.sh check</code></td><td>检查新版本</td></tr>
 <tr><td><code>bash xy.sh upgrade [--yes] [desktop]</code></td><td>更新（自动备份、失败回退）</td></tr>
 <tr><td><code>bash xy.sh rollback [版本号]</code></td><td>回退程序</td></tr>

@@ -15,6 +15,7 @@
 #   bash xy.sh backup | restore <目录> 在线热备份 / 恢复平台数据
 #   bash xy.sh doctor                 一键体检，生成诊断报告（发给开发排查）
 #   bash xy.sh browser [参数]          全屏打开新耀工厂大屏（如 gpu=compact）
+#   bash xy.sh camera demo|live       监控画面切到演示视频 / 真实摄像头
 #   bash xy.sh logs [服务名]           查看日志
 set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
@@ -113,10 +114,24 @@ start_studio() {
   site studio-debug debug "$PORT_DEBUG"
   site studio-demo demo "$PORT_DEMO"
 }
+camera_mode() { cat "$LOCAL/camera-mode" 2>/dev/null || echo live; }
 start_video() {
+  if [ "$(camera_mode)" = demo ]; then
+    # 演示源：开源工厂视频循环推流到 cam1–cam13（不依赖真实摄像头）
+    ( cd "$APP/video" && PATH="$ROOT/runtime/bin:$PATH" launch video-gateway "$MTX" "$APP/video/xy-cameras.demo.yml" )
+    return 0
+  fi
   local cfg="$LOCAL/xy-cameras.yml"
-  [ -f "$cfg" ] || { c_warn "  · 未配置摄像头（local/xy-cameras.yml），跳过视频网关"; return 0; }
+  [ -f "$cfg" ] || { c_warn "  · 未配置摄像头（local/xy-cameras.yml），跳过视频网关（可用 bash xy.sh camera demo 切到演示视频）"; return 0; }
   ( cd "$LOCAL" && PATH="$ROOT/runtime/bin:$PATH" launch video-gateway "$MTX" "$cfg" )
+}
+camera() { # demo | live | 空 = 查看
+  case "${1:-}" in
+    demo|live) mkdir -p "$LOCAL"; echo "$1" > "$LOCAL/camera-mode"; stop video; start video ;;
+    "") ;;
+    *) c_err "用法：bash xy.sh camera demo|live"; return 1 ;;
+  esac
+  if [ "$(camera_mode)" = demo ]; then echo "监控画面：演示视频（开源工厂素材）"; else echo "监控画面：真实摄像头（local/xy-cameras.yml）"; fi
 }
 start_dengta() {
   # 现场配置 local/dengta-config.json 优先（不存在时使用程序自带 config.json）
@@ -380,7 +395,8 @@ case "${1:-}" in
   restore) restore "${2:-}" ;;
   doctor) doctor ;;
   browser) browser "${2:-}" ;;
+  camera) camera "${2:-}" ;;
   logs) tail -n 200 -f "$LOGS/${2:-dengta}.log" ;;
   version) version ;;
-  *) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
