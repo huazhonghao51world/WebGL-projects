@@ -1,0 +1,56 @@
+{
+  "panelPort": 5099,
+  "services": [
+    {
+      "id": "platform",
+      "name": "TwinStudio 平台服务",
+      "desc": "平台 API（5184）+ 资产转换 worker；案例、资产、发布版本、交付码、AI小新会话都在这里",
+      "cwd": "../..",
+      "start": "bash xy.sh start platform",
+      "stop": "bash xy.sh stop platform",
+      "match": "app/platform/api/(server|worker)\\.js",
+      "ports": { "5184": "平台 API" },
+      "links": [{ "label": "健康检查", "port": 5184, "path": "/api/health" }]
+    },
+    {
+      "id": "studio",
+      "name": "TwinStudio 前端",
+      "desc": "编辑器（案例中心 / 资产库 / Agent 管理）、API 联调台、平台演示站",
+      "cwd": "../..",
+      "start": "bash xy.sh start studio",
+      "stop": "bash xy.sh stop studio",
+      "match": "site-server\\.js --root \\S*app/platform/",
+      "ports": { "5186": "编辑器", "5188": "API 联调台", "5185": "演示站" },
+      "links": [
+        { "label": "编辑器", "port": 5186, "path": "/" },
+        { "label": "Agent 管理", "port": 5186, "path": "/#/agent" },
+        { "label": "API 联调台", "port": 5188, "path": "/" },
+        { "label": "演示站", "port": 5185, "path": "/" }
+      ]
+    },
+    {
+      "id": "dengta",
+      "name": "新耀工厂大屏（灯塔交付端）",
+      "desc": "大屏站点 + 同源代理（/api → 平台，/xy-video → 视频网关）",
+      "cwd": "../..",
+      "start": "bash xy.sh start dengta",
+      "stop": "bash xy.sh stop dengta",
+      "match": "site-server\\.js --root \\S*app/dengta",
+      "ports": { "3716": "新耀工厂大屏" },
+      "links": [
+        { "label": "打开大屏", "port": 3716, "path": "/#/xy-factory" },
+        { "label": "低显存模式", "port": 3716, "path": "/?gpu=compact#/xy-factory" }
+      ]
+    },
+    {
+      "id": "video",
+      "name": "视频网关（监控）",
+      "desc": "MediaMTX：RTSP 摄像头 → WebRTC / HLS；配置文件 local/xy-cameras.yml",
+      "cwd": "../..",
+      "start": "bash xy.sh start video",
+      "stop": "bash xy.sh stop video",
+      "match": "mediamtx",
+      "ports": { "8889": "WebRTC", "8888": "HLS", "8554": "RTSP" }
+    }
+  ]
+}

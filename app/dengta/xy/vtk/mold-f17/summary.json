@@ -1,0 +1,100 @@
+{
+ "title": "FANUC-17 针筒模具表面温度（成型周期 13.1 s）",
+ "fields": {
+  "Temperature": {
+   "label": "模具温度",
+   "unit": "°C",
+   "range": [
+    36,
+    120
+   ],
+   "colorMap": "turbo"
+  }
+ },
+ "frames": [
+  {
+   "frame": "frame_00.vtk",
+   "time": 0,
+   "maxTemperature": 64,
+   "leftFace": 52,
+   "rightFace": 62.1
+  },
+  {
+   "frame": "frame_01.vtk",
+   "time": 0.6,
+   "maxTemperature": 93.8,
+   "leftFace": 56,
+   "rightFace": 67.3
+  },
+  {
+   "frame": "frame_02.vtk",
+   "time": 1.2,
+   "maxTemperature": 124.5,
+   "leftFace": 60,
+   "rightFace": 72.5
+  },
+  {
+   "frame": "frame_03.vtk",
+   "time": 2.5,
+   "maxTemperature": 105,
+   "leftFace": 57.5,
+   "rightFace": 69.2
+  },
+  {
+   "frame": "frame_04.vtk",
+   "time": 4,
+   "maxTemperature": 90,
+   "leftFace": 55.5,
+   "rightFace": 66.7
+  },
+  {
+   "frame": "frame_05.vtk",
+   "time": 5.5,
+   "maxTemperature": 80.4,
+   "leftFace": 54.3,
+   "rightFace": 65
+  },
+  {
+   "frame": "frame_06.vtk",
+   "time": 7,
+   "maxTemperature": 74.3,
+   "leftFace": 53.5,
+   "rightFace": 64
+  },
+  {
+   "frame": "frame_07.vtk",
+   "time": 8.5,
+   "maxTemperature": 70.3,
+   "leftFace": 52.9,
+   "rightFace": 63.3
+  },
+  {
+   "frame": "frame_08.vtk",
+   "time": 10,
+   "maxTemperature": 67.7,
+   "leftFace": 52.6,
+   "rightFace": 62.9
+  },
+  {
+   "frame": "frame_09.vtk",
+   "time": 11.4,
+   "maxTemperature": 66.2,
+   "leftFace": 52.4,
+   "rightFace": 62.6
+  },
+  {
+   "frame": "frame_10.vtk",
+   "time": 12.4,
+   "maxTemperature": 65.4,
+   "leftFace": 52.3,
+   "rightFace": 62.5
+  },
+  {
+   "frame": "frame_11.vtk",
+   "time": 13.1,
+   "maxTemperature": 64,
+   "leftFace": 52,
+   "rightFace": 62.1
+  }
+ ]
+}

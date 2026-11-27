@@ -1,0 +1,8 @@
+# 一体机本地内容（数据、现场配置、日志、备份、解压后的运行时）不进仓库
+/data/
+/data.*/
+/local/
+/logs/
+/run/
+/backups/
+/runtime/

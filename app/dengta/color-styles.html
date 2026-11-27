@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WDP 预定义描边颜色样式 (VisualColorStyle)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Segoe UI", -apple-system, "Microsoft YaHei", sans-serif;
+      background: #f5f6f8;
+      color: #1f2328;
+    }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    p.desc { margin: 0 0 20px; color: #57606a; font-size: 13px; }
+    .toolbar { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .toolbar input {
+      padding: 6px 10px; border: 1px solid #d0d7de; border-radius: 6px; font-size: 13px; width: 220px;
+    }
+    label.chk { font-size: 13px; color: #57606a; display: inline-flex; align-items: center; gap: 6px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    .swatch {
+      height: 84px;
+      position: relative;
+      /* 棋盘格底纹，便于观察 alpha 透明度 */
+      background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    }
+    .swatch .fill { position: absolute; inset: 0; }
+    .meta { padding: 8px 10px 10px; }
+    .name { font-weight: 600; font-size: 13px; word-break: break-all; }
+    .hex { font-family: Consolas, monospace; font-size: 12px; color: #57606a; margin-top: 2px; cursor: pointer; }
+    .hex:hover { color: #0969da; text-decoration: underline; }
+    .idx {
+      float: right; font-size: 11px; color: #8b949e;
+      background: #f0f2f4; border-radius: 10px; padding: 1px 7px;
+    }
+    .copied { color: #1a7f37 !important; }
+  </style>
+</head>
+<body>
+  <h1>WDP 预定义描边颜色样式（VisualColorStyle）</h1>
+  <p class="desc">
+    共 64 个预定义 <code>styleName</code>。<code>App.Setting.SetEntityOutline({ styleName })</code> 的
+    <code>styleName</code> 必须使用下列名称之一。hex 为 <code>RRGGBBAA</code>（末两位 <code>77</code> 为透明度 ≈ 47%）。
+    点击 hex 可复制名称。
+  </p>
+  <div class="toolbar">
+    <input id="search" type="text" placeholder="搜索 styleName / hex..." />
+    <label class="chk"><input type="checkbox" id="showAlpha" checked /> 显示透明度</label>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const STYLES = [
+      ["Default", "FFBF0077"], ["Black", "00000077"], ["DarkBlue", "00008B77"],
+      ["MediumBlue", "0000CD77"], ["Blue", "0000FF77"], ["DarkGreen", "00640077"],
+      ["Green", "00800077"], ["SpringGreen", "00FF7F77"], ["MidnightBlue", "19197077"],
+      ["ForestGreen", "2E8B5777"], ["SeaGreen", "2E8B5777"], ["LimeGreen", "32CD3277"],
+      ["RoyalBlue", "4169E177"], ["SteelBlue", "4682B477"], ["Maroon", "80000077"],
+      ["Purple", "80008077"], ["Olive", "80800077"], ["Gray", "80808077"],
+      ["SkyBlue", "87CEEB77"], ["BlueViolet", "8A2BE277"], ["DarkRed", "8B000077"],
+      ["LightGreen", "90EE9077"], ["MediumPurple", "9370DB77"], ["DarkViolet", "9400D377"],
+      ["PaleGreen", "98FB9877"], ["YellowGreen", "9ACD3277"], ["Sienna", "A0522D77"],
+      ["Brown", "A52A2A77"], ["DarkGray", "A9A9A977"], ["LightBlue", "ADD8E677"],
+      ["GreenYellow", "ADFF2F77"], ["PowderBlue", "B0E0E677"], ["Silver", "C0C0C077"],
+      ["IndianRed", "CD5C5C77"], ["Chocolate", "D2691E77"], ["LightGray", "D3D3D377"],
+      ["Thistle", "D8BFD877"], ["Orchid", "DA70D677"], ["GoldenRod", "DAA52077"],
+      ["Plum", "DDA0DD77"], ["LightCyan", "E0FFFF77"], ["DarkSalmon", "E9967A77"],
+      ["Violet", "EE82EE77"], ["LightCoral", "F0808077"], ["Wheat", "F5DEB377"],
+      ["Salmon", "FA807277"], ["Linen", "FAF0E677"], ["DeepPink", "FF149377"],
+      ["OrangeRed", "FF450077"], ["Tomato", "FF634777"], ["HotPink", "FF69B477"],
+      ["Coral", "FF7F5077"], ["DarkOrange", "FF8C0077"], ["LightSalmon", "FFA07A77"],
+      ["Orange", "FFA50077"], ["LightPink", "FFB6C177"], ["Pink", "FFC0CB77"],
+      ["Gold", "FFD70077"], ["FloralWhite", "FFFAF077"], ["Snow", "FFFAFA77"],
+      ["Yellow", "FFFF0077"], ["LightYellow", "FFFFE077"], ["Ivory", "FFFFF077"],
+      ["White", "FFFFFF77"],
+    ];
+
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("search");
+    const showAlpha = document.getElementById("showAlpha");
+
+    function render() {
+      const q = search.value.trim().toLowerCase();
+      const alpha = showAlpha.checked;
+      grid.innerHTML = "";
+      STYLES.forEach(([name, hex], i) => {
+        if (q && !name.toLowerCase().includes(q) && !hex.toLowerCase().includes(q)) return;
+        const rgb = "#" + hex.slice(0, 6);
+        const rgba = "#" + hex;
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML =
+          '<div class="swatch"><div class="fill" style="background:' + (alpha ? rgba : rgb) + '"></div></div>' +
+          '<div class="meta">' +
+            '<span class="idx">#' + i + '</span>' +
+            '<div class="name">' + name + '</div>' +
+            '<div class="hex" title="点击复制 styleName">' + hex + '</div>' +
+          '</div>';
+        card.querySelector(".hex").addEventListener("click", (e) => {
+          navigator.clipboard.writeText(name).then(() => {
+            e.target.textContent = "已复制: " + name;
+            e.target.classList.add("copied");
+            setTimeout(() => { e.target.textContent = hex; e.target.classList.remove("copied"); }, 1000);
+          });
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    search.addEventListener("input", render);
+    showAlpha.addEventListener("change", render);
+    render();
+  </script>
+</body>
+</html>

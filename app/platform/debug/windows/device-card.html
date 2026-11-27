@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<style>
+  html, body { margin: 0; background: transparent; font: 13px/1.5 "Microsoft YaHei", "Segoe UI", sans-serif; color: #dff3ff; overflow: hidden; }
+  .card { box-sizing: border-box; height: 100vh; padding: 12px 14px; border: 1px solid #3fd2c7; border-radius: 8px; background: linear-gradient(160deg, rgba(10, 34, 58, .94), rgba(6, 18, 32, .94)); }
+  h1 { margin: 0 0 8px; font-size: 15px; color: #7ff3e4; }
+  .row { display: flex; justify-content: space-between; border-bottom: 1px dashed #24445e; padding: 3px 0; }
+  .value { color: #fff; font-weight: 600; }
+  .ok { color: #5ef2a0; } .warn { color: #ffbf47; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 id="name">设备</h1>
+  <div class="row"><span>状态</span><span id="state" class="value ok">运行</span></div>
+  <div class="row"><span>温度</span><span class="value"><span id="temp">--</span> °C</span></div>
+  <div class="row"><span>转速</span><span class="value"><span id="rpm">--</span> rpm</span></div>
+  <div class="row"><span>更新时间</span><span id="time" class="value">--</span></div>
+</div>
+<script>
+  const params = new URLSearchParams(location.search);
+  document.getElementById('name').textContent = params.get('name') || '设备';
+  function tick() {
+    const temp = 55 + Math.random() * 30;
+    document.getElementById('temp').textContent = temp.toFixed(1);
+    document.getElementById('rpm').textContent = String(1440 + Math.round(Math.random() * 40));
+    const state = document.getElementById('state');
+    state.textContent = temp > 78 ? '预警' : '运行';
+    state.className = 'value ' + (temp > 78 ? 'warn' : 'ok');
+    document.getElementById('time').textContent = new Date().toLocaleTimeString();
+  }
+  tick(); setInterval(tick, 1000);
+</script>
+</body>
+</html>

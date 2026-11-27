@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>本机服务控制面板</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; font: 14px/1.5 "Microsoft YaHei", system-ui, sans-serif; background: #0d1620; color: #dce8f2; }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 22px; background: #13212e; border-bottom: 1px solid #22384b; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 18px; }
+  .ips { color: #8fb3cc; font-size: 13px; }
+  .ips b { color: #fff; font-family: Consolas, monospace; }
+  .grow { flex: 1; }
+  button { background: #1d3448; color: #dce8f2; border: 1px solid #2f5470; border-radius: 6px; padding: 5px 12px; cursor: pointer; font: inherit; }
+  button:hover:not(:disabled) { background: #26445e; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.go { border-color: #2f8f4e; color: #9ff0b5; }
+  button.halt { border-color: #a04848; color: #ffb3b3; }
+  main { padding: 18px 22px; display: grid; gap: 12px; }
+  .card { background: #13212e; border: 1px solid #22384b; border-radius: 10px; padding: 14px 16px; display: grid; grid-template-columns: 260px 1fr auto; gap: 14px; align-items: start; }
+  .name { font-size: 15px; font-weight: 600; color: #fff; }
+  .desc { color: #8fb3cc; font-size: 12px; }
+  .state { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #555; }
+  .running .dot { background: #34c759; box-shadow: 0 0 6px #34c759; }
+  .starting .dot, .stopping .dot { background: #ffb020; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
+  .ports { display: flex; flex-wrap: wrap; gap: 6px; }
+  .port { font-family: Consolas, monospace; background: #0d1620; border: 1px solid #2a465c; border-radius: 5px; padding: 1px 8px; font-size: 12px; }
+  .port.missing { border-style: dashed; color: #6f8799; }
+  .port small { color: #8fb3cc; font-family: "Microsoft YaHei"; margin-left: 4px; }
+  .links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+  a { color: #6cc4ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .meta { color: #6f8799; font-size: 12px; margin-top: 6px; font-family: Consolas, monospace; word-break: break-all; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 260px; }
+  .warn { color: #ffb020; font-size: 12px; margin-top: 4px; }
+  dialog { width: min(1100px, 92vw); height: 80vh; background: #0b131b; color: #cfe; border: 1px solid #2f5470; border-radius: 10px; padding: 0; }
+  dialog header { padding: 8px 14px; }
+  dialog pre { margin: 0; padding: 12px 14px; height: calc(80vh - 52px); overflow: auto; font: 12px/1.45 Consolas, monospace; white-space: pre-wrap; }
+  #toast { position: fixed; right: 20px; bottom: 20px; background: #26445e; padding: 8px 14px; border-radius: 6px; display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>本机服务控制面板</h1>
+  <span class="ips" id="ips"></span>
+  <span class="grow"></span>
+  <span class="desc" id="updated"></span>
+  <button class="go" onclick="all('start')">全部启动</button>
+  <button class="halt" onclick="all('stop')">全部停止</button>
+  <button onclick="refresh()">刷新</button>
+</header>
+<main id="list">加载中…</main>
+<dialog id="logDialog"><header><b id="logTitle"></b><span class="grow"></span><button onclick="loadLog()">刷新日志</button><button onclick="logDialog.close()">关闭</button></header><pre id="logText"></pre></dialog>
+<div id="toast"></div>
+<script>
+const STATE_TEXT = { running: '运行中', starting: '启动中', stopping: '停止中', stopped: '已停止' };
+let data = null, logId = null, pending = new Set();
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const host = () => (data && data.ips[0] ? data.ips[0].address : '127.0.0.1');
+function toast(text) { const t = $('toast'); t.textContent = text; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => (t.style.display = 'none'), 3000); }
+
+async function refresh() {
+  try {
+    data = await (await fetch('/api/status')).json();
+    render();
+  } catch (e) { $('list').textContent = '面板服务不可达：' + e.message; }
+}
+function render() {
+  $('ips').innerHTML = `${esc(data.host)} · ` + (data.ips.map((i) => `<b>${esc(i.address)}</b> <span title="${esc(i.name)}">(${esc(i.name)})</span>`).join('　') || '无局域网 IP');
+  $('updated').textContent = '更新于 ' + new Date(data.at).toLocaleTimeString();
+  $('list').innerHTML = data.services.map((s) => {
+    const state = pending.has(s.id) ? (s.instances.length ? 'stopping' : 'starting') : s.state;
+    const expected = Object.entries(s.expectedPorts);
+    const extra = s.ports.filter((p) => !s.expectedPorts[p]);
+    const portHtml = expected.map(([p, label]) => `<span class="port ${s.ports.includes(+p) ? '' : 'missing'}">${p}<small>${esc(label)}</small></span>`).join('')
+      + extra.map((p) => `<span class="port">${p}</span>`).join('') || '<span class="desc">无监听端口</span>';
+    const linkHost = host();
+    const links = s.links.map((l) => {
+      const live = s.ports.includes(l.port) || (!Object.keys(s.expectedPorts).length && s.ports.length);
+      const port = s.ports.includes(l.port) || !s.ports.length ? l.port : s.ports[0];
+      return live ? `<a href="http://${linkHost}:${port}${l.path}" target="_blank">${esc(l.label)} ↗</a>` : `<span class="desc">${esc(l.label)}</span>`;
+    }).join('') + (s.ports.length && !s.links.length ? '' : '');
+    const dup = s.instances.length > 1 ? `<div class="warn">检测到 ${s.instances.length} 个实例在运行（可能重复启动），停止会全部结束</div>` : '';
+    const meta = s.instances.map((i) => `PID ${i.pid}（${i.processes} 个进程）${i.ports.length ? ' · 端口 ' + i.ports.join(', ') : ''}`).join('<br>');
+    const running = s.instances.length > 0;
+    return `<section class="card">
+      <div><div class="name">${esc(s.name)}</div><div class="desc">${esc(s.desc)}</div>
+        <div class="state ${state}"><span class="dot"></span>${STATE_TEXT[state]}</div></div>
+      <div><div class="ports">${portHtml}</div><div class="links">${links}</div>${dup}
+        <div class="meta">${meta || esc(s.cwd) + ' › ' + esc(s.start)}</div></div>
+      <div class="actions">
+        ${s.noStart ? '' : `<button class="go" ${running || pending.has(s.id) ? 'disabled' : ''} onclick="act('${s.id}','start')">启动</button>`}
+        <button class="halt" ${!running || pending.has(s.id) ? 'disabled' : ''} onclick="act('${s.id}','stop')">停止</button>
+        ${s.noStart ? '' : `<button ${pending.has(s.id) ? 'disabled' : ''} onclick="act('${s.id}','restart')">重启</button>`}
+        <button ${s.hasLog ? '' : 'disabled title="仅面板启动的服务有日志"'} onclick="openLog('${s.id}','${esc(s.name)}')">日志</button>
+      </div></section>`;
+  }).join('');
+}
+async function act(id, action) {
+  if (action === 'stop' && !confirm('确定停止该服务？')) return;
+  pending.add(id); render();
+  try {
+    const r = await (await fetch(`/api/services/${id}/${action}`, { method: 'POST' })).json();
+    toast(r.error ? '失败：' + r.error : r.already ? '已在运行' : { start: '已发起启动，稍候端口就绪', stop: '已停止', restart: '已重启，稍候端口就绪' }[action]);
+  } finally { pending.delete(id); refresh(); }
+}
+async function all(action) {
+  if (!confirm(action === 'start' ? '启动全部未运行的服务？' : '停止全部服务？')) return;
+  data.services.forEach((s) => pending.add(s.id)); render();
+  try { await fetch(`/api/all/${action}`, { method: 'POST' }); toast(action === 'start' ? '已发起全部启动' : '已全部停止'); }
+  finally { pending.clear(); refresh(); }
+}
+async function openLog(id, name) { logId = id; $('logTitle').textContent = name + ' · 日志（最近 300 行）'; $('logDialog').showModal(); await loadLog(); }
+async function loadLog() { const pre = $('logText'); pre.textContent = await (await fetch(`/api/services/${logId}/log`)).text() || '（暂无）'; pre.scrollTop = pre.scrollHeight; }
+refresh();
+setInterval(() => { if (!pending.size) refresh(); }, 4000);
+</script>
+</body>
+</html>

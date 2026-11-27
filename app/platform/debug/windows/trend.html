@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8" />
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; font: 12px "Microsoft YaHei", sans-serif; color: #cfe7ff; }
+  .card { box-sizing: border-box; height: 100vh; padding: 10px; border: 1px solid #4d8dff; border-radius: 8px; background: rgba(6, 18, 34, .92); }
+  svg { width: 100%; height: calc(100% - 22px); }
+</style></head>
+<body><div class="card"><div>近 30 秒温度趋势（示例页面）</div><svg viewBox="0 0 300 120" preserveAspectRatio="none"><polyline id="line" fill="none" stroke="#5bdbc1" stroke-width="2" /></svg></div>
+<script>
+  const values = Array.from({ length: 30 }, () => 50 + Math.random() * 30);
+  function draw() {
+    values.push(50 + Math.random() * 30); values.shift();
+    document.getElementById('line').setAttribute('points', values.map((v, i) => (i * 300 / 29) + ',' + (120 - (v - 40) * 2.4)).join(' '));
+  }
+  draw(); setInterval(draw, 1000);
+</script></body></html>

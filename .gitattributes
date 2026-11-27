@@ -1,0 +1,14 @@
+* text=auto eol=lf
+*.tar.xz binary
+*.tar.gz binary
+*.gz binary
+*.png binary
+*.jpg binary
+*.mp4 binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.glb binary
+*.wasm binary
+*.vtk binary
+*.ico binary
