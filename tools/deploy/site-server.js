@@ -4,6 +4,7 @@
 //   --spa                   未命中文件时返回 index.html（history 路由）
 //   --local 前缀            转发时把 Host / Origin 改为本机回环（平台 API 只接受回环来源），客户端 IP 变化无需改配置
 //   --local-origin 端口     --local 改写 Origin 时使用的端口（需在平台 API 的可信来源端口内：5185/5186/5187/5188）
+//   --file 路径=文件        用本机文件替换某个路径（如 /config.json=local/dengta-config.json），现场配置不随程序更新被覆盖；文件不存在时回落到 root
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -17,6 +18,7 @@ const spa = argv.includes("--spa");
 const strip = new Set(all("strip"));
 const local = new Set(all("local"));
 const localOrigin = one("local-origin", "5185");
+const files = new Map(all("file").map((v) => { const i = v.indexOf("="); return [v.slice(0, i), path.resolve(v.slice(i + 1))]; }));
 const proxies = all("proxy").map((v) => { const [prefix, target] = v.split("="); const [host, p] = target.split(":"); return { prefix, host, port: Number(p) }; }).sort((a, b) => b.prefix.length - a.prefix.length);
 const types = { ".html": "text/html; charset=utf-8", ".js": "application/javascript", ".mjs": "application/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff": "font/woff", ".woff2": "font/woff2", ".ttf": "font/ttf", ".otf": "font/otf", ".glb": "model/gltf-binary", ".gltf": "model/gltf+json", ".bin": "application/octet-stream", ".wasm": "application/wasm", ".ktx2": "image/ktx2", ".mp4": "video/mp4", ".m3u8": "application/vnd.apple.mpegurl", ".txt": "text/plain; charset=utf-8", ".md": "text/markdown; charset=utf-8" };
 
@@ -54,6 +56,10 @@ function send(req, res, file, size) {
 function serveStatic(req, res) {
   let rel;
   try { rel = decodeURIComponent(req.url.split("?")[0]); } catch { res.writeHead(400); res.end(); return; }
+  const override = files.get(rel);
+  if (override) {
+    try { const st = fs.statSync(override); if (st.isFile()) return send(req, res, override, st.size); } catch { /* 回落到 root */ }
+  }
   let file = path.normalize(path.join(root, rel));
   if (file !== root && !file.startsWith(root + path.sep)) { res.writeHead(403); res.end(); return; }
   fs.stat(file, (err, st) => {
