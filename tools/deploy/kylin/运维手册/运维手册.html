@@ -156,7 +156,7 @@
 <tr><td>显卡</td><td>已安装厂商显卡驱动（见 <a href="#browser">第 11 节</a>）</td></tr>
 <tr><td>浏览器</td><td>Chromium 内核：Chrome / Chromium / Edge / 奇安信 / 360 等（Firefox 不推荐）</td></tr>
 <tr><td>网络</td><td>首次部署和每次更新时能访问 github.com；平时可离线运行</td></tr>
-<tr><td>远程工具</td><td>一体机安装<b>向日葵</b>（用于远程协助和传文件）。数据包文件夹 <code>xy-data-日期</code>（约 1.7 GB）由开发通过向日葵传到一体机桌面</td></tr>
+<tr><td>数据包</td><td>开发通过向日葵传到一体机桌面的文件夹 <code>xy-data-日期</code>（约 1.7 GB）</td></tr>
 <tr><td>令牌</td><td>GitHub 只读令牌（以 <code>github_pat_</code> 开头）。没有的话先按 <a href="#token">第 4.1 节</a> 生成</td></tr>
 </table>
 
@@ -173,20 +173,12 @@ git clone -b deploy-kylin --single-branch https://x-access-token:&lt;令牌&gt;@
 cd /opt/xy-twin</pre>
 <p>看到 <code>Receiving objects: 100%</code> 即下载完成（约 300 MB，视网速 1–10 分钟）。</p>
 
-<h3>3.4 导入数据（向日葵传到桌面）</h3>
-<p>数据包是一个文件夹 <code>xy-data-日期</code>（约 1.7 GB），里面有 <code>xy-data.tar.gz.part-000</code>、<code>xy-data.sha256</code>、<code>说明.txt</code>。用向日葵把<b>整个文件夹</b>传到一体机桌面：</p>
-<ol class="steps">
-  <li>一体机上安装并登录向日葵（麒麟版：<a href="https://sunlogin.oray.com/download" target="_blank">sunlogin.oray.com/download</a> 选 Linux → 对应系统与架构），记下识别码与验证码；开发电脑用向日葵连上它。</li>
-  <li>在开发电脑的向日葵远程窗口顶部工具栏点 <b>「文件」</b>（或「文件传输」），打开双栏文件管理器：左边是开发电脑，右边是一体机。</li>
-  <li>右边进入一体机的 <b>桌面</b>（<code>/home/用户名/桌面</code> 或 <code>/home/用户名/Desktop</code>）。</li>
-  <li>左边找到 <code>xy-data-日期</code> 文件夹，<b>整个拖到右边桌面</b>。等进度条到 100%（1.7 GB，内网约 2–5 分钟，外网视带宽 10–60 分钟）。<b>传输未完成不要关闭窗口。</b></li>
-  <li>一体机终端执行（<b>不用写路径</b>，脚本会自动在桌面上找最新的数据包）：<pre>cd /opt/xy-twin
-bash xy.sh import-data</pre></li>
-  <li>会依次显示：找到桌面上的数据包 → 校验数据包 → 解压运行时 → 解压数据 → <code>数据库完整性： ok</code> → 数据导入完成，然后自动启动服务。</li>
-</ol>
-<div class="warn">「数据包校验失败」= 文件没传完整或传输中断。删掉一体机桌面上的该文件夹，重新传一次，<b>不要强行继续</b>。导入成功后桌面上的数据包文件夹可以删除，释放约 1.7 GB 空间。</div>
-<div class="tip">数据包放在其他位置时也可以指定路径：<code>bash xy.sh import-data "/home/kylin/下载/xy-data-20261127-1130"</code>（有空格或中文时两边加英文引号）。</div>
-
+<h3>3.4 导入数据</h3>
+<p>数据包文件夹 <code>xy-data-日期</code>（约 1.7 GB）由开发通过向日葵传到一体机<b>桌面</b>。传完后在终端执行（<b>不用写路径</b>，会自动在桌面找最新的数据包）：</p>
+<pre>cd /opt/xy-twin
+bash xy.sh import-data</pre>
+<p>会依次显示：找到桌面上的数据包 → 校验 → 解压 → <code>数据库完整性： ok</code> → 数据导入完成，然后自动启动服务。</p>
+<div class="warn">「数据包校验失败」= 文件没传完整。删掉桌面上的该文件夹，让开发重新传，<b>不要强行继续</b>。导入成功后桌面上的数据包可以删除。</div>
 <h3>3.5 安装（开机自启 + 防火墙）</h3>
 <pre>bash xy.sh install</pre>
 <p>会提示输入一次开机密码（用于注册开机自启 <code>xy-twin.service</code> 和放行防火墙端口）。最后打印「服务状态」全部为 <span class="tag t-ok">运行中</span>，并给出访问地址：</p>
@@ -409,10 +401,10 @@ bash xy.sh restart platform</pre>
 
 <!-- ====================================================================== 13 -->
 <h2 id="scene">13. 场景包替换（一般不涉及）</h2>
-<p>场景（模型、灯光材质配置包）保存在平台数据里。场景组出新版本时，<b>推荐由开发在公司发布</b>，然后二选一带到现场：</p>
+<p>场景（模型、灯光材质配置包）保存在平台数据里。场景组出新版本时，<b>推荐由开发在公司发布</b>，再通过向日葵传到一体机桌面，二选一：</p>
 <div class="grid2">
   <div class="card"><h4>方式 A：整体数据包（推荐）</h4>开发重新打数据包，用向日葵传到一体机桌面 → 现场 <code>bash xy.sh import-data</code>。原数据自动改名保留。</div>
-  <div class="card"><h4>方式 B：现场用编辑器导入</h4>在编辑器（5186）里导入新模型 / 配置包并「发布」。大屏开启了自动跟随（<code>autoUpdate</code>），30 秒内会自动换上新版本，无需刷新。</div>
+  <div class="card"><h4>方式 B：场景包 + 编辑器导入</h4>开发用向日葵把场景包传到一体机桌面 → 在编辑器（5186）里从桌面选择文件导入新模型 / 配置包并「发布」。大屏开启了自动跟随（<code>autoUpdate</code>），30 秒内会自动换上新版本，无需刷新。</div>
 </div>
 <div class="warn">场景组配置包按 three.js r187 开发，SDK 也必须是 r187（web-sdk ≥ 0.7.1）。版本不一致会导致国产显卡卡死。方式 B 导入前请与开发确认配置包版本号（配置包 <code>version</code> 必须比当前高）。</div>
 <p>出问题可以立即回到旧场景：编辑器「案例 → 发布记录」重新发布上一版本；或 <code>bash xy.sh restore backups/…</code> 恢复导入前的数据。</p>
@@ -470,14 +462,6 @@ bash xy.sh restart platform</pre>
 <li>密码是否被改过（看 <code>local/xy.env</code> 的 <code>TWIN_ADMIN_PASSWORD</code>）。</li>
 <li>必须通过 <code>http://IP:5186</code> 访问，不要直接访问 5184。</li>
 <li><code>bash xy.sh restart studio platform</code>。</li>
-</ol></details>
-
-<details><summary>向日葵传文件失败 / 很慢 / 桌面上找不到</summary>
-<ol class="steps">
-<li>向日葵连接后顶部没有「文件」按钮：一体机向日葵需登录账号，或在向日葵设置里开启「允许文件传输」。</li>
-<li>传输中断：删掉桌面上不完整的文件夹重传；数据包只有一个 1.7 GB 分片，网络不稳时建议在内网（同一局域网）传输。</li>
-<li>传完了但 <code>bash xy.sh import-data</code> 提示「桌面上没找到」：确认传到的是当前登录用户的桌面（<code>ls ~/桌面 ~/Desktop</code> 查看），或直接写路径 <code>bash xy.sh import-data "/实际/路径/xy-data-日期"</code>。</li>
-<li>磁盘空间：导入需要「数据包 1.7 GB + 解压后 3.4 GB」的空间，导入成功后删除桌面上的数据包即可释放。</li>
 </ol></details>
 
 <details><summary>更新失败：「无法获取更新」/「无法连接 GitHub」</summary>
