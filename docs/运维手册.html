@@ -580,7 +580,7 @@ powershell -File tools\deploy\kylin\publish-kylin.ps1 -Note "..." -Only platform
 <span class="c"># 先生成不推送（自测）：-NoPush；同时生成离线更新包：-Bundle；带 arm64 运行时：-WithArm64</span></pre>
 <p>脚本会：构建大屏（vue-cli）与平台（tsc + vite + esbuild 单文件打包）→ 同步到 <code>E:\All_in_wdp\deploy-build\kylin-repo</code> → 写入 VERSION（含两个源码仓库的提交号，有未提交改动会标「-未提交」）→ 提交并推送 <code>deploy-kylin</code>。</p>
 <h3>C.2 数据包</h3>
-<pre>powershell -File tools\deploy\kylin\pack-data.ps1     <span class="c"># 服务运行中即可（热快照）；输出 E:\All_in_wdp\deploy-build\data-packs\xy-data-日期</span></pre><p>然后用向日葵「文件」把整个 <code>xy-data-日期</code> 文件夹传到一体机桌面，现场执行 <code>bash xy.sh import-data</code>。离线更新包（<code>-Bundle</code> 生成的 <code>.bundle</code>）同样传到桌面，现场执行 <code>bash xy.sh upgrade desktop</code>。</p>
+<pre>powershell -File tools\deploy\kylin\pack-data.ps1     <span class="c"># 服务运行中即可（热快照）；输出 E:\All_in_wdp\wdpapi_sdk\threejs-twin-research\xy-deploy-data-package\xy-data-日期</span></pre><p>然后用向日葵「文件」把整个 <code>xy-data-日期</code> 文件夹传到一体机桌面，现场执行 <code>bash xy.sh import-data</code>。离线更新包（<code>-Bundle</code> 生成的 <code>.bundle</code>）同样传到桌面，现场执行 <code>bash xy.sh upgrade desktop</code>。</p>
 <h3>C.3 SDK 版本</h3>
 <p>SDK（@twin/web-sdk）先在 threejs-twin-p0 执行 <code>npm run build:web-sdk</code>、核对 dist 版本号与 <code>REVISION = "187"</code> 后 <code>npm publish -w @twin/web-sdk</code>；交付端 <code>npm install @twin/web-sdk@x.y.z --save-exact</code> 后再执行 C.1。</p>
 <div class="warn">一体机上不需要 npm / Verdaccio：大屏与平台都以构建产物形式发布，运行时只用随包的 Node 22。</div>
