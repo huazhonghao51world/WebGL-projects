@@ -334,6 +334,7 @@ http://127.0.0.1:3716/#/xy-factory?gpu=compact</pre>
 <tr><th style="width:190px">参数</th><th>作用</th><th style="width:250px">什么时候用</th></tr>
 <tr><td><code>gpu=compact</code></td><td><b>低显存模式</b>：贴图最长边 512（默认 1024）、关闭抗锯齿、像素比 ≤ 1、阴影贴图缩小且只保留 1 盏主光 + 2 盏聚光灯投影、POI 图标走 CPU 生成</td><td>加载卡死、花屏、黑屏、马赛克、帧率个位数</td></tr>
 <tr><td><code>lite=1</code></td><td>关闭页面 UI 动效（面板动画、数字滚动）</td><td>CPU 较弱、界面操作不跟手</td></tr>
+<tr><td><code>ui=1.5</code></td><td>手动指定界面放大倍数（默认按屏幕自动：1080P 为 1，4K 为 2）</td><td>界面看起来偏大或偏小</td></tr>
 </table>
 <div class="warn">系统<b>不会自动降档</b>：是否使用低显存模式完全由地址参数决定。确认需要降档后，用「5-打开大屏-低显存模式.sh」打开即可；如需固定为默认，联系开发修改桌面图标。</div>
 <figure><img src="img/dashboard-compact.jpg" alt="低显存模式"><figcaption>低显存模式（gpu=compact）：画面略模糊、阴影变少，但显存占用和卡死风险大幅降低</figcaption></figure>
