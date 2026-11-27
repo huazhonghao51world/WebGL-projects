@@ -73,7 +73,14 @@ halt() { # 名称：先 TERM 让服务优雅退出（数据库落盘），10 秒
   fi
   rm -f "$RUN/$name.pid"
 }
-wait_http() { for _ in $(seq 1 "${2:-60}"); do curl -fs -o /dev/null --max-time 2 "$1" && return 0; sleep 1; done; c_err "  ✗ 等待超时：$1"; return 1; }
+wait_http() { # URL 秒数 说明
+  local i; for i in $(seq 1 "${2:-60}"); do
+    curl -fs -o /dev/null --max-time 2 "$1" && return 0
+    [ $((i % 15)) = 0 ] && echo "    …仍在等待 ${3:-$1}（${i} 秒）"
+    sleep 1
+  done
+  c_err "  ✗ 等待超时：$1"; return 1
+}
 
 SERVICES_platform="platform-api platform-worker"
 SERVICES_studio="studio-editor studio-debug studio-demo"
@@ -93,7 +100,8 @@ start_platform() {
   TWIN_DATA_DIR="$DATA" TWIN_API_HOST=0.0.0.0 TWIN_API_PORT="$PORT_API" \
     TWIN_DEMO_PORT="$PORT_DEMO" TWIN_EDITOR_PORT="$PORT_EDITOR" TWIN_DEBUG_PORT="$PORT_DEBUG" \
     launch platform-api "$NODE" --max-old-space-size=3072 "$APP/platform/api/server.js"
-  wait_http "http://127.0.0.1:$PORT_API/api/health" 90
+  # 首次启动（或刚导入数据、机械硬盘）需要读取并校验全部数据，可能要 1–3 分钟
+  wait_http "http://127.0.0.1:$PORT_API/api/health" 300 "平台 API 启动（首次较慢）"
   TWIN_DATA_DIR="$DATA" launch platform-worker "$NODE" --max-old-space-size=4096 "$APP/platform/api/worker.js"
 }
 site() { # 名称 目录 端口
