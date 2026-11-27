@@ -157,7 +157,7 @@
 <tr><td>浏览器</td><td>Chromium 内核：Chrome / Chromium / Edge / 奇安信 / 360 等（Firefox 不推荐）</td></tr>
 <tr><td>网络</td><td>首次部署和每次更新时能访问 github.com；平时可离线运行</td></tr>
 <tr><td>U 盘</td><td>开发提供的数据包目录 <code>xy-data-日期</code>（约 1.7 GB，含 <code>xy-data.sha256</code>）</td></tr>
-<tr><td>令牌</td><td>开发提供的 GitHub 只读令牌（以 <code>github_pat_</code> 或 <code>ghp_</code> 开头），见 <a href="#token">第 4 节</a></td></tr>
+<tr><td>令牌</td><td>GitHub 只读令牌（以 <code>github_pat_</code> 开头）。没有的话先按 <a href="#token">第 4.1 节</a> 生成</td></tr>
 </table>
 
 <h3>3.2 安装系统工具（一次）</h3>
@@ -167,9 +167,9 @@ sudo apt install -y git curl xz-utils iproute2 mesa-utils</pre>
 <div class="tip">提示「无法定位软件包」时可跳过 <code>mesa-utils</code>（只用于查看显卡信息）。麒麟个别版本用 <code>yum</code>：<code>sudo yum install -y git curl xz iproute</code>。</div>
 
 <h3>3.3 下载程序</h3>
-<pre><span class="c"># 把 <令牌> 换成开发给的令牌（整段复制后再改）</span>
+<pre><span class="c"># 把 &lt;令牌&gt; 换成第 4.1 节生成的令牌（整段复制后再改，尖括号也删掉）</span>
 sudo mkdir -p /opt/xy-twin && sudo chown $USER:$USER /opt/xy-twin
-git clone -b deploy-kylin --single-branch https://x-access-token:<令牌>@github.com/huazhonghao51world/WebGL-projects.git /opt/xy-twin
+git clone -b deploy-kylin --single-branch https://x-access-token:&lt;令牌&gt;@github.com/huazhonghao51world/WebGL-projects.git /opt/xy-twin
 cd /opt/xy-twin</pre>
 <p>看到 <code>Receiving objects: 100%</code> 即下载完成（约 300 MB，视网速 1–10 分钟）。</p>
 
@@ -212,13 +212,41 @@ bash xy.sh import-data "/media/kylin/U盘/xy-data-20261127-1130"</pre></li>
 
 <!-- ====================================================================== 4 -->
 <h2 id="token">4. GitHub 访问令牌</h2>
-<p>仓库是私有的，一体机拉取更新需要一个<b>只读令牌</b>（由开发在 GitHub 生成：Settings → Developer settings → Fine-grained tokens，仓库选 WebGL-projects，权限 Contents: Read-only）。</p>
+<p>程序仓库是私有的，一体机下载和更新程序需要一个<b>只读访问令牌</b>（一串以 <code>github_pat_</code> 开头的字符）。令牌由仓库所有者账号 <code>huazhonghao51world</code> 在 GitHub 网页上生成，<b>一般由开发人员生成后交给现场</b>；现场也可以按下面步骤自己生成（需要该账号的登录权限）。</p>
+
+<h3>4.1 生成令牌（约 2 分钟，在任意能上网的电脑上操作）</h3>
+<ol class="steps">
+  <li>浏览器登录 GitHub（账号 <code>huazhonghao51world</code>），打开：<pre>https://github.com/settings/personal-access-tokens/new</pre>也可以点右上角头像 → <b>Settings</b> → 左侧最下方 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → 右上角 <b>Generate new token</b>。</li>
+  <li>按下表填写（没提到的保持默认）：
+    <table>
+      <tr><th style="width:230px">页面上的字段</th><th>填写</th></tr>
+      <tr><td>Token name（名称）</td><td><code>xy-kylin-readonly</code>（自己认得出即可）</td></tr>
+      <tr><td>Resource owner（所属）</td><td><code>huazhonghao51world</code></td></tr>
+      <tr><td>Expiration（有效期）</td><td>选 <b>Custom</b>，日期选一年后（到期前需要重新生成，见 4.3）</td></tr>
+      <tr><td>Repository access（可访问的仓库）</td><td>选 <b>Only select repositories</b>，在下拉框里只勾 <code>WebGL-projects</code></td></tr>
+      <tr><td>Permissions → Repository permissions</td><td>点开后找到 <b>Contents</b>，选 <b>Read-only</b>（只改这一项；<b>Metadata</b> 会自动变成 Read-only）</td></tr>
+    </table>
+  </li>
+  <li>拉到页面最下方，点绿色按钮 <b>Generate token</b>（如提示输入密码或验证码，按提示完成）。</li>
+  <li>页面上方显示一串 <code>github_pat_…</code> 字符，点旁边的复制图标。<b>它只显示这一次</b>，关掉页面后再也看不到，请立刻保存（建议存入密码管理器，或交给项目负责人保管）。</li>
+</ol>
+<div class="warn">如果 Resource owner 下拉框里没有 <code>huazhonghao51world</code>，说明登录的不是仓库所有者账号；仓库若在组织名下，Resource owner 选该组织，并可能需要组织管理员在 GitHub 上批准后令牌才生效。</div>
+
+<h3>4.2 使用令牌</h3>
 <table>
-<tr><th>情况</th><th>操作</th></tr>
-<tr><td>首次部署</td><td>令牌已写在 3.3 的 clone 地址里，不用另外设置</td></tr>
-<tr><td>令牌过期 / 被重置（更新时提示「无法获取更新」）</td><td><pre>bash xy.sh set-token 新令牌</pre>显示「令牌已更新，可以访问 GitHub」即可</td></tr>
+<tr><th style="width:230px">情况</th><th>操作</th></tr>
+<tr><td>首次部署</td><td>把 3.3 节命令里的 <code>&lt;令牌&gt;</code> 整段替换掉（尖括号也删掉），例如：<pre>git clone -b deploy-kylin --single-branch https://x-access-token:github_pat_11ABCDEF…xyz@github.com/huazhonghao51world/WebGL-projects.git /opt/xy-twin</pre>令牌会自动保存在一体机上，之后更新不用再输入。</td></tr>
+<tr><td>令牌过期 / 被删除（更新时提示「无法获取更新」，浏览器却能打开 github.com）</td><td>按 4.1 生成新令牌，然后在部署目录执行：<pre>bash xy.sh set-token github_pat_新令牌</pre>显示「令牌已更新，可以访问 GitHub」即可</td></tr>
 </table>
-<div class="danger">令牌等同于钥匙：不要拍照发群、不要写在桌面便签上。令牌只给「只读」权限，即使泄露也不能修改代码，但仍请发现后通知开发重置。</div>
+
+<h3>4.3 到期、泄露与作废</h3>
+<ul>
+  <li><b>查看到期时间</b>：GitHub → Settings → Developer settings → Fine-grained tokens，列表里每个令牌都显示 Expires on（到期日）。到期前 7 天 GitHub 会给账号邮箱发提醒。</li>
+  <li><b>续期</b>：令牌不能延长，到期前按 4.1 生成新的，再执行 <code>bash xy.sh set-token</code> 替换即可，现场服务不受影响。</li>
+  <li><b>作废</b>（怀疑泄露、人员变动）：在上面的列表里点该令牌 → 页面最下方 <b>Delete</b>，立即失效。随后生成新令牌并在一体机上 <code>set-token</code>。</li>
+  <li><b>多台一体机</b>：可以共用一个令牌，也可以每台一个（名称写上机器位置，方便单独作废）。</li>
+</ul>
+<div class="danger">令牌等同于钥匙：不要拍照发群、不要写在桌面便签或文档里。令牌只有「只读」权限，即使泄露也不能修改代码、看不到其他仓库，但仍请发现后立即作废并重新生成。</div>
 
 <!-- ====================================================================== 5 -->
 <h2 id="control">5. 启动 / 停止 / 重启</h2>
